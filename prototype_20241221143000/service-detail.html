@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OwaMailB2 Service Details - Griffin PF Deployment AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <button onclick="window.location.href='ve-detail.html'" class="text-gray-500 hover:text-gray-700">← Back to VE</button>
+                    <h1 class="text-xl font-semibold text-gray-800">OwaMailB2 Service</h1>
+                    <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Healthy</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Admin</span>
+                    <button onclick="window.location.href='login.html'" class="text-blue-600 hover:text-blue-800">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Service Information -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Basic Info -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Service Information</h2>
+                    </div>
+                    <div class="p-6">
+                        <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Service Name</dt>
+                                <dd class="mt-1 text-sm text-gray-900">OwaMailB2</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Service Type</dt>
+                                <dd class="mt-1 text-sm text-gray-900">Model B Service</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Current Version</dt>
+                                <dd class="mt-1 text-sm text-gray-900">v2.1.0</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Last Deployed</dt>
+                                <dd class="mt-1 text-sm text-gray-900">3 hours ago</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Build Type</dt>
+                                <dd class="mt-1 text-sm text-gray-900">RingPromotion</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">PPE VE Name</dt>
+                                <dd class="mt-1 text-sm text-gray-900">OwaMailB2-PPE</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Build Information -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Build Information</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Build Root URL</label>
+                                <div class="mt-1 text-sm text-gray-900 bg-gray-50 p-2 rounded font-mono">
+                                    https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-medium text-gray-500">Build Path Pattern</label>
+                                <div class="mt-1 text-sm text-gray-900 bg-gray-50 p-2 rounded font-mono break-all">
+                                    VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/&lt;BuildVersion&gt;?root=autopilot
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Available Pipelines -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Available Pipelines</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium text-gray-900">Main Pipeline (1418)</h3>
+                                        <p class="text-sm text-gray-500">Primary deployment pipeline</p>
+                                    </div>
+                                    <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Default</span>
+                                </div>
+                                <div class="mt-3">
+                                    <label class="text-xs font-medium text-gray-500">Latest Builds:</label>
+                                    <div class="mt-1 space-y-1">
+                                        <div class="text-sm text-gray-900">v2.1.0 (Latest) - Built 3 hours ago</div>
+                                        <div class="text-sm text-gray-900">v2.0.9 - Built 1 day ago</div>
+                                        <div class="text-sm text-gray-900">v2.0.8 - Built 2 days ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="border border-gray-200 rounded-lg p-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <h3 class="font-medium text-gray-900">Incremental Pipeline (33874)</h3>
+                                        <p class="text-sm text-gray-500">Incremental build pipeline</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <label class="text-xs font-medium text-gray-500">Latest Builds:</label>
+                                    <div class="mt-1 space-y-1">
+                                        <div class="text-sm text-gray-900">v2.1.0-inc.123 - Built 1 hour ago</div>
+                                        <div class="text-sm text-gray-900">v2.1.0-inc.122 - Built 4 hours ago</div>
+                                        <div class="text-sm text-gray-900">v2.1.0-inc.121 - Built 6 hours ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Deployment History -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Recent Deployment History</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <div>
+                                    <div class="font-medium text-gray-900">v2.1.0 deployment</div>
+                                    <div class="text-sm text-gray-500">3 hours ago by Admin</div>
+                                </div>
+                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Success</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-100">
+                                <div>
+                                    <div class="font-medium text-gray-900">v2.0.9 deployment</div>
+                                    <div class="text-sm text-gray-500">1 day ago by Admin</div>
+                                </div>
+                                <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Success</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2">
+                                <div>
+                                    <div class="font-medium text-gray-900">v2.0.8 deployment</div>
+                                    <div class="text-sm text-gray-500">2 days ago by Admin</div>
+                                </div>
+                                <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">Failed</span>
+                            </div>
+                        </div>
+                        <button onclick="window.location.href='deployment-history.html'" class="mt-4 text-blue-600 hover:text-blue-800 text-sm">View All History →</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="space-y-6">
+                <!-- Deploy Card -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Quick Deploy</h2>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Pipeline</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>Main Pipeline (1418)</option>
+                                <option>Incremental Pipeline (33874)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Build Version</label>
+                            <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option>v2.1.0 (Latest)</option>
+                                <option>v2.0.9</option>
+                                <option>v2.0.8</option>
+                            </select>
+                        </div>
+                        <button class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition duration-200">
+                            Deploy Now
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Service Status -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Service Status</h2>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Health Status</span>
+                            <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Healthy</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">CPU Usage</span>
+                            <span class="text-sm text-gray-900">45%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Memory Usage</span>
+                            <span class="text-sm text-gray-900">72%</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">Uptime</span>
+                            <span class="text-sm text-gray-900">3 hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Drop URLs -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Drop URLs</h2>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <div>
+                            <label class="text-xs font-medium text-gray-500">Current Drop URL</label>
+                            <div class="mt-1 text-xs text-gray-900 bg-gray-50 p-2 rounded font-mono break-all">
+                                https://outlookweb.artifacts.visualstudio.com/.../drops/owamailb2_ms/2.1.0?root=autopilot
+                            </div>
+                            <button class="mt-2 text-xs text-blue-600 hover:text-blue-800">Copy URL</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Actions</h2>
+                    </div>
+                    <div class="p-6 space-y-3">
+                        <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+                            View Logs
+                        </button>
+                        <button class="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-200">
+                            Restart Service
+                        </button>
+                        <button onclick="window.location.href='deployment-history.html'" class="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 transition duration-200">
+                            View Full History
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

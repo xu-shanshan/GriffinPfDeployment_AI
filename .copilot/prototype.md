@@ -179,4 +179,4 @@ VE types:
     - OwaMailB2-SOV
     - TodoB2-SOV
 
-- Each service can have multiple pipelines and every pipelines can get a lastest Drop URL .
+- Each service 会有多个 pipelines ，每个pipline 都会有自己的 drop url list.用户可以自由选择 使用哪个 pipline 的buildnumber 的dropurl 来部署。用户也可以自己设置哪个pipelines作为默认的pipline 部署，这样就可以不需要每次都选了，如果用户没有选，那么系统漠然采取最新的buildnumber部署

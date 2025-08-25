@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Management - Griffin PF Deployment AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center space-x-4">
+                    <button onclick="window.location.href='dashboard.html'" class="text-gray-500 hover:text-gray-700">← Back to Dashboard</button>
+                    <h1 class="text-xl font-semibold text-gray-800">Pipeline Management</h1>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Admin</span>
+                    <button onclick="window.location.href='login.html'" class="text-blue-600 hover:text-blue-800">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Service Selection -->
+            <div class="bg-white shadow rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h2 class="text-lg font-medium text-gray-900">Select Service</h2>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">VE</label>
+                            <select id="veSelect" onchange="updateServices()" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select VE</option>
+                                <option value="SovBase">SovBase</option>
+                                <option value="ModelBSov">ModelBSov</option>
+                                <option value="OwaMailB2-SOV">OwaMailB2-SOV</option>
+                                <option value="TodoB2-SOV">TodoB2-SOV</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Service</label>
+                            <select id="serviceSelect" onchange="loadPipelines()" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Select Service</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline Information -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Service Info -->
+                <div id="serviceInfo" class="bg-white shadow rounded-lg hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Service Information</h2>
+                    </div>
+                    <div class="p-6">
+                        <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2">
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">Build Type</dt>
+                                <dd class="mt-1 text-sm text-gray-900" id="buildType">-</dd>
+                            </div>
+                            <div>
+                                <dt class="text-sm font-medium text-gray-500">PPE VE Name</dt>
+                                <dd class="mt-1 text-sm text-gray-900" id="ppeVeName">-</dd>
+                            </div>
+                            <div class="col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Build Root</dt>
+                                <dd class="mt-1 text-sm text-gray-900 bg-gray-50 p-2 rounded font-mono text-xs break-all" id="buildRoot">-</dd>
+                            </div>
+                            <div class="col-span-2">
+                                <dt class="text-sm font-medium text-gray-500">Build Path Pattern</dt>
+                                <dd class="mt-1 text-sm text-gray-900 bg-gray-50 p-2 rounded font-mono text-xs break-all" id="buildPathPattern">-</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <!-- Available Pipelines -->
+                <div id="pipelinesList" class="bg-white shadow rounded-lg hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-lg font-medium text-gray-900">Available Pipelines</h2>
+                            <button onclick="refreshPipelines()" class="text-blue-600 hover:text-blue-800 text-sm">Refresh</button>
+                        </div>
+                    </div>
+                    <div class="p-6 space-y-6" id="pipelinesContainer">
+                        <!-- Pipelines will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Batch Deployment -->
+                <div id="batchDeployment" class="bg-white shadow rounded-lg hidden">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h2 class="text-lg font-medium text-gray-900">Batch Deployment Configuration</h2>
+                    </div>
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Default Pipeline</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option>Main Pipeline (1418)</option>
+                                    <option>Incremental Pipeline (33874)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Default Build Strategy</label>
+                                <select class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option>Latest Build</option>
+                                    <option>Latest Stable</option>
+                                    <option>Manual Selection</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="autoDeployEnabled" class="mr-2">
+                                <label for="autoDeployEnabled" class="text-sm text-gray-700">Enable auto-deployment for this service</label>
+                            </div>
+                            <button class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200">
+                                Save Configuration
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deploy Modal -->
+    <div id="deployModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg font-medium text-gray-900" id="deployModalTitle">Deploy Service</h3>
+                <div class="mt-4">
+                    <div class="text-left space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Selected Build</label>
+                            <div class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-sm" id="selectedBuild">
+                                v2.1.0 (Pipeline 1418)
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Drop URL</label>
+                            <div class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-xs break-all" id="dropUrl">
+                                https://outlookweb.artifacts.visualstudio.com/...
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="forceDeployment" class="mr-2">
+                            <label for="forceDeployment" class="text-sm text-gray-700">Force deployment (ignore health checks)</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button onclick="hideDeployModal()" class="px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 mr-2">
+                        Cancel
+                    </button>
+                    <button onclick="confirmDeploy()" class="mt-2 px-4 py-2 bg-green-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-green-700">
+                        Confirm Deploy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const serviceData = {
+            'SovBase': ['ActionsAssistants', 'ActionsB2NetCore', 'OwaMailB2', 'GraphAnalytics', 'OWS'],
+            'ModelBSov': ['ActionsAssistants', 'ActionsB2NetCore', 'OwaMailB2', 'GraphAnalytics'],
+            'OwaMailB2-SOV': ['OwaMailB2'],
+            'TodoB2-SOV': ['SignalPatchService']
+        };
+
+        const pipelineData = {
+            'OwaMailB2': {
+                buildType: 'RingPromotion',
+                ppeVeName: 'OwaMailB2-PPE',
+                buildRoot: 'https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt',
+                buildPathPattern: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot',
+                pipelines: [
+                    {
+                        id: '1418',
+                        name: 'Main Pipeline (1418)',
+                        description: 'Primary deployment pipeline',
+                        isDefault: true,
+                        builds: [
+                            { version: 'v2.1.0', buildTime: '3 hours ago', status: 'Latest' },
+                            { version: 'v2.0.9', buildTime: '1 day ago', status: 'Stable' },
+                            { version: 'v2.0.8', buildTime: '2 days ago', status: 'Stable' }
+                        ]
+                    },
+                    {
+                        id: '33874',
+                        name: 'Incremental Pipeline (33874)',
+                        description: 'Incremental build pipeline',
+                        isDefault: false,
+                        builds: [
+                            { version: 'v2.1.0-inc.123', buildTime: '1 hour ago', status: 'Latest' },
+                            { version: 'v2.1.0-inc.122', buildTime: '4 hours ago', status: 'Stable' },
+                            { version: 'v2.1.0-inc.121', buildTime: '6 hours ago', status: 'Stable' }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function updateServices() {
+            const veSelect = document.getElementById('veSelect');
+            const serviceSelect = document.getElementById('serviceSelect');
+            const selectedVe = veSelect.value;
+
+            serviceSelect.innerHTML = '<option value="">Select Service</option>';
+            
+            if (selectedVe && serviceData[selectedVe]) {
+                serviceData[selectedVe].forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service;
+                    option.textContent = service;
+                    serviceSelect.appendChild(option);
+                });
+            }
+
+            hideServiceInfo();
+        }
+
+        function loadPipelines() {
+            const serviceSelect = document.getElementById('serviceSelect');
+            const selectedService = serviceSelect.value;
+
+            if (selectedService && pipelineData[selectedService]) {
+                showServiceInfo(selectedService);
+                showPipelines(selectedService);
+            } else {
+                hideServiceInfo();
+            }
+        }
+
+        function showServiceInfo(service) {
+            const serviceInfo = document.getElementById('serviceInfo');
+            const data = pipelineData[service];
+
+            document.getElementById('buildType').textContent = data.buildType;
+            document.getElementById('ppeVeName').textContent = data.ppeVeName;
+            document.getElementById('buildRoot').textContent = data.buildRoot;
+            document.getElementById('buildPathPattern').textContent = data.buildPathPattern;
+
+            serviceInfo.classList.remove('hidden');
+        }
+
+        function hideServiceInfo() {
+            document.getElementById('serviceInfo').classList.add('hidden');
+            document.getElementById('pipelinesList').classList.add('hidden');
+            document.getElementById('batchDeployment').classList.add('hidden');
+        }
+
+        function showPipelines(service) {
+            const pipelinesList = document.getElementById('pipelinesList');
+            const pipelinesContainer = document.getElementById('pipelinesContainer');
+            const data = pipelineData[service];
+
+            pipelinesContainer.innerHTML = '';
+
+            data.pipelines.forEach(pipeline => {
+                const pipelineDiv = document.createElement('div');
+                pipelineDiv.className = 'border border-gray-200 rounded-lg p-4';
+                pipelineDiv.innerHTML = `
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <h3 class="font-medium text-gray-900">${pipeline.name}</h3>
+                            <p class="text-sm text-gray-500">${pipeline.description}</p>
+                        </div>
+                        ${pipeline.isDefault ? '<span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Default</span>' : ''}
+                    </div>
+                    <div class="mt-3">
+                        <label class="text-xs font-medium text-gray-500">Available Builds:</label>
+                        <div class="mt-2 space-y-2">
+                            ${pipeline.builds.map(build => `
+                                <div class="flex items-center justify-between p-2 border border-gray-100 rounded">
+                                    <div>
+                                        <span class="text-sm font-medium">${build.version}</span>
+                                        <span class="text-xs text-gray-500 ml-2">(${build.buildTime})</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 text-xs ${build.status === 'Latest' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'} rounded-full">${build.status}</span>
+                                        <button onclick="deployBuild('${service}', '${pipeline.id}', '${build.version}')" class="text-green-600 hover:text-green-800 text-xs">Deploy</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                pipelinesContainer.appendChild(pipelineDiv);
+            });
+
+            pipelinesList.classList.remove('hidden');
+            document.getElementById('batchDeployment').classList.remove('hidden');
+        }
+
+        function deployBuild(service, pipelineId, version) {
+            document.getElementById('deployModalTitle').textContent = `Deploy ${service}`;
+            document.getElementById('selectedBuild').textContent = `${version} (Pipeline ${pipelineId})`;
+            document.getElementById('dropUrl').textContent = `https://outlookweb.artifacts.visualstudio.com/.../drops/${service.toLowerCase()}_ms/${version}?root=autopilot`;
+            document.getElementById('deployModal').classList.remove('hidden');
+        }
+
+        function hideDeployModal() {
+            document.getElementById('deployModal').classList.add('hidden');
+        }
+
+        function confirmDeploy() {
+            alert('Deployment initiated successfully!');
+            hideDeployModal();
+            window.location.href = 'deployment-history.html';
+        }
+
+        function refreshPipelines() {
+            const serviceSelect = document.getElementById('serviceSelect');
+            if (serviceSelect.value) {
+                loadPipelines();
+                alert('Pipeline information refreshed!');
+            }
+        }
+    </script>
+</body>
+</html>

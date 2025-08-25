@@ -37,10 +37,6 @@
 
 真是功能需求如下：
 
-GriffinPfDeployment_AI is a deployment management tool for Virtual Environments (VE) and services. Users can:
-- View all VE and their associated services
-- Check Build information and Drop URL of a service 
-- Trigger deployment for individual services or all services under some VE 
 ```json
 {
   "CloudBuildRoot": "https://cloudbuild.microsoft.com",
@@ -145,18 +141,6 @@ GriffinPfDeployment_AI is a deployment management tool for Virtual Environments 
 }
 
 ```
-- ExpectedVEs 
-本质上是VE 集合的分组，主要用于定义部署范围（deployment scope）和组织管理。
-前端的核心需求是展示 用户可以操作的 VE 列表 和其对应的 Services，而不是强制按照集合显示。
-也就是说，前端只需要知道有哪些 VE 可供选择，以及每个 VE 下有哪些 Service。
-
-- ExpectedServices
-这是 VE → Service 的映射。key:Ve name value：该VE 下有哪些 Service
-前端必须使用这个数据来动态生成 VE 树结构或下拉菜单。
-
-- Services
-每个 Service 的具体信息（Build、Pipeline、Drop URL 等）。
-前端需要显示和操作这些信息（触发部署、选择 Build 等）。
 
 
 - 给一些基础背景知识：
@@ -170,7 +154,6 @@ Virtual Environment (VE):就是由此引出的逻辑概念。会将很多公共�
 Model B Service must deployed by B type VE
 Model B2 Service can deployed by B type VE or B2 VE
 
-
 VE types:
 - B type VE
     - SovBase
@@ -179,4 +162,24 @@ VE types:
     - OwaMailB2-SOV
     - TodoB2-SOV
 
+GriffinPfDeployment_AI is a deployment management tool for Virtual Environments (VE) and services. Users can:
+- View all VE and their associated services
+- Check Build information and Drop URL of a service 
+- Trigger deployment for individual services or all services under some VE 
+- ExpectedVEs 
+本质上是VE 集合的分组，主要用于定义部署范围（deployment scope）和组织管理。
+前端的核心需求是展示 用户可以操作的 VE 列表 和其对应的 Services，而不是强制按照集合显示。
+也就是说，前端只需要知道有哪些 VE 可供选择，以及每个 VE 下有哪些 Service。
+
+- ExpectedServices
+这是 VE → Service 的映射。key:Ve name value：该VE 下有哪些 Service
+前端必须使用这个数据来动态生成 VE 树结构或下拉菜单。
+
+- Services
+每个 Service 的具体信息（Build、Pipeline、Drop URL 等）。
+前端需要显示和操作这些信息（触发部署、选择 Build 等）。
+
 - Each service 会有多个 pipelines ，每个pipline 都会有自己的 drop url list.用户可以自由选择 使用哪个 pipline 的buildnumber 的dropurl 来部署。用户也可以自己设置哪个pipelines作为默认的pipline 部署，这样就可以不需要每次都选了，如果用户没有选，那么系统漠然采取最新的buildnumber部署
+
+
+- 用户可以选择Favorite VE

@@ -23,9 +23,11 @@
     <div class="container mx-auto p-6">
         <!-- Statistics Cards -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-lg shadow">
+            <div class="bg-white p-6 rounded-lg shadow cursor-pointer hover:shadow-lg transition-shadow"
+                 onclick="showAllVEsModal()">
                 <div class="text-2xl font-bold text-blue-600">18</div>
                 <div class="text-gray-600">Total VEs</div>
+                <div class="text-xs text-blue-500 mt-1">Click to view all</div>
             </div>
             <div class="bg-white p-6 rounded-lg shadow">
                 <div class="text-2xl font-bold text-green-600">156</div>
@@ -41,11 +43,24 @@
             </div>
         </div>
 
+        <!-- Favorite VEs Header -->
+        <div class="mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-2">Favorite VEs</h2>
+            <p class="text-gray-600 text-sm">Your frequently used Virtual Environments</p>
+        </div>
+
         <!-- VE Groups -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <!-- SovBase VEs -->
             <div class="bg-white p-6 rounded-lg shadow">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">SovBase VEs</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">SovBase VEs</h3>
+                    <button class="text-yellow-500 hover:text-yellow-600" onclick="toggleFavoriteGroup('SovBase')">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="space-y-2">
                     <div class="p-3 border rounded hover:bg-gray-50 cursor-pointer" 
                          onclick="window.location.href='ve-detail.html?ve=SovBase'">
@@ -57,7 +72,14 @@
 
             <!-- ModelBSov VEs -->
             <div class="bg-white p-6 rounded-lg shadow">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">ModelBSov VEs</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">ModelBSov VEs</h3>
+                    <button class="text-gray-300 hover:text-yellow-500" onclick="toggleFavoriteGroup('ModelBSov')">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="space-y-2">
                     <div class="p-3 border rounded hover:bg-gray-50 cursor-pointer"
                          onclick="window.location.href='ve-detail.html?ve=ModelBSov'">
@@ -69,7 +91,14 @@
 
             <!-- ModelB2Sov VEs -->
             <div class="bg-white p-6 rounded-lg shadow">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">ModelB2Sov VEs</h3>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-gray-800">ModelB2Sov VEs</h3>
+                    <button class="text-gray-300 hover:text-yellow-500" onclick="toggleFavoriteGroup('ModelB2Sov')">
+                        <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                        </svg>
+                    </button>
+                </div>
                 <div class="space-y-2">
                     <div class="p-3 border rounded hover:bg-gray-50 cursor-pointer"
                          onclick="window.location.href='ve-detail.html?ve=OwaMailB2-SOV'">
@@ -80,7 +109,7 @@
                         <div class="font-medium">TodoB2-SOV</div>
                         <div class="text-sm text-gray-600">1 service</div>
                     </div>
-                    <div class="text-sm text-blue-500 cursor-pointer">+ 13 more VEs</div>
+                    <div class="text-sm text-blue-500 cursor-pointer hover:text-blue-700" onclick="showAllVEsModal()">+ 13 more VEs</div>
                 </div>
             </div>
         </div>
@@ -102,5 +131,24 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function showAllVEsModal() {
+            // Instead of showing modal, redirect to VE Management page
+            window.location.href = 've-management.html';
+        }
+
+        function toggleVEFavorite(veName) {
+            // Toggle favorite status for individual VE
+            console.log('Toggle favorite for VE:', veName);
+            // In real app, this would update the backend
+        }
+
+        function toggleFavoriteGroup(groupName) {
+            // Toggle favorite status for entire group
+            console.log('Toggle favorite for group:', groupName);
+            // In real app, this would update the backend
+        }
+    </script>
 </body>
 </html>

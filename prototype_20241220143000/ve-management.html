@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Griffin Deployment - VE Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="bg-blue-600 text-white p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Griffin Deployment Tool</h1>
+            <div class="space-x-4">
+                <a href="dashboard.html" class="hover:text-blue-200">Dashboard</a>
+                <a href="ve-management.html" class="text-blue-200 font-medium">VE Management</a>
+                <a href="deployment-history.html" class="hover:text-blue-200">History</a>
+                <button class="bg-red-500 px-3 py-1 rounded" onclick="window.location.href='login.html'">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <!-- Header -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Virtual Environment Management</h2>
+            <p class="text-gray-600">Manage all Virtual Environments and their services</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="text-lg font-bold text-blue-600">18</div>
+                <div class="text-sm text-gray-600">Total VEs</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="text-lg font-bold text-green-600">2</div>
+                <div class="text-sm text-gray-600">B Type VEs</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="text-lg font-bold text-purple-600">15</div>
+                <div class="text-sm text-gray-600">B2 Type VEs</div>
+            </div>
+            <div class="bg-white p-4 rounded-lg shadow">
+                <div class="text-lg font-bold text-yellow-600">3</div>
+                <div class="text-sm text-gray-600">Favorites</div>
+            </div>
+        </div>
+
+        <!-- Search and Filter -->
+        <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div class="flex flex-wrap gap-4">
+                <input type="text" placeholder="Search VEs..." 
+                       class="flex-1 min-w-64 border px-3 py-2 rounded-md focus:outline-none focus:border-blue-500" 
+                       id="searchInput">
+                <select class="border px-3 py-2 rounded-md focus:outline-none focus:border-blue-500" id="typeFilter">
+                    <option value="">All Types</option>
+                    <option value="B">B Type VE</option>
+                    <option value="B2">B2 Type VE</option>
+                </select>
+                <select class="border px-3 py-2 rounded-md focus:outline-none focus:border-blue-500" id="serviceCountFilter">
+                    <option value="">All Service Counts</option>
+                    <option value="high">50+ Services</option>
+                    <option value="medium">10-49 Services</option>
+                    <option value="low">1-9 Services</option>
+                </select>
+                <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onclick="applyFilters()">
+                    Apply Filters
+                </button>
+                <button class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600" onclick="clearFilters()">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- VE List -->
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="w-full">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            VE Name
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Type
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Services Count
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Favorite
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200" id="veTableBody">
+                    <!-- SovBase -->
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">SovBase</div>
+                            <div class="text-sm text-gray-500">Primary production VE</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                B Type VE
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">73</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button class="text-yellow-500 hover:text-yellow-600" onclick="toggleFavorite('SovBase', this)">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900" onclick="window.location.href='ve-detail.html?ve=SovBase'">View</button>
+                            <button class="text-green-600 hover:text-green-900">Deploy All</button>
+                        </td>
+                    </tr>
+
+                    <!-- ModelBSov -->
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">ModelBSov</div>
+                            <div class="text-sm text-gray-500">Model B production VE</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                B Type VE
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">66</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button class="text-gray-300 hover:text-yellow-500" onclick="toggleFavorite('ModelBSov', this)">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900" onclick="window.location.href='ve-detail.html?ve=ModelBSov'">View</button>
+                            <button class="text-green-600 hover:text-green-900">Deploy All</button>
+                        </td>
+                    </tr>
+
+                    <!-- B2 VEs -->
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">TBA1-SOV</div>
+                            <div class="text-sm text-gray-500">B2 specialized VE</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                B2 Type VE
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button class="text-gray-300 hover:text-yellow-500" onclick="toggleFavorite('TBA1-SOV', this)">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900" onclick="window.location.href='ve-detail.html?ve=TBA1-SOV'">View</button>
+                            <button class="text-green-600 hover:text-green-900">Deploy All</button>
+                        </td>
+                    </tr>
+
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">OwaMailB2-SOV</div>
+                            <div class="text-sm text-gray-500">Outlook Mail B2 VE</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                B2 Type VE
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button class="text-yellow-500 hover:text-yellow-600" onclick="toggleFavorite('OwaMailB2-SOV', this)">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900" onclick="window.location.href='ve-detail.html?ve=OwaMailB2-SOV'">View</button>
+                            <button class="text-green-600 hover:text-green-900">Deploy All</button>
+                        </td>
+                    </tr>
+
+                    <!-- More B2 VEs -->
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="font-medium text-gray-900">TodoB2-SOV</div>
+                            <div class="text-sm text-gray-500">Todo B2 specialized VE</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                                B2 Type VE
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">1</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                Active
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button class="text-yellow-500 hover:text-yellow-600" onclick="toggleFavorite('TodoB2-SOV', this)">
+                                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
+                                </svg>
+                            </button>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                            <button class="text-blue-600 hover:text-blue-900" onclick="window.location.href='ve-detail.html?ve=TodoB2-SOV'">View</button>
+                            <button class="text-green-600 hover:text-green-900">Deploy All</button>
+                        </td>
+                    </tr>
+
+                    <!-- Add more VEs as needed -->
+                    <tr class="bg-gray-50">
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                            <div>+ 13 more B2 VEs</div>
+                            <div class="text-xs mt-1">EBA1-SOV, M365Coral1B2-SOV, FastV2B2-SOV, MessagesIngestionServiceB2-SOV...</div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="mt-6 flex justify-between items-center">
+            <div class="text-sm text-gray-600">Showing 1-18 of 18 VEs</div>
+            <div class="space-x-2">
+                <button class="px-3 py-1 border rounded bg-blue-500 text-white">1</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleFavorite(veName, button) {
+            // Toggle favorite status
+            const isFavorited = button.classList.contains('text-yellow-500');
+            
+            if (isFavorited) {
+                button.classList.remove('text-yellow-500');
+                button.classList.add('text-gray-300', 'hover:text-yellow-500');
+            } else {
+                button.classList.remove('text-gray-300', 'hover:text-yellow-500');
+                button.classList.add('text-yellow-500', 'hover:text-yellow-600');
+            }
+            
+            console.log(`Toggle favorite for ${veName}: ${!isFavorited}`);
+        }
+
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const serviceCountFilter = document.getElementById('serviceCountFilter').value;
+            
+            console.log('Applying filters:', { searchTerm, typeFilter, serviceCountFilter });
+            // In real app, this would filter the VE list
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('serviceCountFilter').value = '';
+            console.log('Filters cleared');
+        }
+    </script>
+</body>
+</html>

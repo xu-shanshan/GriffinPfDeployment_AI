@@ -7,7 +7,7 @@ GriffinPfDeployment_AI is a deployment management tool for Virtual Environments 
 - Trigger deployment for individual services or all services under some VE 
 
 ## Tech Stack
-- Frontend: React, Fluent UI v9, axios/fetch
+- Frontend: React, typescript，Fluent UI v9, axios/fetch
 - Backend: Python + FastAPI, httpx, pydantic, python-dotenv
 
 ## Data Structure

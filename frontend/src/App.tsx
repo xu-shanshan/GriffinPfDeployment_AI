@@ -17,8 +17,8 @@ function App() {
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="ve-management" element={<VEManagement />} />
-        <Route path="ve-detail/:veName" element={<VEDetail />} />
-        <Route path="service-detail/:serviceName" element={<ServiceDetail />} />
+        <Route path="ve/:veName" element={<VEDetail />} />
+        <Route path="ve/:veName/service/:serviceName" element={<ServiceDetail />} />
         <Route path="deployment-history" element={<DeploymentHistory />} />
       </Route>
     </Routes>

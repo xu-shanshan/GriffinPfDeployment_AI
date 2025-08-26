@@ -61,8 +61,8 @@
         </div>
 
         <!-- Enhanced Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div onclick="window.location.href='ve-management.html'" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover cursor-pointer hover:border-blue-300 hover:shadow-md">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-sm font-medium text-gray-600 mb-1">Total VEs</p>
@@ -73,9 +73,12 @@
                         <i data-feather="database" class="w-6 h-6 text-white"></i>
                     </div>
                 </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-green-600 font-medium">+2</span>
-                    <span class="text-gray-500 ml-1">from last month</span>
+                <div class="mt-4 flex items-center justify-between">
+                    <div class="flex items-center text-sm">
+                        <span class="text-green-600 font-medium">+2</span>
+                        <span class="text-gray-500 ml-1">from last month</span>
+                    </div>
+                    <i data-feather="arrow-right" class="w-4 h-4 text-gray-400 group-hover:text-blue-500 transition-colors"></i>
                 </div>
             </div>
             
@@ -110,23 +113,6 @@
                 <div class="mt-4 flex items-center text-sm">
                     <span class="text-blue-600 font-medium">+15%</span>
                     <span class="text-gray-500 ml-1">vs yesterday</span>
-                </div>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 card-hover">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-600 mb-1">Failed Deployments</p>
-                        <p class="text-3xl font-bold text-gray-900">2</p>
-                        <p class="text-xs text-gray-500 mt-1">Need attention</p>
-                    </div>
-                    <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                        <i data-feather="alert-circle" class="w-6 h-6 text-red-600"></i>
-                    </div>
-                </div>
-                <div class="mt-4 flex items-center text-sm">
-                    <span class="text-red-600 font-medium">-50%</span>
-                    <span class="text-gray-500 ml-1">improvement</span>
                 </div>
             </div>
         </div>

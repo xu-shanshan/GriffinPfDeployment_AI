@@ -1,4 +1,4 @@
-const dataJSON = {
+ {
   "CloudBuildRoot": "https://cloudbuild.microsoft.com",
   "ExpectedVEs": {
     "SovBaseVEs": ["SovBase"],
@@ -100,4 +100,4 @@ const dataJSON = {
       "BuildPathPattern": "VSO://https://ossinfra.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/secondary/OSS_RoutingPlane_Retail_Drops_Signing_Git/Sec.1.0.0.<BuildVersion>?root=/target/distrib/Autopilot/Microsoft.Griffin.BricksV2.RoutingUpdateService"
     }
   }
-};
+}

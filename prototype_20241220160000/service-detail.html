@@ -157,23 +157,14 @@
                 </div>
                 
                 <!-- Key Metrics Display -->
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
                     <div class="bg-blue-50 rounded-lg p-4 border border-blue-100">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-blue-600 font-medium">Successful Deployments</p>
-                                <p class="text-2xl font-bold text-blue-900 mt-1">127</p>
+                                <p class="text-sm text-blue-600 font-medium">Current Build</p>
+                                <p class="text-2xl font-bold text-blue-900 mt-1">20241220.5</p>
                             </div>
-                            <i data-feather="check-circle" class="w-8 h-8 text-blue-500"></i>
-                        </div>
-                    </div>
-                    <div class="bg-green-50 rounded-lg p-4 border border-green-100">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-sm text-green-600 font-medium">Uptime</p>
-                                <p class="text-2xl font-bold text-green-900 mt-1">99.8%</p>
-                            </div>
-                            <i data-feather="trending-up" class="w-8 h-8 text-green-500"></i>
+                            <i data-feather="package" class="w-8 h-8 text-blue-500"></i>
                         </div>
                     </div>
                     <div class="bg-purple-50 rounded-lg p-4 border border-purple-100">
@@ -184,14 +175,20 @@
                             </div>
                             <i data-feather="zap" class="w-8 h-8 text-purple-500"></i>
                         </div>
+                        <div class="mt-2 text-xs text-purple-700">
+                            Available for deployment
+                        </div>
                     </div>
                     <div class="bg-orange-50 rounded-lg p-4 border border-orange-100">
                         <div class="flex items-center justify-between">
                             <div>
-                                <p class="text-sm text-orange-600 font-medium">Avg Deploy Time</p>
-                                <p class="text-2xl font-bold text-orange-900 mt-1">12m</p>
+                                <p class="text-sm text-orange-600 font-medium">Last Deploy</p>
+                                <p class="text-2xl font-bold text-orange-900 mt-1">2h ago</p>
                             </div>
                             <i data-feather="clock" class="w-8 h-8 text-orange-500"></i>
+                        </div>
+                        <div class="mt-2 text-xs text-orange-700">
+                            2024-12-20 14:30:25
                         </div>
                     </div>
                 </div>

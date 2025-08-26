@@ -13,38 +13,60 @@
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         
-        /* Pipeline card color themes */
-        .pipeline-blue { border-color: #3B82F6; background-color: #EFF6FF; }
-        .pipeline-blue .icon-bg { background-color: #DBEAFE; }
-        .pipeline-blue .icon { color: #3B82F6; }
-        .pipeline-blue .btn-primary { background-color: #3B82F6; }
-        .pipeline-blue .btn-primary:hover { background-color: #2563EB; }
-        .pipeline-blue .badge { background-color: #DBEAFE; color: #3B82F6; }
+        /* Pipeline card color themes - 修复样式 */
+        .pipeline-blue { 
+            border-color: #3B82F6 !important; 
+            background-color: #EFF6FF; 
+        }
+        .pipeline-blue .icon-bg { 
+            background-color: #DBEAFE; 
+        }
+        .pipeline-blue .icon { 
+            color: #3B82F6; 
+        }
         
-        .pipeline-purple { border-color: #8B5CF6; background-color: #F3E8FF; }
-        .pipeline-purple .icon-bg { background-color: #E9D5FF; }
-        .pipeline-purple .icon { color: #8B5CF6; }
-        .pipeline-purple .btn-primary { background-color: #8B5CF6; }
-        .pipeline-purple .btn-primary:hover { background-color: #7C3AED; }
-        .pipeline-purple .badge { background-color: #E9D5FF; color: #8B5CF6; }
+        .pipeline-purple { 
+            border-color: #8B5CF6 !important; 
+            background-color: #F3E8FF; 
+        }
+        .pipeline-purple .icon-bg { 
+            background-color: #E9D5FF; 
+        }
+        .pipeline-purple .icon { 
+            color: #8B5CF6; 
+        }
         
-        .pipeline-green { border-color: #10B981; background-color: #ECFDF5; }
-        .pipeline-green .icon-bg { background-color: #D1FAE5; }
-        .pipeline-green .icon { color: #10B981; }
-        .pipeline-green .btn-primary { background-color: #10B981; }
-        .pipeline-green .btn-primary:hover { background-color: #059669; }
-        .pipeline-green .badge { background-color: #D1FAE5; color: #10B981; }
+        .pipeline-green { 
+            border-color: #10B981 !important; 
+            background-color: #ECFDF5; 
+        }
+        .pipeline-green .icon-bg { 
+            background-color: #D1FAE5; 
+        }
+        .pipeline-green .icon { 
+            color: #10B981; 
+        }
         
-        .pipeline-orange { border-color: #F59E0B; background-color: #FFFBEB; }
-        .pipeline-orange .icon-bg { background-color: #FEF3C7; }
-        .pipeline-orange .icon { color: #F59E0B; }
-        .pipeline-orange .btn-primary { background-color: #F59E0B; }
-        .pipeline-orange .btn-primary:hover { background-color: #D97706; }
-        .pipeline-orange .badge { background-color: #FEF3C7; color: #F59E0B; }
+        .pipeline-orange { 
+            border-color: #F59E0B !important; 
+            background-color: #FFFBEB; 
+        }
+        .pipeline-orange .icon-bg { 
+            background-color: #FEF3C7; 
+        }
+        .pipeline-orange .icon { 
+            color: #F59E0B; 
+        }
 
         .pipeline-card.default-pipeline {
-            ring: 2px solid #3B82F6;
-            ring-opacity: 0.5;
+            border: 2px solid #3B82F6 !important;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
+        }
+        
+        .pipeline-card.active {
+            border: 2px solid #3B82F6 !important;
+            background-color: #EFF6FF;
+            box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.3);
         }
     </style>
 </head>
@@ -251,248 +273,6 @@
             </div>
         </div>
 
-        <!-- Advanced Deployment Configuration Modal -->
-        <div id="advancedDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-                <div class="p-6 border-b border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i data-feather="settings" class="w-6 h-6 text-blue-600"></i>
-                            <h3 class="text-lg font-semibold text-gray-900">Advanced Deployment Configuration</h3>
-                        </div>
-                        <button onclick="closeAdvancedDeploy()" class="text-gray-400 hover:text-gray-600">
-                            <i data-feather="x" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="p-6">
-                    <div class="space-y-6">
-                        <!-- Pipeline Selection -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Pipeline Selection</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <label class="relative">
-                                    <input type="radio" name="deployPipeline" value="1418" checked class="sr-only">
-                                    <div class="pipeline-option p-4 border rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                        <div class="flex items-center space-x-3">
-                                            <i data-feather="zap" class="w-5 h-5 text-blue-600"></i>
-                                            <div>
-                                                <p class="font-medium text-gray-900">Main Pipeline</p>
-                                                <p class="text-sm text-gray-500">Full build with all features</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </label>
-                                <label class="relative">
-                                    <input type="radio" name="deployPipeline" value="33874" class="sr-only">
-                                    <div class="pipeline-option p-4 border rounded-lg cursor-pointer hover:border-blue-300 transition-all">
-                                        <div class="flex items-center space-x-3">
-                                            <i data-feather="refresh-cw" class="w-5 h-5 text-purple-600"></i>
-                                            <div>
-                                                <p class="font-medium text-gray-900">Incremental Build</p>
-                                                <p class="text-sm text-gray-500">Faster, incremental changes</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- Version Selection with Real-time Preview -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Build Version</label>
-                            <div class="flex space-x-3">
-                                <select id="modalVersionSelect" class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" onchange="updateDropUrlPreview()">
-                                    <option value="latest">Latest (20241220.5)</option>
-                                    <option value="20241220.4">20241220.4</option>
-                                    <option value="20241220.3">20241220.3</option>
-                                </select>
-                                <button class="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
-                                    <i data-feather="refresh-cw" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                            <div class="mt-2 p-3 bg-gray-50 rounded-lg">
-                                <p class="text-xs text-gray-500 mb-1">Drop URL Preview:</p>
-                                <p id="modalDropUrlPreview" class="text-xs font-mono text-gray-700 break-all">VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot</p>
-                            </div>
-                        </div>
-
-                        <!-- PR Workflow Integration -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">PR Workflow</label>
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <div class="flex items-start space-x-3">
-                                    <i data-feather="git-pull-request" class="w-5 h-5 text-blue-600 mt-0.5"></i>
-                                    <div>
-                                        <p class="text-sm font-medium text-blue-900">Create Pull Request</p>
-                                        <p class="text-xs text-blue-700 mt-1">Automatically create PR for configuration changes</p>
-                                        <label class="flex items-center mt-2">
-                                            <input type="checkbox" id="createPR" class="mr-2 rounded border-gray-300">
-                                            <span class="text-xs text-blue-800">Enable PR workflow</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
-                    <button onclick="closeAdvancedDeploy()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-                    <button onclick="confirmAdvancedDeploy()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <i data-feather="play" class="w-4 h-4 inline mr-2"></i>Deploy
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Service Configuration Editor Modal -->
-        <div id="configEditorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
-                <div class="p-6 border-b border-gray-100 flex-shrink-0">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i data-feather="edit-3" class="w-6 h-6 text-purple-600"></i>
-                            <h3 class="text-lg font-semibold text-gray-900">Edit Service Configuration</h3>
-                        </div>
-                        <button onclick="closeConfigEditor()" class="text-gray-400 hover:text-gray-600">
-                            <i data-feather="x" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="flex-1 flex overflow-hidden">
-                    <!-- Configuration Editor -->
-                    <div class="flex-1 p-6 overflow-y-auto">
-                        <div class="space-y-4">
-                            <div class="flex items-center justify-between mb-4">
-                                <h4 class="text-sm font-medium text-gray-700">Service: OwaMailB2</h4>
-                                <div class="flex items-center space-x-2">
-                                    <button onclick="validateConfig()" class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-sm">
-                                        <i data-feather="check-circle" class="w-3 h-3 inline mr-1"></i>Validate
-                                    </button>
-                                    <button onclick="resetConfig()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm">
-                                        <i data-feather="refresh-cw" class="w-3 h-3 inline mr-1"></i>Reset
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <!-- JSON Editor -->
-                            <div class="relative">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Configuration JSON</label>
-                                <div class="border border-gray-300 rounded-lg overflow-hidden">
-                                    <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-xs text-gray-500">JSON Editor</span>
-                                            <div id="configStatus" class="flex items-center space-x-1">
-                                                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                                                <span class="text-xs text-green-600">Valid</span>
-                                            </div>
-                                        </div>
-                                        <button onclick="formatConfig()" class="text-xs text-gray-500 hover:text-gray-700">Format</button>
-                                    </div>
-                                    <textarea id="configEditor" class="w-full h-96 p-4 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" spellcheck="false">
-{
-  "BuildType": "RingPromotion",
-  "PipelineId": 1418,
-  "IncrementalBuildPipelineId": 33874,
-  "RingPromotionRootPath": "autopilot",
-  "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
-  "PpeVeName": "OwaMailB2-PPE",
-  "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
-}</textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Configuration Diff Preview -->
-                    <div id="configDiff" class="hidden w-1/2 border-l border-gray-200 p-6 overflow-y-auto">
-                        <h4 class="text-sm font-medium text-gray-700 mb-4">Configuration Changes</h4>
-                        <div class="space-y-3">
-                            <div class="bg-green-50 border border-green-200 rounded-lg p-3">
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <i data-feather="plus" class="w-3 h-3 text-green-600"></i>
-                                    <span class="text-xs font-medium text-green-700">Added</span>
-                                </div>
-                                <pre class="text-xs text-green-800 font-mono">+ "MainlineBuildPipelineId": 31235</pre>
-                            </div>
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                                <div class="flex items-center space-x-2 mb-2">
-                                    <i data-feather="edit-2" class="w-3 h-3 text-yellow-600"></i>
-                                    <span class="text-xs font-medium text-yellow-700">Modified</span>
-                                </div>
-                                <pre class="text-xs text-gray-600 font-mono">- "PipelineId": 1418</pre>
-                                <pre class="text-xs text-yellow-800 font-mono">+ "PipelineId": 1420</pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="px-6 py-4 border-t border-gray-100 flex justify-between items-center flex-shrink-0">
-                    <div class="flex items-center space-x-3">
-                        <label class="flex items-center">
-                            <input type="checkbox" id="createPRConfig" checked class="mr-2 rounded border-gray-300">
-                            <span class="text-sm text-gray-700">Create Pull Request</span>
-                        </label>
-                        <button onclick="toggleDiffView()" class="text-sm text-blue-600 hover:text-blue-800">
-                            <i data-feather="eye" class="w-3 h-3 inline mr-1"></i>Preview Changes
-                        </button>
-                    </div>
-                    <div class="flex space-x-3">
-                        <button onclick="closeConfigEditor()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-                        <button onclick="saveConfiguration()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                            <i data-feather="save" class="w-4 h-4 inline mr-2"></i>Save Configuration
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PR Creation Confirmation Modal -->
-        <div id="prConfirmModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <i data-feather="git-pull-request" class="w-6 h-6 text-green-600 mr-3"></i>
-                        <h3 class="text-lg font-semibold text-gray-900">Create Pull Request</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">PR Title</label>
-                            <input type="text" id="prTitle" value="Update OwaMailB2 service configuration" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                            <textarea id="prDescription" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Describe the changes made to the service configuration...">Updated service configuration for OwaMailB2:
-- Modified PipelineId from 1418 to 1420
-- Added MainlineBuildPipelineId: 31235</textarea>
-                        </div>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                            <div class="flex items-start space-x-3">
-                                <i data-feather="info" class="w-5 h-5 text-blue-600 mt-0.5"></i>
-                                <div>
-                                    <p class="text-sm font-medium text-blue-900">Configuration Changes</p>
-                                    <ul class="text-xs text-blue-700 mt-1 space-y-1">
-                                        <li>• Service: OwaMailB2</li>
-                                        <li>• Changes: 2 modifications, 1 addition</li>
-                                        <li>• Impact: Build pipeline configuration</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
-                    <button onclick="closePRModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-                    <button onclick="createPullRequest()" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                        <i data-feather="git-pull-request" class="w-4 h-4 inline mr-2"></i>Create PR
-                    </button>
-                </div>
-            </div>
-        </div>
-
         <!-- Set Default Pipeline Confirmation Modal -->
         <div id="setDefaultPipelineModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
             <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
@@ -527,20 +307,80 @@
             </div>
         </div>
 
-        <script>
-            // Service configuration data (this would come from API in real implementation)
-            const serviceConfig = {
-                "OwaMailB2": {
-                    "BuildType": "RingPromotion",
-                    "PipelineId": 1418,
-                    "IncrementalBuildPipelineId": 33874,
-                    "RingPromotionRootPath": "autopilot",
-                    "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
-                    "PpeVeName": "OwaMailB2-PPE",
-                    "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
-                }
-            };
+        <!-- Configuration Editor Modal -->
+        <div id="configEditorModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
+                <div class="p-6 border-b border-gray-100 flex-shrink-0">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <i data-feather="edit-3" class="w-6 h-6 text-purple-600"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Edit Service Configuration</h3>
+                        </div>
+                        <button onclick="closeConfigEditor()" class="text-gray-400 hover:text-gray-600">
+                            <i data-feather="x" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex-1 p-6 overflow-y-auto">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-sm font-medium text-gray-700">Service: OwaMailB2</h4>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="validateConfig()" class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 transition-colors text-sm">
+                                    <i data-feather="check-circle" class="w-3 h-3 inline mr-1"></i>Validate
+                                </button>
+                                <button onclick="resetConfig()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm">
+                                    <i data-feather="refresh-cw" class="w-3 h-3 inline mr-1"></i>Reset
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- JSON Editor -->
+                        <div class="relative">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Configuration JSON</label>
+                            <div class="border border-gray-300 rounded-lg overflow-hidden">
+                                <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs text-gray-500">JSON Editor</span>
+                                        <div id="configStatus" class="flex items-center space-x-1">
+                                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                            <span class="text-xs text-green-600">Valid</span>
+                                        </div>
+                                    </div>
+                                    <button onclick="formatConfig()" class="text-xs text-gray-500 hover:text-gray-700">Format</button>
+                                </div>
+                                <textarea id="configEditor" class="w-full h-96 p-4 font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-blue-500" spellcheck="false">
+{
+  "BuildType": "RingPromotion",
+  "PipelineId": 1418,
+  "IncrementalBuildPipelineId": 33874,
+  "RingPromotionRootPath": "autopilot",
+  "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
+  "PpeVeName": "OwaMailB2-PPE",
+  "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
+}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="px-6 py-4 border-t border-gray-100 flex justify-between items-center flex-shrink-0">
+                    <label class="flex items-center">
+                        <input type="checkbox" id="createPRConfig" checked class="mr-2 rounded border-gray-300">
+                        <span class="text-sm text-gray-700">Create Pull Request</span>
+                    </label>
+                    <div class="flex space-x-3">
+                        <button onclick="closeConfigEditor()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+                        <button onclick="saveConfiguration()" class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                            <i data-feather="save" class="w-4 h-4 inline mr-2"></i>Save Configuration
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <script>
             // Pipeline metadata and configurations
             const pipelineConfigs = {
                 1418: {
@@ -562,12 +402,37 @@
                     isDefault: false,
                     latestBuild: "20241220.3",
                     dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot"
+                },
+                31234: {
+                    name: "Incremental Build Alt",
+                    description: "Alternative incremental build",
+                    type: "incremental",
+                    color: "green", 
+                    icon: "refresh-cw",
+                    isDefault: false,
+                    latestBuild: "20241220.2",
+                    dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot"
                 }
             };
 
             // Global state for default pipeline management
             let pendingDefaultPipelineId = null;
             let currentDefaultPipelineId = 1418;
+
+            // Service configuration data
+            const serviceConfig = {
+                "OwaMailB2": {
+                    "BuildType": "RingPromotion", 
+                    "PipelineId": 1418,
+                    "IncrementalBuildPipelineId": 33874,
+                    "MainlineBuildPipelineId": 31234,
+                    "RingPromotionRootPath": "autopilot",
+                    "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
+                    "PpeVeName": "OwaMailB2-PPE",
+                    "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
+                }
+            };
+
             const currentService = "OwaMailB2";
 
             // Initialize Feather icons
@@ -575,15 +440,15 @@
 
             // Initialize the page
             document.addEventListener('DOMContentLoaded', function() {
+                console.log('Page initializing...');
                 initializePipelines();
-                updateConfigEditor();
-                updateQuickDeployOptions();
-                updateAdvancedDeployModal();
                 updateDefaultPipelineDisplay();
+                console.log('Page initialization complete');
             });
 
             function initializePipelines() {
-                console.log('Initializing pipelines...'); // Debug log
+                console.log('Initializing pipelines...', pipelineConfigs);
+                
                 const service = serviceConfig[currentService];
                 if (!service) {
                     console.error('Service not found:', currentService);
@@ -598,43 +463,46 @@
                 
                 container.innerHTML = '';
 
-                // Extract all pipeline IDs from service config
+                // Extract all pipeline IDs from service config  
                 const pipelineIds = [];
                 if (service.PipelineId) pipelineIds.push({ id: service.PipelineId, role: 'primary' });
                 if (service.IncrementalBuildPipelineId) pipelineIds.push({ id: service.IncrementalBuildPipelineId, role: 'incremental' });
                 if (service.MainlineBuildPipelineId) pipelineIds.push({ id: service.MainlineBuildPipelineId, role: 'mainline' });
 
-                console.log('Found pipeline IDs:', pipelineIds); // Debug log
+                console.log('Found pipeline IDs:', pipelineIds);
 
                 // Create pipeline cards
                 pipelineIds.forEach(({ id, role }) => {
                     const config = pipelineConfigs[id];
                     if (config) {
-                        console.log('Creating card for pipeline:', id, config); // Debug log
+                        console.log('Creating card for pipeline:', id, config);
                         const card = createPipelineCard(id, config, role);
                         container.appendChild(card);
                     } else {
                         console.warn('Pipeline config not found for ID:', id);
+                        
+                        // 为缺失的pipeline创建默认卡片
+                        const defaultCard = createDefaultPipelineCard(id, role);
+                        container.appendChild(defaultCard);
                     }
                 });
 
                 feather.replace();
-                console.log('Pipeline initialization complete'); // Debug log
+                console.log('Pipeline initialization complete, cards created:', container.children.length);
             }
 
             function createPipelineCard(pipelineId, config, role) {
                 const card = document.createElement('div');
-                const isCurrentDefault = currentDefaultPipelineId === pipelineId;
+                const isCurrentDefault = currentDefaultPipelineId == pipelineId;
                 
-                // Use CSS classes instead of dynamic Tailwind classes
                 card.className = `pipeline-card border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer pipeline-${config.color} ${isCurrentDefault ? 'default-pipeline' : ''}`;
-                card.onclick = () => selectPipeline(config.type, pipelineId);
+                card.onclick = () => selectPipeline(pipelineId);
 
                 const statusBadge = isCurrentDefault ? 
                     `<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center">
                         <i data-feather="star" class="w-3 h-3 mr-1 fill-current"></i>Default
                     </span>` :
-                    `<span class="badge px-2 py-1 text-xs font-medium rounded-full">${config.type.charAt(0).toUpperCase() + config.type.slice(1)}</span>`;
+                    `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">${config.type.charAt(0).toUpperCase() + config.type.slice(1)}</span>`;
 
                 card.innerHTML = `
                     <div class="flex items-start justify-between mb-3">
@@ -687,23 +555,86 @@
                 return card;
             }
 
-            // New function to copy drop URL
-            function copyDropUrl(dropUrl) {
-                navigator.clipboard.writeText(dropUrl).then(() => {
-                    showNotification('Drop URL Copied', 'Drop URL has been copied to clipboard');
-                }).catch(err => {
-                    // Fallback for older browsers
-                    const textArea = document.createElement('textarea');
-                    textArea.value = dropUrl;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    showNotification('Drop URL Copied', 'Drop URL has been copied to clipboard');
-                });
+            // 为缺失配置的pipeline创建默认卡片
+            function createDefaultPipelineCard(pipelineId, role) {
+                const card = document.createElement('div');
+                const isCurrentDefault = currentDefaultPipelineId == pipelineId;
+                
+                card.className = `pipeline-card border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer ${isCurrentDefault ? 'default-pipeline' : ''}`;
+                card.onclick = () => selectPipeline(pipelineId);
+
+                const roleNames = {
+                    'primary': 'Main Pipeline',
+                    'incremental': 'Incremental Build', 
+                    'mainline': 'Mainline Build'
+                };
+
+                const roleIcons = {
+                    'primary': 'zap',
+                    'incremental': 'refresh-cw',
+                    'mainline': 'git-branch'
+                };
+
+                const statusBadge = isCurrentDefault ? 
+                    `<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center">
+                        <i data-feather="star" class="w-3 h-3 mr-1 fill-current"></i>Default
+                    </span>` :
+                    `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">${role.charAt(0).toUpperCase() + role.slice(1)}</span>`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center">
+                                <i data-feather="${roleIcons[role] || 'settings'}" class="w-4 h-4 text-gray-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900">${roleNames[role] || 'Unknown Pipeline'}</h4>
+                                <p class="text-xs text-gray-500">ID: ${pipelineId}</p>
+                            </div>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <p class="text-xs text-gray-600 mb-3">Pipeline configuration not available</p>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Status:</span>
+                            <span class="text-yellow-600">Configuration Missing</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <div class="flex justify-center">
+                            ${!isCurrentDefault ? `
+                                <button class="px-4 py-2 bg-yellow-100 text-yellow-700 text-sm rounded-md hover:bg-yellow-200 transition-colors" onclick="event.stopPropagation(); showSetDefaultModal(${pipelineId}, '${roleNames[role] || 'Unknown Pipeline'}')" title="Set as default pipeline">
+                                    <i data-feather="star" class="w-3 h-3 inline mr-2"></i>Set as Default
+                                </button>
+                            ` : `
+                                <span class="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-md flex items-center" title="Current default pipeline">
+                                    <i data-feather="star" class="w-3 h-3 inline mr-2 fill-current"></i>Default Pipeline
+                                </span>
+                            `}
+                        </div>
+                    </div>
+                `;
+
+                return card;
             }
 
-            // Default pipeline management functions
+            // Pipeline management functions
+            function selectPipeline(pipelineId) {
+                console.log('Pipeline selected:', pipelineId);
+                // Remove active state from all cards
+                document.querySelectorAll('.pipeline-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Add active state to selected card
+                event.currentTarget.classList.add('active');
+                
+                const config = pipelineConfigs[pipelineId];
+                const pipelineName = config ? config.name : `Pipeline ${pipelineId}`;
+                showNotification('Pipeline Selected', `${pipelineName} activated`);
+            }
+
             function showSetDefaultModal(pipelineId, pipelineName) {
                 pendingDefaultPipelineId = pipelineId;
                 document.getElementById('pipelineNameToSet').textContent = pipelineName;
@@ -719,191 +650,31 @@
             function confirmSetDefault() {
                 if (!pendingDefaultPipelineId) return;
 
-                const oldDefaultId = currentDefaultPipelineId;
                 currentDefaultPipelineId = pendingDefaultPipelineId;
-                
-                // Update service config
-                const service = serviceConfig[currentService];
-                service.DefaultPipelineId = currentDefaultPipelineId;
-                
-                // Update UI displays
                 updateDefaultPipelineDisplay();
-                updateQuickDeployOptions();
-                updateAdvancedDeployModal();
-                
-                // Refresh pipeline cards to show new default
                 initializePipelines();
-                
                 closeSetDefaultModal();
                 
                 const pipelineName = pipelineConfigs[currentDefaultPipelineId].name;
                 showNotification('Default Pipeline Updated', `${pipelineName} is now the default pipeline`);
-                
-                // Update configuration editor with new default
-                updateConfigEditor();
             }
 
             function updateDefaultPipelineDisplay() {
                 const defaultConfig = pipelineConfigs[currentDefaultPipelineId];
                 const display = document.getElementById('currentDefaultPipeline');
-                if (defaultConfig && display) {
-                    display.textContent = `${defaultConfig.name} (ID: ${currentDefaultPipelineId})`;
+                if (display) {
+                    display.textContent = `Main Pipeline (ID: ${currentDefaultPipelineId})`;
                 }
             }
 
-            function updateQuickDeployOptions() {
-                const service = serviceConfig[currentService];
-                if (!service) return;
-
-                const pipelineSelect = document.getElementById('quickPipelineSelect');
-                if (!pipelineSelect) return;
+            function toggleFavorite() {
+                const btn = document.getElementById('favoriteBtn');
+                const isActive = btn.classList.toggle('text-yellow-500');
+                btn.classList.toggle('text-gray-400', !isActive);
                 
-                pipelineSelect.innerHTML = '';
-
-                // Add pipeline options, with default pipeline first
-                const pipelineIds = [];
-                if (service.PipelineId) pipelineIds.push({ id: service.PipelineId, role: 'primary' });
-                if (service.IncrementalBuildPipelineId) pipelineIds.push({ id: service.IncrementalBuildPipelineId, role: 'incremental' });
-                if (service.MainlineBuildPipelineId) pipelineIds.push({ id: service.MainlineBuildPipelineId, role: 'mainline' });
-
-                // Sort so default pipeline appears first
-                pipelineIds.sort((a, b) => {
-                    if (a.id === currentDefaultPipelineId) return -1;
-                    if (b.id === currentDefaultPipelineId) return 1;
-                    return 0;
-                });
-
-                pipelineIds.forEach(({ id, role }) => {
-                    const config = pipelineConfigs[id];
-                    if (config) {
-                        const option = document.createElement('option');
-                        option.value = id;
-                        const isDefault = id === currentDefaultPipelineId;
-                        option.textContent = `${config.name}${isDefault ? ' (Default)' : ''} - ID: ${id}`;
-                        if (isDefault) {
-                            option.selected = true;
-                        }
-                        pipelineSelect.appendChild(option);
-                    }
-                });
+                showNotification('Favorite Toggled', `OwaMailB2 has been ${isActive ? 'added to' : 'removed from'} favorites`);
             }
 
-            function updateAdvancedDeployModal() {
-                const service = serviceConfig[currentService];
-                if (!service) return;
-
-                const container = document.querySelector('#advancedDeployModal .grid');
-                if (!container) return;
-
-                container.innerHTML = '';
-
-                const pipelineIds = [];
-                if (service.PipelineId) pipelineIds.push({ id: service.PipelineId, role: 'primary' });
-                if (service.IncrementalBuildPipelineId) pipelineIds.push({ id: service.IncrementalBuildPipelineId, role: 'incremental' });
-                if (service.MainlineBuildPipelineId) pipelineIds.push({ id: service.MainlineBuildPipelineId, role: 'mainline' });
-
-                // Sort so default pipeline appears first and is pre-selected
-                pipelineIds.sort((a, b) => {
-                    if (a.id === currentDefaultPipelineId) return -1;
-                    if (b.id === currentDefaultPipelineId) return 1;
-                    return 0;
-                });
-
-                pipelineIds.forEach(({ id, role }, index) => {
-                    const config = pipelineConfigs[id];
-                    if (config) {
-                        const isDefault = id === currentDefaultPipelineId;
-                        const label = document.createElement('label');
-                        label.className = 'relative';
-                        label.innerHTML = `
-                            <input type="radio" name="deployPipeline" value="${id}" ${isDefault ? 'checked' : ''} class="sr-only">
-                            <div class="pipeline-option p-4 border rounded-lg cursor-pointer hover:border-blue-300 transition-all ${isDefault ? 'border-blue-500 bg-blue-50' : ''}">
-                                <div class="flex items-center space-x-3">
-                                    <i data-feather="${config.icon}" class="w-5 h-5 text-${config.color}-600"></i>
-                                    <div class="flex-1">
-                                        <div class="flex items-center space-x-2">
-                                            <p class="font-medium text-gray-900">${config.name}</p>
-                                            ${isDefault ? '<i data-feather="star" class="w-4 h-4 text-blue-600 fill-current"></i>' : ''}
-                                        </div>
-                                        <p class="text-sm text-gray-500">${config.description}</p>
-                                        <p class="text-xs text-gray-400 mt-1">Pipeline ID: ${id}${isDefault ? ' • Default' : ''}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                        container.appendChild(label);
-                    }
-                });
-
-                // Re-initialize radio button listeners
-                document.querySelectorAll('input[name="deployPipeline"]').forEach(radio => {
-                    radio.addEventListener('change', function() {
-                        document.querySelectorAll('.pipeline-option').forEach(option => {
-                            option.classList.remove('border-blue-500', 'bg-blue-50');
-                        });
-                        this.parentElement.querySelector('.pipeline-option').classList.add('border-blue-500', 'bg-blue-50');
-                    });
-                });
-
-                feather.replace();
-            }
-
-            function updateConfigEditor() {
-                const service = serviceConfig[currentService];
-                if (!service) return;
-
-                // Add DefaultPipelineId to the service config
-                service.DefaultPipelineId = currentDefaultPipelineId;
-
-                const configEditor = document.getElementById('configEditor');
-                if (configEditor) {
-                    configEditor.value = JSON.stringify(service, null, 2);
-                }
-            }
-
-            // Pipeline action functions
-            function selectPipeline(type, pipelineId) {
-                const cards = document.querySelectorAll('.pipeline-card');
-                cards.forEach(card => card.classList.remove('border-blue-500', 'bg-blue-50'));
-                
-                event.currentTarget.classList.add('border-blue-500', 'bg-blue-50');
-                showNotification('Pipeline Selected', `${pipelineConfigs[pipelineId].name} (ID: ${pipelineId}) activated`);
-            }
-
-            // Notification system
-            function showNotification(title, message) {
-                // Create and show notification
-                const notification = document.createElement('div');
-                notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 bg-blue-500 text-white';
-                notification.innerHTML = `<strong>${title}</strong><br>${message}`;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.remove();
-                }, 3000);
-            }
-
-            // Initialize page
-            document.addEventListener('DOMContentLoaded', function() {
-                updateBuildVersions();
-                
-                document.getElementById('buildVersionSelect').addEventListener('change', updateDropUrl);
-
-                // Add stagger animation for cards
-                const cards = document.querySelectorAll('.card-hover');
-                cards.forEach((card, index) => {
-                    card.style.opacity = '0';
-                    card.style.transform = 'translateY(20px)';
-                    setTimeout(() => {
-                        card.style.transition = 'all 0.6s ease';
-                        card.style.opacity = '1';
-                        card.style.transform = 'translateY(0)';
-                    }, index * 100);
-                });
-            });
-
-            // Configuration Editor Functions
             function showConfigEditor() {
                 document.getElementById('configEditorModal').classList.remove('hidden');
                 feather.replace();
@@ -914,39 +685,42 @@
             }
 
             function validateConfig() {
-                const configEditor = document.getElementById('configEditor');
-                const statusElement = document.getElementById('configStatus');
+                const editor = document.getElementById('configEditor');
+                const status = document.getElementById('configStatus');
                 
                 try {
-                    JSON.parse(configEditor.value);
-                    statusElement.innerHTML = `
+                    JSON.parse(editor.value);
+                    status.innerHTML = `
                         <div class="w-2 h-2 bg-green-400 rounded-full"></div>
                         <span class="text-xs text-green-600">Valid</span>
                     `;
-                    showNotification('Configuration Valid', 'JSON configuration is valid');
-                } catch (error) {
-                    statusElement.innerHTML = `
+                    editor.classList.remove('border-red-500');
+                } catch (e) {
+                    status.innerHTML = `
                         <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-                        <span class="text-xs text-red-600">Invalid</span>
+                        <span class="text-xs text-red-600">Invalid JSON</span>
                     `;
-                    showNotification('Configuration Error', `Invalid JSON: ${error.message}`);
+                    editor.classList.add('border-red-500');
                 }
             }
 
             function formatConfig() {
-                const configEditor = document.getElementById('configEditor');
+                const editor = document.getElementById('configEditor');
+                const json = editor.value.trim();
+                
+                if (!json) return;
+
                 try {
-                    const parsed = JSON.parse(configEditor.value);
-                    configEditor.value = JSON.stringify(parsed, null, 2);
-                    showNotification('Format Applied', 'Configuration formatted successfully');
-                } catch (error) {
-                    showNotification('Format Error', 'Cannot format invalid JSON');
+                    const obj = JSON.parse(json);
+                    editor.value = JSON.stringify(obj, null, 4);
+                    validateConfig();
+                } catch (e) {
+                    console.error('Formatting error:', e);
                 }
             }
 
             function resetConfig() {
-                const configEditor = document.getElementById('configEditor');
-                configEditor.value = `{
+                const defaultConfig = `{
   "BuildType": "RingPromotion",
   "PipelineId": 1418,
   "IncrementalBuildPipelineId": 33874,
@@ -955,88 +729,42 @@
   "PpeVeName": "OwaMailB2-PPE",
   "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
 }`;
+
+                document.getElementById('configEditor').value = defaultConfig;
                 validateConfig();
-                showNotification('Configuration Reset', 'Configuration restored to original values');
             }
 
-            function toggleDiffView() {
-                const diffPanel = document.getElementById('configDiff');
-                if (diffPanel.classList.contains('hidden')) {
-                    diffPanel.classList.remove('hidden');
-                    showNotification('Diff View', 'Showing configuration changes');
-                } else {
-                    diffPanel.classList.add('hidden');
-                }
+            function copyDropUrl(url) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showNotification('URL Copied', 'Drop URL has been copied to clipboard');
+                }, (err) => {
+                    console.error('Copy failed', err);
+                });
             }
 
-            function saveConfiguration() {
-                const createPR = document.getElementById('createPRConfig').checked;
+            function quickDeploy() {
+                const pipelineId = document.getElementById('quickPipelineSelect').value;
+                const version = document.getElementById('quickVersionSelect').value;
                 
-                if (createPR) {
-                    closeConfigEditor();
-                    document.getElementById('prConfirmModal').classList.remove('hidden');
-                } else {
-                    // Direct save without PR
-                    closeConfigEditor();
-                    showNotification('Configuration Saved', 'Service configuration updated successfully');
-                }
+                // Simulate deploy action
+                showNotification('Deploy Started', `Deploying with ${pipelineId} - Version: ${version}`);
             }
 
-            function exportConfig() {
-                const config = {
-                    "OwaMailB2": {
-                        "BuildType": "RingPromotion",
-                        "PipelineId": 1418,
-                        "IncrementalBuildPipelineId": 33874,
-                        "RingPromotionRootPath": "autopilot",
-                        "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
-                        "PpeVeName": "OwaMailB2-PPE",
-                        "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
-                    }
-                };
-                
-                const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'owamailb2-config.json';
-                a.click();
-                URL.revokeObjectURL(url);
-                
-                showNotification('Export Complete', 'Configuration exported successfully');
+            function showAdvancedDeploy() {
+                showNotification('Advanced Deploy', 'Advanced deploy options are not yet implemented');
             }
 
-            // PR Modal Functions
-            function closePRModal() {
-                document.getElementById('prConfirmModal').classList.add('hidden');
-            }
-
-            function createPullRequest() {
-                const title = document.getElementById('prTitle').value;
-                const description = document.getElementById('prDescription').value;
+            function showNotification(title, message) {
+                const notification = document.createElement('div');
+                notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 bg-blue-500 text-white max-w-sm';
+                notification.innerHTML = `<strong>${title}</strong><br>${message}`;
                 
-                closePRModal();
-                
-                // Simulate PR creation
-                showNotification('PR Created', 'Pull request created successfully');
+                document.body.appendChild(notification);
                 
                 setTimeout(() => {
-                    showNotification('PR Status', 'PR #1247: Ready for review');
-                }, 2000);
+                    notification.remove();
+                }, 3000);
             }
-
-            // Auto-validate on editor input
-            document.addEventListener('DOMContentLoaded', function() {
-                const configEditor = document.getElementById('configEditor');
-                if (configEditor) {
-                    configEditor.addEventListener('input', function() {
-                        // Debounced validation
-                        clearTimeout(this.validationTimer);
-                        this.validationTimer = setTimeout(validateConfig, 500);
-                    });
-                }
-            });
         </script>
     </body>
 </html>
-              

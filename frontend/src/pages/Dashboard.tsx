@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
             <div 
               key={index}
               className={styles.favoriteItem}
-              onClick={() => navigate(`/ve-detail/${ve.name}`)}
+              onClick={() => navigate(`/ve/${ve.name}`)}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 <div style={{ width: '40px', height: '40px', backgroundColor: '#e3f2fd', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

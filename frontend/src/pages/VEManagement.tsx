@@ -202,7 +202,7 @@ const VEManagement: React.FC = () => {
             <Card 
               key={ve.name}
               className={styles.veCard}
-              onClick={() => navigate(`/ve-detail/${ve.name}`)}
+              onClick={() => navigate(`/ve/${ve.name}`)}
             >
               <div className={styles.veHeader}>
                 <div className={styles.veIcon} style={iconStyle}>

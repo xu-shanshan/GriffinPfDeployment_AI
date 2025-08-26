@@ -12,6 +12,40 @@
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         .card-hover { transition: all 0.3s ease; }
         .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        /* Pipeline card color themes */
+        .pipeline-blue { border-color: #3B82F6; background-color: #EFF6FF; }
+        .pipeline-blue .icon-bg { background-color: #DBEAFE; }
+        .pipeline-blue .icon { color: #3B82F6; }
+        .pipeline-blue .btn-primary { background-color: #3B82F6; }
+        .pipeline-blue .btn-primary:hover { background-color: #2563EB; }
+        .pipeline-blue .badge { background-color: #DBEAFE; color: #3B82F6; }
+        
+        .pipeline-purple { border-color: #8B5CF6; background-color: #F3E8FF; }
+        .pipeline-purple .icon-bg { background-color: #E9D5FF; }
+        .pipeline-purple .icon { color: #8B5CF6; }
+        .pipeline-purple .btn-primary { background-color: #8B5CF6; }
+        .pipeline-purple .btn-primary:hover { background-color: #7C3AED; }
+        .pipeline-purple .badge { background-color: #E9D5FF; color: #8B5CF6; }
+        
+        .pipeline-green { border-color: #10B981; background-color: #ECFDF5; }
+        .pipeline-green .icon-bg { background-color: #D1FAE5; }
+        .pipeline-green .icon { color: #10B981; }
+        .pipeline-green .btn-primary { background-color: #10B981; }
+        .pipeline-green .btn-primary:hover { background-color: #059669; }
+        .pipeline-green .badge { background-color: #D1FAE5; color: #10B981; }
+        
+        .pipeline-orange { border-color: #F59E0B; background-color: #FFFBEB; }
+        .pipeline-orange .icon-bg { background-color: #FEF3C7; }
+        .pipeline-orange .icon { color: #F59E0B; }
+        .pipeline-orange .btn-primary { background-color: #F59E0B; }
+        .pipeline-orange .btn-primary:hover { background-color: #D97706; }
+        .pipeline-orange .badge { background-color: #FEF3C7; color: #F59E0B; }
+
+        .pipeline-card.default-pipeline {
+            ring: 2px solid #3B82F6;
+            ring-opacity: 0.5;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
@@ -198,13 +232,19 @@
             <!-- Pipeline Management Cards -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div class="p-6 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
-                            <i data-feather="layers" class="w-5 h-5 text-white"></i>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center">
+                                <i data-feather="layers" class="w-5 h-5 text-white"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900">Pipeline Management</h3>
+                                <p class="text-sm text-gray-500">Manage and configure deployment pipelines</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-xl font-semibold text-gray-900">Pipeline Management</h3>
-                            <p class="text-sm text-gray-500">Manage and configure deployment pipelines</p>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600">Default Pipeline:</span>
+                            <span id="currentDefaultPipeline" class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">Main Pipeline (ID: 1418)</span>
                         </div>
                     </div>
                 </div>
@@ -483,8 +523,7 @@
                     icon: "zap",
                     isDefault: true,
                     latestBuild: "20241220.5",
-                    successRate: "98.5%",
-                    lastRun: "2h ago"
+                    dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot"
                 },
                 33874: {
                     name: "Incremental Build",
@@ -494,8 +533,7 @@
                     icon: "refresh-cw",
                     isDefault: false,
                     latestBuild: "20241220.3",
-                    successRate: "96.2%",
-                    lastRun: "4h ago"
+                    dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot"
                 },
                 31234: {
                     name: "Incremental Build",
@@ -505,8 +543,7 @@
                     icon: "refresh-cw",
                     isDefault: false,
                     latestBuild: "20241220.2",
-                    successRate: "94.8%",
-                    lastRun: "6h ago"
+                    dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot"
                 },
                 31235: {
                     name: "Mainline Build",
@@ -516,8 +553,7 @@
                     icon: "git-branch",
                     isDefault: false,
                     latestBuild: "20241220.1",
-                    successRate: "99.1%",
-                    lastRun: "8h ago"
+                    dropUrl: "VSO://https://ossinfra.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/secondary/OSS_RoutingPlane_Retail_Drops_Signing_Git/Sec.1.0.0.20241220.1"
                 },
                 31238: {
                     name: "Release Pipeline",
@@ -527,8 +563,7 @@
                     icon: "upload",
                     isDefault: true,
                     latestBuild: "20241220.4",
-                    successRate: "99.8%",
-                    lastRun: "1h ago"
+                    dropUrl: "VSO://https://ossinfra.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/secondary/OSS_RoutingPlane_Retail_Drops_Signing_Git/Sec.1.0.0.20241220.4"
                 }
             };
 
@@ -538,19 +573,34 @@
             // Current service (would be passed from URL params in real implementation)
             const currentService = "OwaMailB2";
 
+            // Global state for default pipeline management
+            let pendingDefaultPipelineId = null;
+            let currentDefaultPipelineId = 1418; // Initially set to main pipeline
+
             // Initialize the page
             document.addEventListener('DOMContentLoaded', function() {
+                console.log('Initializing page...'); // Debug log
                 initializePipelines();
                 updateConfigEditor();
                 updateQuickDeployOptions();
                 updateAdvancedDeployModal();
+                updateDefaultPipelineDisplay();
             });
 
             function initializePipelines() {
+                console.log('Initializing pipelines...'); // Debug log
                 const service = serviceConfig[currentService];
-                if (!service) return;
+                if (!service) {
+                    console.error('Service not found:', currentService);
+                    return;
+                }
 
                 const container = document.getElementById('pipelineCardsContainer');
+                if (!container) {
+                    console.error('Pipeline container not found');
+                    return;
+                }
+                
                 container.innerHTML = '';
 
                 // Extract all pipeline IDs from service config
@@ -559,32 +609,43 @@
                 if (service.IncrementalBuildPipelineId) pipelineIds.push({ id: service.IncrementalBuildPipelineId, role: 'incremental' });
                 if (service.MainlineBuildPipelineId) pipelineIds.push({ id: service.MainlineBuildPipelineId, role: 'mainline' });
 
+                console.log('Found pipeline IDs:', pipelineIds); // Debug log
+
                 // Create pipeline cards
                 pipelineIds.forEach(({ id, role }) => {
                     const config = pipelineConfigs[id];
                     if (config) {
+                        console.log('Creating card for pipeline:', id, config); // Debug log
                         const card = createPipelineCard(id, config, role);
                         container.appendChild(card);
+                    } else {
+                        console.warn('Pipeline config not found for ID:', id);
                     }
                 });
 
                 feather.replace();
+                console.log('Pipeline initialization complete'); // Debug log
             }
 
             function createPipelineCard(pipelineId, config, role) {
                 const card = document.createElement('div');
-                card.className = `pipeline-card border border-gray-200 rounded-lg p-4 hover:border-${config.color}-300 hover:shadow-md transition-all cursor-pointer`;
+                const isCurrentDefault = currentDefaultPipelineId === pipelineId;
+                
+                // Use CSS classes instead of dynamic Tailwind classes
+                card.className = `pipeline-card border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer pipeline-${config.color} ${isCurrentDefault ? 'default-pipeline' : ''}`;
                 card.onclick = () => selectPipeline(config.type, pipelineId);
 
-                const statusBadge = role === 'primary' || config.isDefault ? 
-                    `<span class="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">Default</span>` :
-                    `<span class="px-2 py-1 bg-${config.color}-100 text-${config.color}-700 text-xs font-medium rounded-full">${config.type.charAt(0).toUpperCase() + config.type.slice(1)}</span>`;
+                const statusBadge = isCurrentDefault ? 
+                    `<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center">
+                        <i data-feather="star" class="w-3 h-3 mr-1 fill-current"></i>Default
+                    </span>` :
+                    `<span class="badge px-2 py-1 text-xs font-medium rounded-full">${config.type.charAt(0).toUpperCase() + config.type.slice(1)}</span>`;
 
                 card.innerHTML = `
                     <div class="flex items-start justify-between mb-3">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-${config.color}-100 rounded-lg flex items-center justify-center">
-                                <i data-feather="${config.icon}" class="w-4 h-4 text-${config.color}-600"></i>
+                            <div class="w-8 h-8 icon-bg rounded-lg flex items-center justify-center">
+                                <i data-feather="${config.icon}" class="w-4 h-4 icon"></i>
                             </div>
                             <div>
                                 <h4 class="font-semibold text-gray-900">${config.name}</h4>
@@ -594,28 +655,36 @@
                         ${statusBadge}
                     </div>
                     <p class="text-xs text-gray-600 mb-3">${config.description}</p>
-                    <div class="space-y-2 text-sm">
+                    <div class="space-y-3 text-sm">
                         <div class="flex justify-between">
                             <span class="text-gray-600">Latest Build:</span>
                             <span class="font-mono text-gray-900">${config.latestBuild}</span>
                         </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Success Rate:</span>
-                            <span class="text-green-600 font-medium">${config.successRate}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Last Run:</span>
-                            <span class="text-gray-900">${config.lastRun}</span>
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-gray-600">Drop URL:</span>
+                                <button onclick="event.stopPropagation(); copyDropUrl('${config.dropUrl}')" 
+                                        class="px-2 py-1 text-xs bg-gray-100 text-gray-600 rounded hover:bg-gray-200 transition-colors" 
+                                        title="Copy Drop URL">
+                                    <i data-feather="copy" class="w-3 h-3 inline mr-1"></i>Copy
+                                </button>
+                            </div>
+                            <div class="bg-gray-50 rounded p-2">
+                                <p class="font-mono text-xs text-gray-700 break-all">${config.dropUrl}</p>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-3 pt-3 border-t border-gray-100">
-                        <div class="flex space-x-2">
-                            <button class="flex-1 px-3 py-1.5 bg-${config.color}-600 text-white text-sm rounded-md hover:bg-${config.color}-700 transition-colors" onclick="event.stopPropagation(); deployPipeline(${pipelineId})">
-                                <i data-feather="play" class="w-3 h-3 inline mr-1"></i>Deploy
-                            </button>
-                            <button class="px-3 py-1.5 border border-gray-300 text-gray-600 text-sm rounded-md hover:bg-gray-50 transition-colors" onclick="event.stopPropagation(); configurePipeline(${pipelineId})">
-                                <i data-feather="settings" class="w-3 h-3"></i>
-                            </button>
+                        <div class="flex justify-center">
+                            ${!isCurrentDefault ? `
+                                <button class="px-4 py-2 bg-yellow-100 text-yellow-700 text-sm rounded-md hover:bg-yellow-200 transition-colors" onclick="event.stopPropagation(); showSetDefaultModal(${pipelineId}, '${config.name}')" title="Set as default pipeline">
+                                    <i data-feather="star" class="w-3 h-3 inline mr-2"></i>Set as Default
+                                </button>
+                            ` : `
+                                <span class="px-4 py-2 bg-blue-100 text-blue-700 text-sm rounded-md flex items-center" title="Current default pipeline">
+                                    <i data-feather="star" class="w-3 h-3 inline mr-2 fill-current"></i>Default Pipeline
+                                </span>
+                            `}
                         </div>
                     </div>
                 `;
@@ -623,25 +692,102 @@
                 return card;
             }
 
+            // New function to copy drop URL
+            function copyDropUrl(dropUrl) {
+                navigator.clipboard.writeText(dropUrl).then(() => {
+                    showNotification('Drop URL Copied', 'Drop URL has been copied to clipboard');
+                }).catch(err => {
+                    // Fallback for older browsers
+                    const textArea = document.createElement('textarea');
+                    textArea.value = dropUrl;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    showNotification('Drop URL Copied', 'Drop URL has been copied to clipboard');
+                });
+            }
+
+            // Default pipeline management functions
+            function showSetDefaultModal(pipelineId, pipelineName) {
+                pendingDefaultPipelineId = pipelineId;
+                document.getElementById('pipelineNameToSet').textContent = pipelineName;
+                document.getElementById('setDefaultPipelineModal').classList.remove('hidden');
+                feather.replace();
+            }
+
+            function closeSetDefaultModal() {
+                pendingDefaultPipelineId = null;
+                document.getElementById('setDefaultPipelineModal').classList.add('hidden');
+            }
+
+            function confirmSetDefault() {
+                if (!pendingDefaultPipelineId) return;
+
+                const oldDefaultId = currentDefaultPipelineId;
+                currentDefaultPipelineId = pendingDefaultPipelineId;
+                
+                // Update service config
+                const service = serviceConfig[currentService];
+                service.DefaultPipelineId = currentDefaultPipelineId;
+                
+                // Update UI displays
+                updateDefaultPipelineDisplay();
+                updateQuickDeployOptions();
+                updateAdvancedDeployModal();
+                
+                // Refresh pipeline cards to show new default
+                initializePipelines();
+                
+                closeSetDefaultModal();
+                
+                const pipelineName = pipelineConfigs[currentDefaultPipelineId].name;
+                showNotification('Default Pipeline Updated', `${pipelineName} is now the default pipeline`);
+                
+                // Update configuration editor with new default
+                updateConfigEditor();
+            }
+
+            function updateDefaultPipelineDisplay() {
+                const defaultConfig = pipelineConfigs[currentDefaultPipelineId];
+                const display = document.getElementById('currentDefaultPipeline');
+                if (defaultConfig && display) {
+                    display.textContent = `${defaultConfig.name} (ID: ${currentDefaultPipelineId})`;
+                }
+            }
+
             function updateQuickDeployOptions() {
                 const service = serviceConfig[currentService];
                 if (!service) return;
 
                 const pipelineSelect = document.getElementById('quickPipelineSelect');
+                if (!pipelineSelect) return;
+                
                 pipelineSelect.innerHTML = '';
 
-                // Add pipeline options
+                // Add pipeline options, with default pipeline first
                 const pipelineIds = [];
                 if (service.PipelineId) pipelineIds.push({ id: service.PipelineId, role: 'primary' });
                 if (service.IncrementalBuildPipelineId) pipelineIds.push({ id: service.IncrementalBuildPipelineId, role: 'incremental' });
                 if (service.MainlineBuildPipelineId) pipelineIds.push({ id: service.MainlineBuildPipelineId, role: 'mainline' });
+
+                // Sort so default pipeline appears first
+                pipelineIds.sort((a, b) => {
+                    if (a.id === currentDefaultPipelineId) return -1;
+                    if (b.id === currentDefaultPipelineId) return 1;
+                    return 0;
+                });
 
                 pipelineIds.forEach(({ id, role }) => {
                     const config = pipelineConfigs[id];
                     if (config) {
                         const option = document.createElement('option');
                         option.value = id;
-                        option.textContent = `${config.name}${config.isDefault || role === 'primary' ? ' (Default)' : ''} - ID: ${id}`;
+                        const isDefault = id === currentDefaultPipelineId;
+                        option.textContent = `${config.name}${isDefault ? ' (Default)' : ''} - ID: ${id}`;
+                        if (isDefault) {
+                            option.selected = true;
+                        }
                         pipelineSelect.appendChild(option);
                     }
                 });
@@ -661,20 +807,31 @@
                 if (service.IncrementalBuildPipelineId) pipelineIds.push({ id: service.IncrementalBuildPipelineId, role: 'incremental' });
                 if (service.MainlineBuildPipelineId) pipelineIds.push({ id: service.MainlineBuildPipelineId, role: 'mainline' });
 
+                // Sort so default pipeline appears first and is pre-selected
+                pipelineIds.sort((a, b) => {
+                    if (a.id === currentDefaultPipelineId) return -1;
+                    if (b.id === currentDefaultPipelineId) return 1;
+                    return 0;
+                });
+
                 pipelineIds.forEach(({ id, role }, index) => {
                     const config = pipelineConfigs[id];
                     if (config) {
+                        const isDefault = id === currentDefaultPipelineId;
                         const label = document.createElement('label');
                         label.className = 'relative';
                         label.innerHTML = `
-                            <input type="radio" name="deployPipeline" value="${id}" ${index === 0 ? 'checked' : ''} class="sr-only">
-                            <div class="pipeline-option p-4 border rounded-lg cursor-pointer hover:border-blue-300 transition-all">
+                            <input type="radio" name="deployPipeline" value="${id}" ${isDefault ? 'checked' : ''} class="sr-only">
+                            <div class="pipeline-option p-4 border rounded-lg cursor-pointer hover:border-blue-300 transition-all ${isDefault ? 'border-blue-500 bg-blue-50' : ''}">
                                 <div class="flex items-center space-x-3">
                                     <i data-feather="${config.icon}" class="w-5 h-5 text-${config.color}-600"></i>
-                                    <div>
-                                        <p class="font-medium text-gray-900">${config.name}</p>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2">
+                                            <p class="font-medium text-gray-900">${config.name}</p>
+                                            ${isDefault ? '<i data-feather="star" class="w-4 h-4 text-blue-600 fill-current"></i>' : ''}
+                                        </div>
                                         <p class="text-sm text-gray-500">${config.description}</p>
-                                        <p class="text-xs text-gray-400 mt-1">Pipeline ID: ${id}</p>
+                                        <p class="text-xs text-gray-400 mt-1">Pipeline ID: ${id}${isDefault ? ' • Default' : ''}</p>
                                     </div>
                                 </div>
                             </div>
@@ -692,11 +849,16 @@
                         this.parentElement.querySelector('.pipeline-option').classList.add('border-blue-500', 'bg-blue-50');
                     });
                 });
+
+                feather.replace();
             }
 
             function updateConfigEditor() {
                 const service = serviceConfig[currentService];
                 if (!service) return;
+
+                // Add DefaultPipelineId to the service config
+                service.DefaultPipelineId = currentDefaultPipelineId;
 
                 const configEditor = document.getElementById('configEditor');
                 if (configEditor) {
@@ -713,150 +875,12 @@
                 showNotification('Pipeline Selected', `${pipelineConfigs[pipelineId].name} (ID: ${pipelineId}) activated`);
             }
 
-            function deployPipeline(pipelineId) {
-                const config = pipelineConfigs[pipelineId];
-                showNotification('Deployment Started', `Deploying with ${config.name} (ID: ${pipelineId})`);
-            }
-
-            function configurePipeline(pipelineId) {
-                const config = pipelineConfigs[pipelineId];
-                showNotification('Pipeline Configuration', `Opening configuration for ${config.name} (ID: ${pipelineId})`);
-            }
-
-            // Quick Deploy
-            function quickDeploy() {
-                const pipeline = document.getElementById('quickPipelineSelect').value;
-                const version = document.getElementById('quickVersionSelect').value;
-                
-                showNotification('Deployment Started', `Deploying ${version} with pipeline ${pipeline}`);
-                
-                // Simulate deployment progress
-                setTimeout(() => {
-                    showNotification('Deployment Completed', 'Service deployed successfully');
-                }, 3000);
-            }
-
-            // Advanced Deploy Modal
-            function showAdvancedDeploy() {
-                document.getElementById('advancedDeployModal').classList.remove('hidden');
-            }
-
-            function closeAdvancedDeploy() {
-                document.getElementById('advancedDeployModal').classList.add('hidden');
-            }
-
-            function confirmAdvancedDeploy() {
-                const pipeline = document.querySelector('input[name="deployPipeline"]:checked').value;
-                const version = document.getElementById('modalVersionSelect').value;
-                const createPR = document.getElementById('createPR').checked;
-                
-                closeAdvancedDeploy();
-                showNotification('Advanced Deployment Started', `Deploying with advanced configuration${createPR ? ' and PR workflow' : ''}`);
-            }
-
-            // Drop URL Preview Update
-            function updateDropUrlPreview() {
-                const version = document.getElementById('modalVersionSelect').value;
-                const versionNumber = version === 'latest' ? '20241220.5' : version;
-                const preview = document.getElementById('modalDropUrlPreview');
-                preview.textContent = `VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/${versionNumber}?root=autopilot`;
-            }
-
-            // Build History Actions
-            function deployVersion(version) {
-                showNotification('Version Deploy', `Deploying version ${version}`);
-            }
-
-            function retryDeploy(version) {
-                showNotification('Retry Deploy', `Retrying deployment for version ${version}`);
-            }
-
-            function copyDropUrl(version) {
-                const url = `VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/${version}?root=autopilot`;
-                navigator.clipboard.writeText(url);
-                showNotification('URL Copied', 'Drop URL copied to clipboard');
-            }
-
-            function refreshBuildHistory() {
-                showNotification('Refreshing', 'Build history updated');
-            }
-
-            // Pipeline options in modal
-            document.querySelectorAll('input[name="deployPipeline"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    document.querySelectorAll('.pipeline-option').forEach(option => {
-                        option.classList.remove('border-blue-500', 'bg-blue-50');
-                    });
-                    this.parentElement.querySelector('.pipeline-option').classList.add('border-blue-500', 'bg-blue-50');
-                });
-            });
-
-            // Toggle favorite
-            function toggleFavorite() {
-                const btn = document.getElementById('favoriteBtn');
-                const icon = btn.querySelector('i');
-                
-                if (icon.classList.contains('text-gray-400')) {
-                    icon.classList.remove('text-gray-400');
-                    icon.classList.add('text-yellow-500', 'fill-current');
-                } else {
-                    icon.classList.remove('text-yellow-500', 'fill-current');
-                    icon.classList.add('text-gray-400');
-                }
-            }
-
-            // Pipeline and build version updates
-            function updateBuildVersions() {
-                const pipelineSelect = document.getElementById('pipelineSelect');
-                const buildVersionSelect = document.getElementById('buildVersionSelect');
-                
-                // Simulate different build versions for different pipelines
-                const versions = {
-                    '1418': ['Latest (20241220.5)', '20241220.4', '20241220.3', '20241220.2'],
-                    '33874': ['Latest (20241220.3)', '20241220.2', '20241220.1', '20241219.8'],
-                    'custom': ['Custom Build']
-                };
-                
-                buildVersionSelect.innerHTML = '';
-                versions[pipelineSelect.value].forEach(version => {
-                    const option = document.createElement('option');
-                    option.value = version.includes('Latest') ? 'latest' : version;
-                    option.textContent = version;
-                    buildVersionSelect.appendChild(option);
-                });
-                
-                updateDropUrl();
-            }
-
-            function updateDropUrl() {
-                const buildVersion = document.getElementById('buildVersionSelect').value;
-                const dropUrlInput = document.getElementById('dropUrl');
-                const version = buildVersion === 'latest' ? '20241220.5' : buildVersion;
-                
-                dropUrlInput.value = `VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/${version}?root=autopilot`;
-            }
-
-            function refreshBuilds() {
-                updateBuildVersions();
-                showNotification('Build versions refreshed', 'success');
-            }
-
-            function copyDropUrl() {
-                const dropUrlInput = document.getElementById('dropUrl');
-                dropUrlInput.select();
-                document.execCommand('copy');
-                showNotification('Drop URL copied to clipboard', 'success');
-            }
-
             // Notification system
-            function showNotification(message, type = 'info') {
+            function showNotification(title, message) {
+                // Create and show notification
                 const notification = document.createElement('div');
-                notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
-                    type === 'success' ? 'bg-green-500 text-white' :
-                    type === 'error' ? 'bg-red-500 text-white' :
-                    'bg-blue-500 text-white'
-                }`;
-                notification.textContent = message;
+                notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 bg-blue-500 text-white';
+                notification.innerHTML = `<strong>${title}</strong><br>${message}`;
                 
                 document.body.appendChild(notification);
                 

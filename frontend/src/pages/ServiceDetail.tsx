@@ -343,7 +343,7 @@ const ServiceDetail: React.FC = () => {
                       <div style={{ fontSize: '12px', color: '#616161' }}>ID: {pipeline.id}</div>
                     </div>
                   </div>
-                  <Badge appearance={pipeline.isDefault ? "filled" : "outline"} color={pipeline.isDefault ? "brand" : "neutral"}>
+                  <Badge appearance={pipeline.isDefault ? "filled" : "outline"} color={pipeline.isDefault ? "brand" : "subtle"}>
                     {pipeline.isDefault ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Star20Filled style={{ width: '12px', height: '12px' }} />

@@ -47,8 +47,6 @@
       "SubstrateSearchAssistants","TenantDataSink","TenantSearchProcessorsCore",
       "TokenIssuerSAPs","UserContext","UserKnowledgeBase","WebhookB2NetCore"
     ],
-
-    // ModelB2 Sovereign sub‑groups (各子 VE 对应服务)
     "TBA1-SOV": ["PingB2NetCore","TenantSearchProcessorsCore"],
     "OwaMailB2-SOV": ["OwaMailB2"],
     "EBA1-SOV": ["DNPublisher","DirectoryReplication","SignalPropagation","ClearData","Ssmsnetcore","SearchInsightsNetCore"],

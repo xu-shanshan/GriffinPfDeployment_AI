@@ -72,9 +72,6 @@
                     <a href="deployment-history.html" class="px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all">
                         <i data-feather="clock" class="w-4 h-4 inline mr-2"></i>History
                     </a>
-                    <a href="settings.html" class="px-4 py-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all">
-                        <i data-feather="settings" class="w-4 h-4 inline mr-2"></i>Settings
-                    </a>
                     <div class="h-6 w-px bg-white bg-opacity-20 mx-2"></div>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
@@ -133,9 +130,6 @@
                         </div>
                         <button onclick="showConfigEditor()" class="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
                             <i data-feather="edit-3" class="w-4 h-4 inline mr-2"></i>Edit Configuration
-                        </button>
-                        <button class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">
-                            <i data-feather="settings" class="w-4 h-4 inline mr-2"></i>Settings
                         </button>
                     </div>
                 </div>
@@ -499,6 +493,40 @@
             </div>
         </div>
 
+        <!-- Set Default Pipeline Confirmation Modal -->
+        <div id="setDefaultPipelineModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+                <div class="p-6">
+                    <div class="flex items-center mb-4">
+                        <i data-feather="star" class="w-6 h-6 text-yellow-600 mr-3"></i>
+                        <h3 class="text-lg font-semibold text-gray-900">Set Default Pipeline</h3>
+                    </div>
+                    <p class="text-gray-600 mb-4">
+                        Are you sure you want to set <span id="pipelineNameToSet" class="font-semibold"></span> as the default pipeline for <span class="font-semibold">OwaMailB2</span>?
+                    </p>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                        <div class="flex items-start space-x-3">
+                            <i data-feather="info" class="w-5 h-5 text-yellow-600 mt-0.5"></i>
+                            <div>
+                                <p class="text-sm font-medium text-yellow-900">Impact</p>
+                                <ul class="text-xs text-yellow-800 mt-1 space-y-1">
+                                    <li>• Quick Deploy will use this pipeline by default</li>
+                                    <li>• Advanced Deploy will pre-select this pipeline</li>
+                                    <li>• Configuration will be updated in service settings</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
+                    <button onclick="closeSetDefaultModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+                    <button onclick="confirmSetDefault()" class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                        <i data-feather="star" class="w-4 h-4 inline mr-2"></i>Set as Default
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <script>
             // Service configuration data (this would come from API in real implementation)
             const serviceConfig = {
@@ -534,52 +562,19 @@
                     isDefault: false,
                     latestBuild: "20241220.3",
                     dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot"
-                },
-                31234: {
-                    name: "Incremental Build",
-                    description: "Fast incremental changes",
-                    type: "incremental",
-                    color: "purple",
-                    icon: "refresh-cw",
-                    isDefault: false,
-                    latestBuild: "20241220.2",
-                    dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot"
-                },
-                31235: {
-                    name: "Mainline Build",
-                    description: "Full mainline build pipeline",
-                    type: "mainline",
-                    color: "green",
-                    icon: "git-branch",
-                    isDefault: false,
-                    latestBuild: "20241220.1",
-                    dropUrl: "VSO://https://ossinfra.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/secondary/OSS_RoutingPlane_Retail_Drops_Signing_Git/Sec.1.0.0.20241220.1"
-                },
-                31238: {
-                    name: "Release Pipeline",
-                    description: "Production release pipeline",
-                    type: "release",
-                    color: "orange",
-                    icon: "upload",
-                    isDefault: true,
-                    latestBuild: "20241220.4",
-                    dropUrl: "VSO://https://ossinfra.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/secondary/OSS_RoutingPlane_Retail_Drops_Signing_Git/Sec.1.0.0.20241220.4"
                 }
             };
+
+            // Global state for default pipeline management
+            let pendingDefaultPipelineId = null;
+            let currentDefaultPipelineId = 1418;
+            const currentService = "OwaMailB2";
 
             // Initialize Feather icons
             feather.replace();
 
-            // Current service (would be passed from URL params in real implementation)
-            const currentService = "OwaMailB2";
-
-            // Global state for default pipeline management
-            let pendingDefaultPipelineId = null;
-            let currentDefaultPipelineId = 1418; // Initially set to main pipeline
-
             // Initialize the page
             document.addEventListener('DOMContentLoaded', function() {
-                console.log('Initializing page...'); // Debug log
                 initializePipelines();
                 updateConfigEditor();
                 updateQuickDeployOptions();
@@ -1039,6 +1034,11 @@
                         clearTimeout(this.validationTimer);
                         this.validationTimer = setTimeout(validateConfig, 500);
                     });
+                }
+            });
+        </script>
+    </body>
+</html>
                 }
             });
         </script>

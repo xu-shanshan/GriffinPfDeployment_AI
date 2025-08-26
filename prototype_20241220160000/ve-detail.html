@@ -7,66 +7,165 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .card-hover { transition: all 0.3s ease; }
-        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .status-indicator { animation: pulse 2s infinite; }
-        .search-highlight { background: rgba(59, 130, 246, 0.1); border: 2px solid #3B82F6; }
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        
+        /* Fluent UI v9 Design System */
+        :root {
+            --colorNeutralForeground1: #242424;
+            --colorNeutralForeground2: #424242;
+            --colorNeutralForeground3: #616161;
+            --colorNeutralBackground1: #ffffff;
+            --colorNeutralBackground2: #f5f5f5;
+            --colorNeutralBackground3: #f0f0f0;
+            --colorBrandBackground: #0f6cbd;
+            --colorBrandBackgroundHover: #115ea3;
+            --colorBrandForeground1: #0f6cbd;
+            --colorNeutralStroke1: #d1d1d1;
+            --colorNeutralStroke2: #e0e0e0;
+            --borderRadiusSmall: 4px;
+            --borderRadiusMedium: 6px;
+            --borderRadiusLarge: 8px;
+            --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+            --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+        }
+        
+        .fluent-card {
+            background: var(--colorNeutralBackground1);
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusLarge);
+            box-shadow: var(--shadow2);
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+        }
+        
+        .fluent-nav-item {
+            padding: 6px 12px;
+            border-radius: var(--borderRadiusSmall);
+            color: var(--colorNeutralForeground2);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+        }
+        
+        .fluent-nav-item:hover {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-nav-item.selected {
+            background: #e3f2fd;
+            color: var(--colorBrandForeground1);
+            font-weight: 600;
+        }
+        
+        .fluent-button {
+            border-radius: var(--borderRadiusSmall);
+            padding: 5px 12px;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        
+        .fluent-button-primary {
+            background: var(--colorBrandBackground);
+            color: white;
+        }
+        
+        .fluent-button-primary:hover {
+            background: var(--colorBrandBackgroundHover);
+        }
+        
+        .fluent-button-subtle {
+            background: transparent;
+            color: var(--colorNeutralForeground2);
+            border: 1px solid var(--colorNeutralStroke1);
+        }
+        
+        .fluent-button-subtle:hover {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground1);
+        }
+        
+        /* Keep existing table styles */
         .config-actions { opacity: 0; transition: opacity 0.2s; }
         .table-row:hover .config-actions { opacity: 1; }
-        .loading { opacity: 0.6; pointer-events: none; }
-        .notification { transform: translateY(-100%); transition: transform 0.3s ease; }
-        .notification.show { transform: translateY(0); }
+        .search-highlight { background: rgba(59, 130, 246, 0.1); border: 2px solid #3B82F6; }
+        
+        .fluent-text-title1 {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 36px;
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-text-title2 {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 28px;
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-text-body1 {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: var(--colorNeutralForeground2);
+        }
+        
+        .fluent-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 16px;
+        }
+        
+        .fluent-badge-neutral {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground2);
+        }
+        
+        .fluent-icon {
+            width: 16px;
+            height: 16px;
+        }
     </style>
 </head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
-    <!-- Notification Toast -->
-    <div id="notification" class="fixed top-4 right-4 z-50 notification">
-        <div class="bg-white border-l-4 border-blue-500 rounded-lg shadow-lg p-4 max-w-sm">
-            <div class="flex items-center">
-                <i data-feather="info" class="w-5 h-5 text-blue-500 mr-3"></i>
-                <div>
-                    <p id="notification-title" class="font-medium text-gray-900"></p>
-                    <p id="notification-message" class="text-sm text-gray-600"></p>
-                </div>
-                <button onclick="hideNotification()" class="ml-4 text-gray-400 hover:text-gray-600">
-                    <i data-feather="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Updated Navigation to match other pages -->
-    <nav class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-40">
+<body style="background: var(--colorNeutralBackground2); min-h: 100vh;">
+    <!-- Fluent Navigation -->
+    <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; position: sticky; top: 0; z-index: 40;">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <i data-feather="layers" class="w-4 h-4 text-white"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-semibold text-gray-900">Griffin PF Deployment AI</h1>
-                        <p class="text-xs text-gray-500">Virtual Environment Management</p>
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
+                            <i data-feather="layers" class="fluent-icon text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF Deployment AI</h1>
+                            <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center space-x-1">
-                    <a href="dashboard.html" class="px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50 text-sm">
-                        <i data-feather="home" class="w-4 h-4 inline mr-1"></i>Dashboard
+                    <a href="dashboard.html" class="fluent-nav-item">
+                        <i data-feather="home" class="fluent-icon inline mr-2"></i>Dashboard
                     </a>
-                    <a href="ve-management.html" class="px-3 py-2 rounded-md bg-blue-50 text-blue-700 text-sm font-medium">
-                        <i data-feather="server" class="w-4 h-4 inline mr-1"></i>VE Management
+                    <a href="ve-management.html" class="fluent-nav-item selected">
+                        <i data-feather="server" class="fluent-icon inline mr-2"></i>VE Management
                     </a>
-                    <a href="deployment-history.html" class="px-3 py-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-50 text-sm">
-                        <i data-feather="clock" class="w-4 h-4 inline mr-1"></i>History
+                    <a href="deployment-history.html" class="fluent-nav-item">
+                        <i data-feather="clock" class="fluent-icon inline mr-2"></i>History
                     </a>
-                    <div class="h-4 w-px bg-gray-300 mx-3"></div>
-                    <div class="flex items-center space-x-2">
-                        <div class="w-7 h-7 bg-gray-100 rounded-full flex items-center justify-center">
-                            <i data-feather="user" class="w-4 h-4 text-gray-600"></i>
+                    <div class="h-6 w-px mx-3" style="background: var(--colorNeutralStroke2);"></div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
+                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
                         </div>
-                        <a href="login.html" class="text-gray-500 hover:text-gray-700 text-sm">
+                        <a href="login.html" class="fluent-nav-item text-sm">
                             <i data-feather="log-out" class="w-4 h-4 inline mr-1"></i>Logout
                         </a>
                     </div>
@@ -76,74 +175,74 @@
     </nav>
 
     <div class="container mx-auto px-6 py-8">
-        <!-- Enhanced Breadcrumb -->
-        <nav class="flex items-center space-x-2 text-sm text-gray-600 mb-6" aria-label="Breadcrumb">
-            <a href="ve-management.html" class="hover:text-blue-600 transition-colors">VE Management</a>
+        <!-- Fluent Breadcrumb -->
+        <nav class="flex items-center space-x-2 text-sm mb-6" style="color: var(--colorNeutralForeground3);">
+            <a href="ve-management.html" class="hover:text-blue-600 transition-colors" style="color: var(--colorBrandForeground1);">VE Management</a>
             <i data-feather="chevron-right" class="w-4 h-4"></i>
-            <span class="text-gray-900 font-medium">SovBase</span>
+            <span style="color: var(--colorNeutralForeground1); font-weight: 500;">SovBase</span>
         </nav>
 
-        <!-- Enhanced VE Header with Quick Actions -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-8">
+        <!-- Fluent VE Header -->
+        <div class="fluent-card mb-8">
             <div class="p-8">
                 <div class="flex items-center justify-between mb-6">
                     <div class="flex items-center space-x-4">
-                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%);">
                             <i data-feather="server" class="w-8 h-8 text-white"></i>
                         </div>
                         <div>
                             <div class="flex items-center space-x-3 mb-1">
-                                <h1 class="text-3xl font-bold text-gray-900">SovBase</h1>
-                                <button id="favoriteBtn" onclick="toggleFavorite()" class="text-yellow-500 hover:text-yellow-600 transition-colors" title="Add to favorites">
+                                <h1 class="fluent-text-title1">SovBase</h1>
+                                <button id="favoriteBtn" onclick="toggleFavorite()" style="color: #faa06b; transition: opacity 0.1s;" class="hover:opacity-80" title="Add to favorites">
                                     <i data-feather="star" class="w-6 h-6 fill-current"></i>
                                 </button>
                             </div>
-                            <p class="text-gray-600 mt-1">Base sovereign virtual environment for core services</p>
+                            <p class="fluent-text-body1 mt-1">Base sovereign virtual environment for core services</p>
                             <div class="flex items-center space-x-4 mt-3">
-                                <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">B Type VE</span>
-                                <span class="text-sm text-gray-500">Last updated: 2 hours ago</span>
+                                <span class="fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">B Type VE</span>
+                                <span class="text-sm" style="color: var(--colorNeutralForeground3);">Last updated: 2 hours ago</span>
                             </div>
                         </div>
                     </div>
                     <div class="flex items-center space-x-3">
-                        <button onclick="refreshData()" class="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium" title="Refresh data">
-                            <i data-feather="refresh-cw" class="w-4 h-4 inline mr-2"></i>Refresh
+                        <button onclick="refreshData()" class="fluent-button fluent-button-subtle" title="Refresh data">
+                            <i data-feather="refresh-cw" class="fluent-icon inline mr-2"></i>Refresh
                         </button>
-                        <button class="px-6 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors font-medium">
-                            <i data-feather="edit" class="w-4 h-4 inline mr-2"></i>Edit Config
+                        <button class="fluent-button fluent-button-primary">
+                            <i data-feather="edit" class="fluent-icon inline mr-2"></i>Edit Config
                         </button>
                     </div>
                 </div>
                 
-                <!-- Enhanced Stats Grid with Click-to-Filter -->
+                <!-- Fluent Stats Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <button onclick="filterByConfigSource('dragon')" class="stat-card text-center p-4 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all group">
-                        <p class="text-3xl font-bold text-blue-600 group-hover:text-blue-700">89</p>
-                        <p class="text-sm text-gray-500 mt-2">Dragon GriffinServiceMap.ini</p>
-                        <p class="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to filter</p>
+                    <button onclick="filterByConfigSource('dragon')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorBrandForeground1)'; this.style.background='#e3f2fd';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
+                        <p class="text-3xl font-bold mb-2" style="color: var(--colorBrandForeground1);">89</p>
+                        <p class="text-sm" style="color: var(--colorNeutralForeground2);">Dragon GriffinServiceMap.ini</p>
+                        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--colorBrandForeground1);">Click to filter</p>
                     </button>
-                    <button onclick="filterByConfigSource('pfgold')" class="stat-card text-center p-4 rounded-lg border border-gray-200 hover:border-gray-400 hover:bg-gray-50 transition-all group">
-                        <p class="text-3xl font-bold text-gray-900 group-hover:text-gray-700">67</p>
-                        <p class="text-sm text-gray-500 mt-2">PFGold deployment.ini</p>
-                        <p class="text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to filter</p>
+                    <button onclick="filterByConfigSource('pfgold')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorNeutralStroke1)'; this.style.background='var(--colorNeutralBackground3)';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
+                        <p class="text-3xl font-bold mb-2" style="color: var(--colorNeutralForeground1);">67</p>
+                        <p class="text-sm" style="color: var(--colorNeutralForeground2);">PFGold deployment.ini</p>
+                        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--colorNeutralForeground2);">Click to filter</p>
                     </button>
-                    <button onclick="filterByStatus('deployed')" class="stat-card text-center p-4 rounded-lg border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all group">
-                        <p class="text-3xl font-bold text-green-600 group-hover:text-green-700">62</p>
-                        <p class="text-sm text-gray-500 mt-2">Deployed</p>
-                        <p class="text-xs text-green-600 opacity-0 group-hover:opacity-100 transition-opacity mt-1">Click to filter</p>
+                    <button onclick="filterByStatus('deployed')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='#107c10'; this.style.background='#dff6dd';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
+                        <p class="text-3xl font-bold mb-2" style="color: #107c10;">62</p>
+                        <p class="text-sm" style="color: var(--colorNeutralForeground2);">Deployed</p>
+                        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: #107c10;">Click to filter</p>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Enhanced Services Table -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <!-- Enhanced Services Table (keep existing functionality) -->
+        <div class="fluent-card">
             <!-- Improved Table Header with Bulk Actions -->
-            <div class="p-6 border-b border-gray-100">
+            <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
                     <div class="flex items-center space-x-4">
-                        <h2 class="text-xl font-semibold text-gray-900">Services Management</h2>
-                        <span id="selectedCount" class="hidden px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">0 selected</span>
+                        <h2 class="fluent-text-title2">Services Management</h2>
+                        <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
                     </div>
                     <div class="flex flex-col md:flex-row items-stretch md:items-center space-y-3 md:space-y-0 md:space-x-3">
                         <!-- Enhanced Search with Suggestions -->
@@ -156,7 +255,7 @@
                             <div id="searchSuggestions" class="hidden absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg mt-1 shadow-lg z-10"></div>
                         </div>
                         
-                        <!-- Smart Filters -->
+                        <!-- Smart Filters (keep existing) -->
                         <select id="statusFilter" onchange="applyFilters()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                             <option value="">All Status</option>
                             <option value="ready">Ready to Deploy</option>
@@ -176,11 +275,11 @@
                         <!-- Bulk Actions -->
                         <div class="flex space-x-2">
                             <button id="bulkDeployBtn" onclick="showBulkDeployModal()" 
-                                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                                    class="fluent-button fluent-button-primary disabled:opacity-50 disabled:cursor-not-allowed" 
                                     disabled>
-                                <i data-feather="upload" class="w-4 h-4 inline mr-2"></i>Deploy Selected
+                                <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy Selected
                             </button>
-                            <button onclick="clearAllFilters()" class="px-4 py-2 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                            <button onclick="clearAllFilters()" class="fluent-button fluent-button-subtle">
                                 Clear Filters
                             </button>
                         </div>
@@ -188,7 +287,7 @@
                 </div>
             </div>
 
-            <!-- Enhanced Table with Better UX -->
+            <!-- Enhanced Table with Better UX (keep all existing table functionality) -->
             <div class="overflow-x-auto">
                 <table class="min-w-full" id="servicesTable">
                     <thead class="bg-gray-50">

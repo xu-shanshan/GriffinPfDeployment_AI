@@ -1,4 +1,6 @@
 假设你是一个超级厉害的前端专家，精通 React 全家桶，但现在我们先要生成原型图，用 HTML 原型快速展示页面和交互逻辑。
+你是专业的交互师，你需要将交互逻辑更合理化。交互流程，UI 设计是否合理。
+你是专业的设计师，确定整个项目的 的视觉设计和用户体验。
 
 需求：
 1. 请仔细阅读以下功能需求（我会提供），总结出核心交互逻辑：
@@ -20,18 +22,18 @@
 
 4. 示例输出结构：
 /prototype_YYYYMMDDHHHMMSS/
-   ├── login.html
    ├── dashboard.html
    ├── project-list.html
    ├── project-detail.html
    ├── reports.html
+   |--- project_readme.md
 
 5. 输出示例 HTML：
-- login.html：表单 + 登录按钮，居中
 - dashboard.html：导航栏 + 统计卡片 + 项目入口
 - project-list.html：表格 + 筛选 + 分页 + 操作按钮
 - project-detail.html：卡片展示详情 + 编辑/删除按钮 + 弹窗
 - reports.html：图表 + 筛选条件
+- project_readme.md: 整个项目的设计风格，每个原型图的架构，交互逻辑
 
 请根据我提供的具体需求生成原型图，确保每个页面的布局和交互逻辑清晰，HTML 可直接在浏览器打开，并保持每个页面独立文件。
 
@@ -183,3 +185,5 @@ GriffinPfDeployment_AI is a deployment management tool for Virtual Environments 
 
 
 - 用户可以选择Favorite VE
+
+

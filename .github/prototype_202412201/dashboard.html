@@ -8,6 +8,64 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
     <link rel="stylesheet" href="./shared/dashboard.css">
+    <style>
+        :root { --app-header-height: 64px; --top-bar-bg: rgba(255,255,255,0.85); --top-bar-border: 1px solid rgba(0,0,0,0.06); }
+        .sidebar-header {
+            height: var(--app-header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        /* Removed card-like header, added web app top bar */
+        .top-bar {
+            height: var(--app-header-height);
+            display: flex;
+            align-items: center;
+            background: var(--top-bar-bg);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-bottom: var(--top-bar-border);
+        }
+        .top-bar .h-app-header {
+            height: var(--app-header-height);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+        }
+        :root {
+            --page-max-width: 1440px;
+            --page-gutter: 32px;
+            --gap-sm: 12px;
+            --gap-md: 20px;
+            --gap-lg: 32px;
+        }
+        .web-container {
+            max-width: var(--page-max-width);
+            margin: 0 auto;
+            padding: 0 var(--page-gutter);
+            width: 100%;
+        }
+        .content-area {
+            padding-top: var(--gap-lg);
+            padding-bottom: var(--gap-lg);
+        }
+        .stats-grid {
+            display: grid;
+            gap: var(--gap-md);
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        }
+        .favorites-grid-wrap {
+            display: grid;
+            gap: var(--gap-lg);
+            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            :root { --page-gutter: 20px; }
+            .favorites-grid-wrap { grid-template-columns: 1fr; }
+        }
+        .section-spacing { margin-bottom: var(--gap-lg); }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -61,9 +119,9 @@
     <!-- Main Content -->
     <main class="main-content" role="main">
         <!-- Header -->
-        <header class="fluent-card app-header" role="banner">
-            <div class="container mx-auto px-6">
-                <div class="flex justify-between items-center py-4">
+        <header class="top-bar" role="banner">
+            <div class="web-container"><!-- replaced container mx-auto px-6 -->
+                <div class="flex justify-between items-center h-app-header">
                     <div class="header-title">
                         <h1 class="text-lg font-semibold page-title">Dashboard</h1>
                         <p class="fluent-text-caption1">Virtual Environment Management</p>
@@ -78,21 +136,21 @@
             </div>
         </header>
 
-        <div class="container mx-auto px-6 py-8">
+        <div class="web-container content-area"><!-- replaced container mx-auto px-6 py-8 -->
             <!-- Welcome Section -->
-            <section class="welcome-section mb-8">
+            <section class="welcome-section section-spacing">
                 <h2 class="fluent-text-title1 mb-3">Good morning, John</h2>
                 <p class="fluent-text-body1">Here's what's happening with your virtual environments today.</p>
             </section>
 
             <!-- Stats Cards -->
-            <section class="stats-section mb-8" aria-label="System statistics">
-                <div id="statsCards" class="grid grid-cols-3 gap-6"></div>
+            <section class="stats-section section-spacing" aria-label="System statistics">
+                <div id="statsCards" class="stats-grid"></div><!-- replaced Tailwind grid classes -->
             </section>
 
             <!-- Favorites Grid -->
             <section class="favorites-grid">
-                <div class="grid grid-cols-2 gap-8">
+                <div class="favorites-grid-wrap"><!-- replaced grid grid-cols-2 gap-8 -->
                     <!-- Favorite VEs Section -->
                     <article class="favorites-card">
                         <header class="favorites-header">

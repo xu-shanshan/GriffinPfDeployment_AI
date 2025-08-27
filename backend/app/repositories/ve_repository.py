@@ -1,10 +1,13 @@
 from typing import Optional, Dict, Any, List
 import logging
 from app.models.ve import VEListResponse, VEDetailResponse, VEServicesResponse, VEItem, VEServiceItem
+from ..models.ve import VE, VEStats
+from ..core.mock_data import MOCK_DATA
+from .base_repository import BaseRepository
 
 logger = logging.getLogger(__name__)
 
-class VERepository:
+class VERepository(BaseRepository):
     """VE数据访问层"""
     
     def __init__(self):
@@ -170,42 +173,33 @@ class VERepository:
             ]
         }
     
-    async def get_all_ves(self) -> List[Dict[str, Any]]:
-        """获取所有VE数据"""
-        try:
-            logger.info("Repository层: 获取所有VE数据")
-            return self._mock_ves
-        except Exception as e:
-            logger.error(f"获取VE数据Repository层错误: {str(e)}")
-            raise
+    async def get_all_ves(self) -> List[VE]:
+        """获取所有VE"""
+        ves = []
+        for ve_data in MOCK_DATA["ves"]:
+            ve = VE(
+                name=ve_data["name"],
+                description=ve_data["description"],
+                ve_type=ve_data["ve_type"],
+                group=ve_data["group"],
+                stats=VEStats(**ve_data["stats"]),
+                is_favorite=ve_data["is_favorite"],
+                last_updated=ve_data["last_updated"]
+            )
+            ves.append(ve)
+        return ves
     
-    async def get_ve_by_name(self, ve_name: str) -> Optional[Dict[str, Any]]:
-        """根据VE名称获取VE数据"""
-        try:
-            logger.info(f"Repository层: 获取VE数据 - {ve_name}")
-            return next((ve for ve in self._mock_ves if ve["name"] == ve_name), None)
-        except Exception as e:
-            logger.error(f"获取VE数据Repository层错误: {str(e)}")
-            raise
+    async def get_ve_by_name(self, name: str) -> Optional[VE]:
+        """根据名称获取VE"""
+        all_ves = await self.get_all_ves()
+        for ve in all_ves:
+            if ve.name == name:
+                return ve
+        return None
     
-    async def get_ve_services(self, ve_name: str) -> List[Dict[str, Any]]:
-        """获取VE下的服务列表"""
-        try:
-            logger.info(f"Repository层: 获取VE服务列表 - {ve_name}")
-            return self._mock_services.get(ve_name, [])
-        except Exception as e:
-            logger.error(f"获取VE服务列表Repository层错误: {str(e)}")
-            raise
+    async def get_data(self):
+        return await self.get_all_ves()
     
-    async def get_favorite_ves(self) -> List[Dict[str, Any]]:
-        """获取收藏的VE列表"""
-        try:
-            logger.info("Repository层: 获取收藏VE列表")
-            return [ve for ve in self._mock_ves if ve.get("is_favorite", False)]
-        except Exception as e:
-            logger.error(f"获取收藏VE列表Repository层错误: {str(e)}")
-            raise
-
     async def fetch_list(self, search, ve_type, group, page, page_size) -> VEListResponse:
         items = []
         for ve in self._mock_ves.values():
@@ -229,6 +223,12 @@ class VERepository:
         ve = self._mock_ves.get(ve_name)
         if not ve:
             return VEServicesResponse(services=[])
+        services = [VEServiceItem(**s) for s in ve.get("services", [])]
+        if status:
+            services = [s for s in services if s.status == status]
+        return VEServicesResponse(services=services)
+        # config_filter 可按需实现
+        return VEServicesResponse(services=services)
         services = [VEServiceItem(**s) for s in ve.get("services", [])]
         if status:
             services = [s for s in services if s.status == status]

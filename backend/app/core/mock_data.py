@@ -14,6 +14,21 @@ MOCK_DATA = {
             },
             "is_favorite": True,
             "last_updated": "2024-12-20T14:00:00Z"
+        },
+        {
+            "name": "ModelBSov",
+            "description": "Model B sovereign virtual environment",
+            "ve_type": "B Type",
+            "group": "ModelBSovVEs",
+            "stats": {
+                "total_services": 65,
+                "deployed_services": 58,
+                "dragon_services": 65,
+                "pfgold_services": 62,
+                "ready_to_deploy": 7
+            },
+            "is_favorite": True,
+            "last_updated": "2024-12-20T08:00:00Z"
         }
     ],
     "services": {
@@ -34,35 +49,20 @@ MOCK_DATA = {
             }
         ]
     },
-    "deployment_history": []
+    "deployment_history": [
+        {
+            "id": "deploy-001",
+            "ve_name": "SovBase",
+            "service_names": ["OwaMailB2"],
+            "status": "success",
+            "started_at": "2024-12-20T10:30:00Z",
+            "completed_at": "2024-12-20T10:45:00Z",
+            "build_version": "20241220.5",
+            "deployed_by": "john.doe@example.com",
+            "duration": "15m"
+        }
+    ]
 }
-                "total_services": 1,
-                "deployed_services": 1,
-                "dragon_services": 1,
-                "pfgold_services": 1,
-                "ready_to_deploy": 0
-            },
-            "is_favorite": True,
-            "last_updated": "2024-12-20T14:00:00Z"
-        },
-        {
-            "name": "GraphConnectorsB2-SOV",
-            "description": "Graph Connectors B2 services",
-            "ve_type": "B2 Type",
-            "group": "ModelB2SovVEs",
-            "stats": {
-                "total_services": 1,
-                "deployed_services": 0,
-                "dragon_services": 1,
-                "pfgold_services": 0,
-                "ready_to_deploy": 1
-            },
-            "is_favorite": False,
-            "last_updated": "2024-12-20T10:00:00Z"
-        },
-        {
-            "name": "FlowControlB2-SOV",
-            "description": "Flow Control B2 services",
             "ve_type": "B2 Type",
             "group": "ModelB2SovVEs",
             "stats": {

@@ -13,14 +13,14 @@ class VEStats(BaseModel):
     pfgold_services: int
     ready_to_deploy: int
 
-class VEModel(BaseModel):
+class VE(BaseModel):
     name: str
-    description: str
-    ve_type: VEType
-    group: str
+    description: Optional[str]
+    ve_type: Optional[str]
+    group: Optional[str]
     stats: VEStats
-    is_favorite: Optional[bool] = False
-    last_updated: Optional[str] = None
+    is_favorite: bool
+    last_updated: str
 
 class ServiceModel(BaseModel):
     id: str
@@ -43,8 +43,8 @@ class VEItem(BaseModel):
     status: str
 
 class VEListResponse(BaseModel):
-    ves: List[VEItem]
-    total: int
+    items: List[VE]
+    total_count: int
 
 class VEDetailResponse(BaseModel):
     name: str

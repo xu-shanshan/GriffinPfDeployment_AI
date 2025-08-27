@@ -69,7 +69,22 @@ router = APIRouter(
     tags=["virtual-environments"]
 )
 
+ve_service = VEService()
+
 @router.get("/")
 async def list_ves():
     """获取VE列表"""
     return {"message": "VE list placeholder"}
+
+@router.get("/{ve_name}", response_model=VE)
+async def get_ve(ve_name: str):
+    """根据名称获取VE详情"""
+    ve = await ve_service.get_ve_by_name(ve_name)
+    if not ve:
+        raise HTTPException(status_code=404, detail="VE not found")
+    return ve
+
+@router.get("/favorites/list", response_model=list[VE])
+async def get_favorite_ves():
+    """获取收藏的VE列表"""
+    return await ve_service.get_favorite_ves()

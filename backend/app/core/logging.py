@@ -1,6 +1,5 @@
 import logging
 import sys
-from typing import Any
 
 # 配置日志格式
 logging.basicConfig(
@@ -11,6 +10,7 @@ logging.basicConfig(
     ]
 )
 
+logger = logging.getLogger("griffin_pf_ai")
 logger = logging.getLogger("griffin_pf_ai")
     logger.setLevel(getattr(logging, settings.log_level.upper()))
     

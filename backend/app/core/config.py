@@ -1,19 +1,16 @@
-import os
 from pydantic import BaseSettings
-from typing import List, Optional
+from typing import List
 
 class Settings(BaseSettings):
-    # 应用配置
+    # App基础配置
     app_name: str = "Griffin PF Deployment AI"
-    version: str = "1.0.0"
     description: str = "Griffin PF Deployment AI Backend API"
+    version: str = "1.0.0"
     debug: bool = True
     
     # 服务器配置
     host: str = "0.0.0.0"
     port: int = 8000
-    
-    # API配置
     api_prefix: str = "/api/v1"
     
     # CORS配置
@@ -23,6 +20,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     
     class Config:
+        env_file = ".env"
+
+settings = Settings()
         env_file = ".env"
         env_file_encoding = 'utf-8'
 

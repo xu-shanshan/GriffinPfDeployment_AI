@@ -14,15 +14,15 @@ class Pipeline(BaseModel):
 class Service(BaseModel):
     id: str
     name: str
-    description: str
+    description: Optional[str]
     status: str
     in_dragon: bool
     in_pfgold: bool
-    current_version: Optional[str] = None
-    pipeline: Optional[str] = None
-    pipeline_version: Optional[str] = None
-    icon: str
-    icon_color: str
+    current_version: Optional[str]
+    pipeline: Optional[str]
+    pipeline_version: Optional[str]
+    icon: Optional[str]
+    icon_color: Optional[str]
     ready_to_deploy: bool
 
 class ServiceDetail(BaseModel):
@@ -42,7 +42,9 @@ class ServiceDetailResponse(BaseModel):
     data: ServiceDetail
 
 class ServiceListResponse(BaseModel):
-    services: List[Service]
+    items: List[Service]
+    ve_name: str
+    total_count: int
 
 class ConfigUpdateRequest(BaseModel):
     config: dict

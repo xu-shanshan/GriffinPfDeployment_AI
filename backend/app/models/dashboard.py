@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import List
+from .ve import VE
 
 class FavoriteVEStats(BaseModel):
     total_services: int
@@ -17,4 +18,4 @@ class DashboardStats(BaseModel):
     active_services: int
     recent_deployments: int
     success_rate: float
-    favorite_ves: List[FavoriteVE]
+    favorite_ves: List[VE]

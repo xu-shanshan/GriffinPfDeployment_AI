@@ -276,3 +276,35 @@ class VEService:
             "SignalPatchService": "Signal Patch Service"
         }
         return descriptions.get(service_name, f"{service_name} service")
+from typing import List, Optional
+from ..models.ve import VE, VEListResponse
+from ..repositories.ve_repository import VERepository
+import logging
+
+logger = logging.getLogger(__name__)
+
+class VEService:
+    """VE业务逻辑服务"""
+    
+    def __init__(self, repository: VERepository = None):
+        self.repository = repository or VERepository()
+    
+    async def get_all_ves(self) -> VEListResponse:
+        """获取所有VE列表"""
+        logger.info("获取VE列表")
+        ves = await self.repository.get_all_ves()
+        return VEListResponse(
+            items=ves,
+            total_count=len(ves)
+        )
+    
+    async def get_ve_by_name(self, name: str) -> Optional[VE]:
+        """根据名称获取VE"""
+        logger.info(f"获取VE: {name}")
+        return await self.repository.get_ve_by_name(name)
+    
+    async def get_favorite_ves(self) -> List[VE]:
+        """获取收藏的VE"""
+        logger.info("获取收藏VE列表")
+        all_ves = await self.repository.get_all_ves()
+        return [ve for ve in all_ves if ve.is_favorite]

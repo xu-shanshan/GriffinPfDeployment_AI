@@ -36,25 +36,765 @@ MSW (Mock Service Worker) for API mocking
 ## Project Structure
 
 ```
-frontend/src/
-├── components/           # Reusable UI components
-│   ├── ui/              # Basic UI elements (buttons, inputs, modals)
-│   ├── layout/          # Layout components (sidebar, header, navigation)
-│   ├── data/            # Data display components (tables, cards, charts)
-│   └── forms/           # Form components with validation
-├── pages/               # Route components
-│   ├── dashboard/       # Dashboard page
-│   ├── ve-management/   # VE management pages
-│   ├── services/        # Service management pages
-│   └── deployment/      # Deployment and history pages
-├── hooks/               # Custom React hooks
-├── services/            # API service layer
-├── stores/              # Zustand stores
-├── types/               # TypeScript type definitions
-├── utils/               # Utility functions
-├── constants/           # Application constants
-└── assets/              # Static assets
+griffin-pf-frontend/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── manifest.json
+├── src/
+│   ├── components/           # Reusable UI components
+│   │   ├── ui/              # Basic UI elements
+│   │   │   ├── Button/
+│   │   │   │   ├── Button.tsx
+│   │   │   │   ├── Button.types.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── Input/
+│   │   │   ├── Modal/
+│   │   │   ├── Card/
+│   │   │   ├── Table/
+│   │   │   └── index.ts
+│   │   ├── layout/          # Layout components
+│   │   │   ├── AppLayout/
+│   │   │   │   ├── AppLayout.tsx
+│   │   │   │   ├── AppLayout.module.css
+│   │   │   │   └── index.ts
+│   │   │   ├── NavigationSidebar/
+│   │   │   ├── AppHeader/
+│   │   │   ├── Breadcrumb/
+│   │   │   └── index.ts
+│   │   ├── data/            # Data display components
+│   │   │   ├── ServiceCard/
+│   │   │   ├── VECard/
+│   │   │   ├── DeploymentCard/
+│   │   │   ├── DataTable/
+│   │   │   ├── StatusBadge/
+│   │   │   └── index.ts
+│   │   ├── forms/           # Form components with validation
+│   │   │   ├── SearchAndFilter/
+│   │   │   ├── ServiceForm/
+│   │   │   ├── DeploymentForm/
+│   │   │   └── index.ts
+│   │   └── common/          # Common components
+│   │       ├── LoadingState/
+│   │       ├── ErrorBoundary/
+│   │       ├── EmptyState/
+│   │       └── index.ts
+│   ├── pages/               # Route components
+│   │   ├── Dashboard/
+│   │   │   ├── Dashboard.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── DashboardStats/
+│   │   │   │   ├── RecentDeployments/
+│   │   │   │   └── QuickActions/
+│   │   │   └── index.ts
+│   │   ├── VEManagement/
+│   │   │   ├── VEManagementPage.tsx
+│   │   │   ├── VEDetailPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── VEList/
+│   │   │   │   ├── VEServiceGrid/
+│   │   │   │   └── VEMetrics/
+│   │   │   └── index.ts
+│   │   ├── Services/
+│   │   │   ├── ServicesManagementPage.tsx
+│   │   │   ├── ServiceDetailPage.tsx
+│   │   │   ├── components/
+│   │   │   │   ├── ServiceList/
+│   │   │   │   ├── ServiceConfig/
+│   │   │   │   └── ServiceHistory/
+│   │   │   └── index.ts
+│   │   └── Deployment/
+│   │       ├── DeploymentHistoryPage.tsx
+│   │       ├── DeploymentDetailPage.tsx
+│   │       ├── components/
+│   │       │   ├── DeploymentList/
+│   │       │   ├── DeploymentProgress/
+│   │       │   └── DeploymentLogs/
+│   │       └── index.ts
+│   ├── hooks/               # Custom React hooks
+│   │   ├── useSidebar.ts
+│   │   ├── useFavorites.ts
+│   │   ├── useDeployment.ts
+│   │   ├── useLocalStorage.ts
+│   │   ├── useDebounce.ts
+│   │   └── index.ts
+│   ├── services/            # API service layer
+│   │   ├── api/
+│   │   │   ├── client.ts           # API client configuration
+│   │   │   ├── types.ts            # API response types
+│   │   │   ├── endpoints.ts        # API endpoints
+│   │   │   └── mockClient.ts       # Mock API client
+│   │   ├── queries/
+│   │   │   ├── veQueries.ts        # Virtual Environment queries
+│   │   │   ├── serviceQueries.ts   # Service queries
+│   │   │   ├── deploymentQueries.ts # Deployment queries
+│   │   │   └── index.ts
+│   │   └── index.ts
+│   ├── stores/              # Zustand stores
+│   │   ├── appStore.ts             # Global app state
+│   │   ├── deploymentStore.ts      # Deployment state
+│   │   ├── userPreferencesStore.ts # User preferences
+│   │   └── index.ts
+│   ├── types/               # TypeScript type definitions
+│   │   ├── api.ts                  # API types
+│   │   ├── common.ts               # Common types
+│   │   ├── ve.ts                   # Virtual Environment types
+│   │   ├── service.ts              # Service types
+│   │   ├── deployment.ts           # Deployment types
+│   │   └── index.ts
+│   ├── utils/               # Utility functions
+│   │   ├── formatters.ts           # Data formatters
+│   │   ├── validators.ts           # Form validators
+│   │   ├── constants.ts            # App constants
+│   │   ├── helpers.ts              # Helper functions
+│   │   └── index.ts
+│   ├── styles/              # Global styles
+│   │   ├── globals.css
+│   │   ├── variables.css
+│   │   └── components.css
+│   ├── assets/              # Static assets
+│   │   ├── images/
+│   │   ├── icons/
+│   │   └── fonts/
+│   ├── __tests__/           # Test files
+│   │   ├── components/
+│   │   ├── hooks/
+│   │   ├── utils/
+│   │   └── setup.ts
+│   ├── App.tsx
+│   ├── App.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── .env.example
+├── .env.development
+├── .gitignore
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+├── tailwind.config.js
+├── eslint.config.js
+├── prettier.config.js
+└── README.md
 ```
+
+## Mock API Client
+
+Since we're starting with frontend development first, here's a comprehensive mock API client that simulates the backend functionality:
+
+### Mock Data Structures
+
+```typescript
+// Mock data for development and testing
+export const mockVirtualEnvironments: VirtualEnvironment[] = [
+  {
+    id: 've-001',
+    name: 'Development Environment',
+    description: 'Primary development environment for testing',
+    status: 'active',
+    region: 'us-east-1',
+    provider: 'aws',
+    createdAt: '2024-01-15T10:00:00Z',
+    updatedAt: '2024-12-20T14:30:00Z',
+    resources: {
+      cpu: { allocated: 16, used: 8 },
+      memory: { allocated: 32, used: 18 },
+      storage: { allocated: 500, used: 245 }
+    },
+    serviceCount: 12,
+    tags: ['development', 'primary']
+  },
+  {
+    id: 've-002',
+    name: 'Staging Environment',
+    description: 'Pre-production staging environment',
+    status: 'active',
+    region: 'us-west-2',
+    provider: 'aws',
+    createdAt: '2024-02-01T09:15:00Z',
+    updatedAt: '2024-12-19T16:45:00Z',
+    resources: {
+      cpu: { allocated: 24, used: 15 },
+      memory: { allocated: 48, used: 32 },
+      storage: { allocated: 1000, used: 678 }
+    },
+    serviceCount: 8,
+    tags: ['staging', 'pre-production']
+  },
+  {
+    id: 've-003',
+    name: 'Production Environment',
+    description: 'Live production environment',
+    status: 'active',
+    region: 'eu-west-1',
+    provider: 'azure',
+    createdAt: '2024-01-10T08:00:00Z',
+    updatedAt: '2024-12-21T10:15:00Z',
+    resources: {
+      cpu: { allocated: 64, used: 48 },
+      memory: { allocated: 128, used: 89 },
+      storage: { allocated: 2000, used: 1234 }
+    },
+    serviceCount: 15,
+    tags: ['production', 'critical']
+  }
+];
+
+export const mockServices: Service[] = [
+  {
+    id: 'svc-001',
+    name: 'User Authentication Service',
+    description: 'Handles user authentication and authorization',
+    version: '2.1.4',
+    status: 'running',
+    veId: 've-001',
+    type: 'microservice',
+    port: 8080,
+    healthEndpoint: '/health',
+    replicas: { desired: 3, running: 3 },
+    resources: {
+      cpu: '500m',
+      memory: '1Gi',
+      storage: '10Gi'
+    },
+    dependencies: ['svc-004', 'svc-007'],
+    lastDeployment: {
+      id: 'dep-001',
+      timestamp: '2024-12-20T09:30:00Z',
+      status: 'success',
+      duration: 180
+    },
+    metrics: {
+      uptime: '99.98%',
+      responseTime: 45,
+      requestsPerSecond: 1234,
+      errorRate: 0.02
+    },
+    tags: ['auth', 'security', 'critical']
+  },
+  {
+    id: 'svc-002',
+    name: 'API Gateway',
+    description: 'Main API gateway for routing requests',
+    version: '1.8.2',
+    status: 'running',
+    veId: 've-001',
+    type: 'gateway',
+    port: 80,
+    healthEndpoint: '/api/health',
+    replicas: { desired: 2, running: 2 },
+    resources: {
+      cpu: '1000m',
+      memory: '2Gi',
+      storage: '5Gi'
+    },
+    dependencies: [],
+    lastDeployment: {
+      id: 'dep-002',
+      timestamp: '2024-12-19T14:15:00Z',
+      status: 'success',
+      duration: 120
+    },
+    metrics: {
+      uptime: '99.95%',
+      responseTime: 25,
+      requestsPerSecond: 5678,
+      errorRate: 0.05
+    },
+    tags: ['gateway', 'routing', 'critical']
+  },
+  {
+    id: 'svc-003',
+    name: 'Data Processing Service',
+    description: 'Processes and transforms data streams',
+    version: '3.2.1',
+    status: 'deploying',
+    veId: 've-002',
+    type: 'processor',
+    port: 8090,
+    healthEndpoint: '/status',
+    replicas: { desired: 5, running: 3 },
+    resources: {
+      cpu: '2000m',
+      memory: '4Gi',
+      storage: '50Gi'
+    },
+    dependencies: ['svc-006'],
+    lastDeployment: {
+      id: 'dep-003',
+      timestamp: '2024-12-21T11:00:00Z',
+      status: 'in-progress',
+      duration: null
+    },
+    metrics: {
+      uptime: '99.92%',
+      responseTime: 150,
+      requestsPerSecond: 892,
+      errorRate: 0.08
+    },
+    tags: ['processing', 'data', 'batch']
+  }
+];
+
+export const mockDeploymentHistory: DeploymentHistory[] = [
+  {
+    id: 'dep-001',
+    services: ['svc-001'],
+    veId: 've-001',
+    status: 'success',
+    startTime: '2024-12-20T09:30:00Z',
+    endTime: '2024-12-20T09:33:00Z',
+    duration: 180,
+    triggeredBy: 'john.doe@company.com',
+    type: 'update',
+    config: {
+      strategy: 'rolling',
+      healthCheckTimeout: 300,
+      rollbackOnFailure: true
+    },
+    logs: [
+      { timestamp: '2024-12-20T09:30:15Z', level: 'info', message: 'Starting deployment for User Authentication Service' },
+      { timestamp: '2024-12-20T09:31:00Z', level: 'info', message: 'Pulling container image: auth-service:2.1.4' },
+      { timestamp: '2024-12-20T09:31:30Z', level: 'info', message: 'Rolling update started - 1/3 replicas' },
+      { timestamp: '2024-12-20T09:32:15Z', level: 'info', message: 'Health check passed for replica 1' },
+      { timestamp: '2024-12-20T09:32:45Z', level: 'info', message: 'Rolling update completed - 3/3 replicas' },
+      { timestamp: '2024-12-20T09:33:00Z', level: 'success', message: 'Deployment completed successfully' }
+    ]
+  },
+  {
+    id: 'dep-002',
+    services: ['svc-002', 'svc-004'],
+    veId: 've-001',
+    status: 'success',
+    startTime: '2024-12-19T14:15:00Z',
+    endTime: '2024-12-19T14:17:00Z',
+    duration: 120,
+    triggeredBy: 'jane.smith@company.com',
+    type: 'update',
+    config: {
+      strategy: 'blue-green',
+      healthCheckTimeout: 180,
+      rollbackOnFailure: true
+    },
+    logs: []
+  },
+  {
+    id: 'dep-003',
+    services: ['svc-003'],
+    veId: 've-002',
+    status: 'in-progress',
+    startTime: '2024-12-21T11:00:00Z',
+    endTime: null,
+    duration: null,
+    triggeredBy: 'auto-deploy',
+    type: 'update',
+    config: {
+      strategy: 'rolling',
+      healthCheckTimeout: 300,
+      rollbackOnFailure: true
+    },
+    logs: [
+      { timestamp: '2024-12-21T11:00:05Z', level: 'info', message: 'Starting deployment for Data Processing Service' },
+      { timestamp: '2024-12-21T11:00:30Z', level: 'info', message: 'Pulling container image: data-processor:3.2.1' },
+      { timestamp: '2024-12-21T11:01:15Z', level: 'info', message: 'Rolling update started - 1/5 replicas' }
+    ]
+  }
+];
+```
+
+### Mock API Client Implementation
+
+```typescript
+// services/api/mockClient.ts
+import { 
+  VirtualEnvironment, 
+  Service, 
+  DeploymentHistory, 
+  DeploymentRequest,
+  DeploymentJob,
+  ServiceConfig,
+  HistoryFilters 
+} from '@/types';
+
+class MockGriffinApiClient {
+  private delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  
+  // Simulate network latency
+  private async simulateNetworkDelay() {
+    const delay = Math.random() * 1000 + 200; // 200-1200ms
+    await this.delay(delay);
+  }
+  
+  // Simulate occasional errors for testing
+  private shouldSimulateError(errorRate = 0.05): boolean {
+    return Math.random() < errorRate;
+  }
+  
+  // Virtual Environments API
+  async getVirtualEnvironments(): Promise<VirtualEnvironment[]> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError()) {
+      throw new Error('Failed to fetch virtual environments');
+    }
+    
+    return [...mockVirtualEnvironments];
+  }
+  
+  async getVirtualEnvironment(veId: string): Promise<VirtualEnvironment> {
+    await this.simulateNetworkDelay();
+    
+    const ve = mockVirtualEnvironments.find(v => v.id === veId);
+    if (!ve) {
+      throw new Error(`Virtual environment ${veId} not found`);
+    }
+    
+    return { ...ve };
+  }
+  
+  async getVEServices(veId: string): Promise<Service[]> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError()) {
+      throw new Error(`Failed to fetch services for VE ${veId}`);
+    }
+    
+    return mockServices.filter(service => service.veId === veId);
+  }
+  
+  // Services API
+  async getServices(filters?: { veId?: string; status?: string; search?: string }): Promise<Service[]> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError()) {
+      throw new Error('Failed to fetch services');
+    }
+    
+    let filteredServices = [...mockServices];
+    
+    if (filters?.veId) {
+      filteredServices = filteredServices.filter(s => s.veId === filters.veId);
+    }
+    
+    if (filters?.status) {
+      filteredServices = filteredServices.filter(s => s.status === filters.status);
+    }
+    
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
+      filteredServices = filteredServices.filter(s => 
+        s.name.toLowerCase().includes(searchLower) ||
+        s.description.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    return filteredServices;
+  }
+  
+  async getService(serviceId: string): Promise<Service> {
+    await this.simulateNetworkDelay();
+    
+    const service = mockServices.find(s => s.id === serviceId);
+    if (!service) {
+      throw new Error(`Service ${serviceId} not found`);
+    }
+    
+    return { ...service };
+  }
+  
+  async updateServiceConfig(serviceId: string, config: Partial<ServiceConfig>): Promise<Service> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError(0.1)) {
+      throw new Error(`Failed to update configuration for service ${serviceId}`);
+    }
+    
+    const serviceIndex = mockServices.findIndex(s => s.id === serviceId);
+    if (serviceIndex === -1) {
+      throw new Error(`Service ${serviceId} not found`);
+    }
+    
+    // Simulate configuration update
+    const updatedService = {
+      ...mockServices[serviceIndex],
+      ...config,
+      updatedAt: new Date().toISOString()
+    };
+    
+    mockServices[serviceIndex] = updatedService;
+    return { ...updatedService };
+  }
+  
+  async restartService(serviceId: string): Promise<Service> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError(0.05)) {
+      throw new Error(`Failed to restart service ${serviceId}`);
+    }
+    
+    const serviceIndex = mockServices.findIndex(s => s.id === serviceId);
+    if (serviceIndex === -1) {
+      throw new Error(`Service ${serviceId} not found`);
+    }
+    
+    // Simulate service restart
+    mockServices[serviceIndex] = {
+      ...mockServices[serviceIndex],
+      status: 'restarting',
+      updatedAt: new Date().toISOString()
+    };
+    
+    // Simulate restart completion after delay
+    setTimeout(() => {
+      if (mockServices[serviceIndex]) {
+        mockServices[serviceIndex].status = 'running';
+      }
+    }, 5000);
+    
+    return { ...mockServices[serviceIndex] };
+  }
+  
+  // Deployments API
+  async startDeployment(deployment: DeploymentRequest): Promise<DeploymentJob> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError(0.08)) {
+      throw new Error('Failed to start deployment');
+    }
+    
+    const deploymentJob: DeploymentJob = {
+      id: `dep-${Date.now()}`,
+      services: deployment.services,
+      veId: deployment.veId,
+      status: 'queued',
+      startTime: new Date().toISOString(),
+      endTime: null,
+      duration: null,
+      triggeredBy: deployment.triggeredBy || 'unknown',
+      type: deployment.type || 'update',
+      config: deployment.config,
+      logs: [
+        {
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: `Deployment queued for ${deployment.services.length} service(s)`
+        }
+      ]
+    };
+    
+    // Add to mock deployment history
+    mockDeploymentHistory.unshift(deploymentJob);
+    
+    // Simulate deployment progress
+    this.simulateDeploymentProgress(deploymentJob);
+    
+    return deploymentJob;
+  }
+  
+  private async simulateDeploymentProgress(job: DeploymentJob) {
+    // Update to in-progress
+    setTimeout(() => {
+      job.status = 'in-progress';
+      job.logs.push({
+        timestamp: new Date().toISOString(),
+        level: 'info',
+        message: 'Deployment started'
+      });
+    }, 2000);
+    
+    // Simulate completion
+    const duration = Math.random() * 300000 + 60000; // 1-6 minutes
+    setTimeout(() => {
+      job.status = Math.random() > 0.1 ? 'success' : 'failed';
+      job.endTime = new Date().toISOString();
+      job.duration = Math.floor(duration / 1000);
+      job.logs.push({
+        timestamp: new Date().toISOString(),
+        level: job.status === 'success' ? 'success' : 'error',
+        message: job.status === 'success' ? 'Deployment completed successfully' : 'Deployment failed'
+      });
+      
+      // Update service statuses
+      if (job.status === 'success') {
+        job.services.forEach(serviceId => {
+          const service = mockServices.find(s => s.id === serviceId);
+          if (service) {
+            service.status = 'running';
+            service.lastDeployment = {
+              id: job.id,
+              timestamp: job.endTime!,
+              status: 'success',
+              duration: job.duration!
+            };
+          }
+        });
+      }
+    }, duration);
+  }
+  
+  async cancelDeployment(jobId: string): Promise<void> {
+    await this.simulateNetworkDelay();
+    
+    const deployment = mockDeploymentHistory.find(d => d.id === jobId);
+    if (!deployment) {
+      throw new Error(`Deployment ${jobId} not found`);
+    }
+    
+    if (deployment.status !== 'in-progress' && deployment.status !== 'queued') {
+      throw new Error(`Cannot cancel deployment with status: ${deployment.status}`);
+    }
+    
+    deployment.status = 'cancelled';
+    deployment.endTime = new Date().toISOString();
+    deployment.logs.push({
+      timestamp: new Date().toISOString(),
+      level: 'warning',
+      message: 'Deployment cancelled by user'
+    });
+  }
+  
+  async getDeploymentHistory(filters?: HistoryFilters): Promise<DeploymentHistory[]> {
+    await this.simulateNetworkDelay();
+    
+    if (this.shouldSimulateError()) {
+      throw new Error('Failed to fetch deployment history');
+    }
+    
+    let filteredHistory = [...mockDeploymentHistory];
+    
+    if (filters?.veId) {
+      filteredHistory = filteredHistory.filter(d => d.veId === filters.veId);
+    }
+    
+    if (filters?.status) {
+      filteredHistory = filteredHistory.filter(d => d.status === filters.status);
+    }
+    
+    if (filters?.serviceId) {
+      filteredHistory = filteredHistory.filter(d => 
+        d.services.includes(filters.serviceId!)
+      );
+    }
+    
+    if (filters?.startDate) {
+      filteredHistory = filteredHistory.filter(d => 
+        new Date(d.startTime) >= new Date(filters.startDate!)
+      );
+    }
+    
+    if (filters?.endDate) {
+      filteredHistory = filteredHistory.filter(d => 
+        new Date(d.startTime) <= new Date(filters.endDate!)
+      );
+    }
+    
+    // Sort by start time (newest first)
+    return filteredHistory.sort((a, b) => 
+      new Date(b.startTime).getTime() - new Date(a.startTime).getTime()
+    );
+  }
+  
+  async getDeploymentLogs(deploymentId: string): Promise<LogEntry[]> {
+    await this.simulateNetworkDelay();
+    
+    const deployment = mockDeploymentHistory.find(d => d.id === deploymentId);
+    if (!deployment) {
+      throw new Error(`Deployment ${deploymentId} not found`);
+    }
+    
+    return [...deployment.logs];
+  }
+  
+  // Dashboard API
+  async getDashboardStats(): Promise<{
+    totalVEs: number;
+    totalServices: number;
+    activeDeployments: number;
+    successRate: number;
+  }> {
+    await this.simulateNetworkDelay();
+    
+    const activeDeployments = mockDeploymentHistory.filter(d => 
+      d.status === 'in-progress' || d.status === 'queued'
+    ).length;
+    
+    const recentDeployments = mockDeploymentHistory.filter(d => {
+      const dayAgo = new Date();
+      dayAgo.setDate(dayAgo.getDate() - 1);
+      return new Date(d.startTime) >= dayAgo;
+    });
+    
+    const successfulDeployments = recentDeployments.filter(d => d.status === 'success').length;
+    const successRate = recentDeployments.length > 0 
+      ? (successfulDeployments / recentDeployments.length) * 100 
+      : 100;
+    
+    return {
+      totalVEs: mockVirtualEnvironments.length,
+      totalServices: mockServices.length,
+      activeDeployments,
+      successRate: Math.round(successRate * 100) / 100
+    };
+  }
+  
+  // Real-time updates simulation
+  subscribeToDeploymentUpdates(callback: (update: DeploymentJob) => void): () => void {
+    const interval = setInterval(() => {
+      const activeDeployments = mockDeploymentHistory.filter(d => 
+        d.status === 'in-progress' || d.status === 'queued'
+      );
+      
+      if (activeDeployments.length > 0) {
+        const randomDeployment = activeDeployments[
+          Math.floor(Math.random() * activeDeployments.length)
+        ];
+        
+        // Add a random log entry
+        randomDeployment.logs.push({
+          timestamp: new Date().toISOString(),
+          level: 'info',
+          message: `Processing step ${randomDeployment.logs.length}...`
+        });
+        
+        callback(randomDeployment);
+      }
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }
+}
+
+export const mockApiClient = new MockGriffinApiClient();
+export default mockApiClient;
+```
+
+### Mock API Integration
+
+```typescript
+// services/api/client.ts - Development/Production API client selector
+import mockApiClient from './mockClient';
+import { ProductionApiClient } from './productionClient'; // Future implementation
+
+const isDevelopment = import.meta.env.DEV;
+const useMockApi = import.meta.env.VITE_USE_MOCK_API === 'true';
+
+export const apiClient = (isDevelopment || useMockApi) 
+  ? mockApiClient 
+  : new ProductionApiClient();
+
+export default apiClient;
+```
+
+This comprehensive mock API client provides:
+
+1. **Realistic Data**: Mock data that represents real-world scenarios
+2. **Network Simulation**: Random delays and error simulation
+3. **State Management**: Maintains state across API calls
+4. **Real-time Updates**: Simulates WebSocket-style updates
+5. **Error Handling**: Various error scenarios for testing
+6. **Filtering & Search**: Complete query parameter support
+7. **Progressive Enhancement**: Easy switch to real API when ready
+
+The mock client allows complete frontend development without backend dependencies while providing realistic behavior for testing and demonstration purposes.
 
 ## Component Architecture
 

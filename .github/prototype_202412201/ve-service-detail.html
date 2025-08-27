@@ -313,6 +313,10 @@
                 <i data-feather="server" class="fluent-icon mr-3"></i>
                 VE Management
             </a>
+            <a href="services-management.html" class="sidebar-nav-item">
+                <i data-feather="layers" class="fluent-icon mr-3"></i>
+                Services Management
+            </a>
             <a href="deployment-history.html" class="sidebar-nav-item">
                 <i data-feather="clock" class="fluent-icon mr-3"></i>
                 History
@@ -356,7 +360,7 @@
                         </button>
                         <div class="flex items-center space-x-3">
                             <div>
-                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">OwaMailB2 - Service Detail</h1>
+                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">OwaMailB2 - VE Service Detail</h1>
                                 <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
                             </div>
                         </div>
@@ -992,6 +996,20 @@
                     if (window.innerWidth >= 1024) {
                         const sidebar = document.getElementById('sidebar');
                         sidebar.classList.add('open');
+                    }
+                });
+                
+                // Handle window resize
+                window.addEventListener('resize', function() {
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('sidebarOverlay');
+                    
+                    if (window.innerWidth >= 1024) {
+                        sidebar.classList.add('open');
+                        overlay.classList.remove('show');
+                    } else {
+                        sidebar.classList.remove('open');
+                        overlay.classList.remove('show');
                     }
                 });
             </script>

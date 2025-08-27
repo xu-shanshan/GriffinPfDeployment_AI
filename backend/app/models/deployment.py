@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 class DeploymentItem(BaseModel):
     id: str
@@ -13,7 +13,7 @@ class DeploymentItem(BaseModel):
     duration: Optional[str] = None
 
 class DeploymentHistoryResponse(BaseModel):
-    items: List[DeploymentItem]
+    items: List['DeploymentItem']
     total_count: int
     page: int
     page_size: int

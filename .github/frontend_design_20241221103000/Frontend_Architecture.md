@@ -36,7 +36,7 @@ MSW (Mock Service Worker) for API mocking
 ## Project Structure
 
 ```
-src/
+frontend/src/
 ├── components/           # Reusable UI components
 │   ├── ui/              # Basic UI elements (buttons, inputs, modals)
 │   ├── layout/          # Layout components (sidebar, header, navigation)

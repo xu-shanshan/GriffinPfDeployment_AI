@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="./shared/fluent-ui.css">
     <link rel="stylesheet" href="./shared/dashboard.css"><!-- added shared styles -->
 </head>
-<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
+<body>
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -46,18 +46,7 @@
         
         <div class="sidebar-section">
             <div class="sidebar-section-title">Quick Access</div>
-            <a href="ve-detail.html?ve=SovBase" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                SovBase
-            </a>
-            <a href="ve-detail.html?ve=ModelBSov" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                ModelBSov
-            </a>
-            <a href="ve-detail.html?ve=OwaMailB2-SOV" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                OwaMailB2-SOV
-            </a>
+            <div id="sidebarFavorites"></div><!-- replaced static links -->
         </div>
         
         <div class="sidebar-section">
@@ -191,6 +180,12 @@
               favorite: false }
         ];
 
+        const favoriteVEs = [
+            { name:'SovBase', query:'SovBase' },
+            { name:'ModelBSov', query:'ModelBSov' },
+            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
+        ];
+
         function serviceStatusBadge(s) {
             if (s.statusClass === 'success') return `<span class="fluent-badge fluent-badge-success">${s.status}</span>`;
             if (s.statusClass === 'neutral') return `<span class="fluent-badge fluent-badge-neutral">${s.status}</span>`;
@@ -252,6 +247,19 @@
             if (window.feather) feather.replace();
         }
 
+        function renderSidebarFavorites() {
+            const wrap = document.getElementById('sidebarFavorites');
+            if (!wrap) return;
+            wrap.innerHTML = '';
+            favoriteVEs.forEach(v => {
+                const a = document.createElement('a');
+                a.href = `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
+                a.className = 'sidebar-nav-item';
+                a.innerHTML = `<i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}`;
+                wrap.appendChild(a);
+            });
+        }
+
         function performSearch() {
             const term = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!term) return renderServices();
@@ -274,8 +282,9 @@
             btn.classList.toggle('active');
         }
 
-        feather.replace();
         renderServices();
+        renderSidebarFavorites(); // added
+        feather.replace(); // after sidebar + services render
     </script>
 </body>
 </html>

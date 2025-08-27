@@ -64,7 +64,7 @@ export const Dashboard: React.FC = () => {
   };
 
   const handleVEClick = (veId: string) => {
-    navigate(`/virtual-environments/${veId}`);
+    navigate(`/ves/${veId}`);
   };
 
   const handleServiceClick = (serviceId: string) => {
@@ -92,7 +92,7 @@ export const Dashboard: React.FC = () => {
       }}>
         <Card 
           style={{ padding: '24px', backgroundColor: 'white', cursor: 'pointer' }}
-          onClick={() => handleCardClick('/virtual-environments')}
+          onClick={() => handleCardClick('/ves')}
         >
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
             <DatabaseRegular style={{ fontSize: '24px', color: '#0078d4', marginRight: '12px' }} />
@@ -182,7 +182,7 @@ export const Dashboard: React.FC = () => {
                 <Subtitle1>⭐ Favorite Virtual Environments</Subtitle1>
                 <Button 
                   appearance="subtle"
-                  onClick={() => handleCardClick('/virtual-environments')}
+                  onClick={() => handleCardClick('/ves')}
                 >
                   View All
                 </Button>

@@ -7,38 +7,39 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
+    <link rel="stylesheet" href="./assets/css/dashboard.css">
 </head>
 <body>
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" role="navigation" aria-label="Main navigation">
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
-                    <i data-feather="layers" class="fluent-icon text-white"></i>
+                <div class="brand-icon">
+                    <i data-feather="layers" class="fluent-icon text-white" aria-hidden="true"></i>
                 </div>
-                <div>
-                    <h1 class="text-sm font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF AI</h1>
-                    <p style="font-size: 10px; color: var(--colorNeutralForeground3);">Deployment Platform</p>
+                <div class="brand-text">
+                    <h1 class="text-sm font-semibold brand-title">Griffin PF AI</h1>
+                    <p class="brand-subtitle">Deployment Platform</p>
                 </div>
             </div>
         </div>
         
         <nav class="sidebar-section">
             <div class="sidebar-section-title">Main Navigation</div>
-            <a href="dashboard.html" class="sidebar-nav-item active">
-                <i data-feather="home" class="fluent-icon mr-3"></i>
+            <a href="dashboard.html" class="sidebar-nav-item active" aria-current="page">
+                <i data-feather="home" class="fluent-icon mr-3" aria-hidden="true"></i>
                 Dashboard
             </a>
             <a href="ve-management.html" class="sidebar-nav-item">
-                <i data-feather="server" class="fluent-icon mr-3"></i>
+                <i data-feather="server" class="fluent-icon mr-3" aria-hidden="true"></i>
                 VE Management
             </a>
             <a href="services-management.html" class="sidebar-nav-item">
-                <i data-feather="layers" class="fluent-icon mr-3"></i>
+                <i data-feather="layers" class="fluent-icon mr-3" aria-hidden="true"></i>
                 Services Management
             </a>
             <a href="deployment-history.html" class="sidebar-nav-item">
-                <i data-feather="clock" class="fluent-icon mr-3"></i>
+                <i data-feather="clock" class="fluent-icon mr-3" aria-hidden="true"></i>
                 History
             </a>
         </nav>
@@ -46,15 +47,15 @@
         <div class="sidebar-section">
             <div class="sidebar-section-title">Quick Access</div>
             <a href="ve-detail.html?ve=SovBase" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
+                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>
                 SovBase
             </a>
             <a href="ve-detail.html?ve=ModelBSov" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
+                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>
                 ModelBSov
             </a>
             <a href="ve-detail.html?ve=OwaMailB2-SOV" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
+                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>
                 OwaMailB2-SOV
             </a>
         </div>
@@ -62,258 +63,228 @@
         <div class="sidebar-section">
             <div class="sidebar-section-title">Account</div>
             <a href="login.html" class="sidebar-nav-item">
-                <i data-feather="log-out" class="fluent-icon mr-3"></i>
+                <i data-feather="log-out" class="fluent-icon mr-3" aria-hidden="true"></i>
                 Logout
             </a>
         </div>
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content">
-        <!-- Fluent Navigation -->
-        <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
+    <main class="main-content" role="main">
+        <!-- Header -->
+        <header class="fluent-card app-header" role="banner">
             <div class="container mx-auto px-6">
                 <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div>
-                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Dashboard</h1>
-                                <p class="fluent-text-caption1">Virtual Environment Management</p>
-                            </div>
-                        </div>
+                    <div class="header-title">
+                        <h1 class="text-lg font-semibold page-title">Dashboard</h1>
+                        <p class="fluent-text-caption1">Virtual Environment Management</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
-                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i data-feather="user" class="fluent-icon user-icon" aria-hidden="true"></i>
                         </div>
-                        <span class="text-sm" style="color: var(--colorNeutralForeground2);">John Doe</span>
+                        <span class="text-sm user-name">John Doe</span>
                     </div>
                 </div>
             </div>
-        </nav>
+        </header>
 
         <div class="container mx-auto px-6 py-8">
             <!-- Welcome Section -->
-            <div class="mb-8">
+            <section class="welcome-section mb-8">
                 <h2 class="fluent-text-title1 mb-3">Good morning, John</h2>
                 <p class="fluent-text-body1">Here's what's happening with your virtual environments today.</p>
-            </div>
+            </section>
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-3 gap-6 mb-8">
-                <div onclick="window.location.href='ve-management.html'" class="fluent-card p-6 cursor-pointer">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #e3f2fd;">
-                            <i data-feather="database" class="w-6 h-6" style="color: var(--colorBrandForeground1);"></i>
+            <section class="stats-section mb-8" aria-label="System statistics">
+                <div class="grid grid-cols-3 gap-6">
+                    <article class="stat-card" data-navigate="ve-management.html">
+                        <div class="stat-card-header">
+                            <div class="stat-icon stat-icon-blue">
+                                <i data-feather="database" class="w-6 h-6" aria-hidden="true"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">18</div>
+                                <div class="fluent-text-body1">Total VEs</div>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-semibold" style="color: var(--colorNeutralForeground1);">18</div>
-                            <div class="fluent-text-body1">Total VEs</div>
+                        <hr class="stat-divider">
+                        <div class="stat-footer">
+                            <span class="fluent-badge fluent-badge-success">+2 this month</span>
+                            <i data-feather="trending-up" class="trend-icon trend-up" aria-hidden="true"></i>
                         </div>
-                    </div>
-                    <hr style="height:1px; background: var(--colorNeutralStroke2); border:none; margin-bottom:16px;">
-                    <div class="flex items-center justify-between">
-                        <span class="fluent-badge fluent-badge-success">+2 this month</span>
-                        <i data-feather="trending-up" class="w-4 h-4" style="color: #107c10;"></i>
-                    </div>
-                </div>
+                    </article>
 
-                <div onclick="window.location.href='services-management.html'" class="fluent-card p-6 cursor-pointer">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #dff6dd;">
-                            <i data-feather="layers" class="w-6 h-6" style="color: #107c10;"></i>
+                    <article class="stat-card" data-navigate="services-management.html">
+                        <div class="stat-card-header">
+                            <div class="stat-icon stat-icon-green">
+                                <i data-feather="layers" class="w-6 h-6" aria-hidden="true"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">156</div>
+                                <div class="fluent-text-body1">Active Services</div>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-semibold" style="color: var(--colorNeutralForeground1);">156</div>
-                            <div class="fluent-text-body1">Active Services</div>
+                        <hr class="stat-divider">
+                        <div class="stat-footer">
+                            <span class="fluent-badge fluent-badge-success">98.7% uptime</span>
+                            <div class="status-indicator status-active"></div>
                         </div>
-                    </div>
-                    <hr style="height:1px; background: var(--colorNeutralStroke2); border:none; margin-bottom:16px;">
-                    <div class="flex items-center justify-between">
-                        <span class="fluent-badge fluent-badge-success">98.7% uptime</span>
-                        <div class="w-2 h-2 rounded-full" style="background: #107c10;"></div>
-                    </div>
-                </div>
+                    </article>
 
-                <div onclick="window.location.href='deployment-history.html'" class="fluent-card p-6 cursor-pointer">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #fff4ce;">
-                            <i data-feather="upload-cloud" class="w-6 h-6" style="color: #ca5010;"></i>
+                    <article class="stat-card" data-navigate="deployment-history.html">
+                        <div class="stat-card-header">
+                            <div class="stat-icon stat-icon-orange">
+                                <i data-feather="upload-cloud" class="w-6 h-6" aria-hidden="true"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number">23</div>
+                                <div class="fluent-text-body1">Recent Deployments</div>
+                            </div>
                         </div>
-                        <div class="text-right">
-                            <div class="text-3xl font-semibold" style="color: var(--colorNeutralForeground1);">23</div>
-                            <div class="fluent-text-body1">Recent Deployments</div>
+                        <hr class="stat-divider">
+                        <div class="stat-footer">
+                            <span class="fluent-badge fluent-badge-info">Last 24 hours</span>
+                            <i data-feather="clock" class="w-4 h-4 clock-icon" aria-hidden="true"></i>
                         </div>
-                    </div>
-                    <hr style="height:1px; background: var(--colorNeutralStroke2); border:none; margin-bottom:16px;">
-                    <div class="flex items-center justify-between">
-                        <span class="fluent-badge fluent-badge-info">Last 24 hours</span>
-                        <i data-feather="clock" class="w-4 h-4" style="color: var(--colorBrandForeground1);"></i>
-                    </div>
+                    </article>
                 </div>
-            </div>
+            </section>
 
-            <!-- Grid for Favorite Sections -->
-            <div class="grid grid-cols-2 gap-8">
-                <!-- Favorite VEs Section -->
-                <div class="fluent-card">
-                    <div class="px-6 py-4" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <i data-feather="star" class="w-5 h-5" style="color: #faa06b;"></i>
+            <!-- Favorites Grid -->
+            <section class="favorites-grid">
+                <div class="grid grid-cols-2 gap-8">
+                    <!-- Favorite VEs Section -->
+                    <article class="favorites-card">
+                        <header class="favorites-header">
+                            <div class="favorites-title">
+                                <i data-feather="star" class="w-5 h-5 star-icon" aria-hidden="true"></i>
                                 <h3 class="fluent-text-title2">Favorite Virtual Environments</h3>
                             </div>
-                            <button onclick="window.location.href='ve-management.html'" class="fluent-button fluent-button-subtle">View All</button>
-                        </div>
-                    </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-1">
-                            <div onclick="window.location.href='ve-detail.html?ve=SovBase'" 
-                                 class="group flex items-center justify-between p-4 rounded cursor-pointer transition-all hover:bg-gray-50">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #e3f2fd;">
-                                        <i data-feather="server" class="w-5 h-5" style="color: var(--colorBrandForeground1);"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium" style="color: var(--colorNeutralForeground1);">SovBase</h4>
-                                        <div class="flex items-center space-x-4 mt-1">
-                                            <span class="fluent-text-body1">67 services</span>
-                                            <span class="fluent-badge fluent-badge-neutral">B Type</span>
+                            <button class="fluent-button fluent-button-subtle" data-navigate="ve-management.html">View All</button>
+                        </header>
+                        
+                        <div class="favorites-content">
+                            <div class="favorites-list">
+                                <div class="favorite-item" data-navigate="ve-detail.html?ve=SovBase">
+                                    <div class="favorite-item-content">
+                                        <div class="favorite-details">
+                                            <h4 class="favorite-name">SovBase</h4>
+                                            <div class="favorite-meta">
+                                                <span class="fluent-text-body1">67 services</span>
+                                                <span class="fluent-badge fluent-badge-neutral">B Type</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="favorite-timestamp">
+                                        <span>2 hours ago</span>
+                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                                <div class="flex items-center space-x-3 fluent-text-body1">
-                                    <span>2 hours ago</span>
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
-                                </div>
-                            </div>
 
-                            <div onclick="window.location.href='ve-detail.html?ve=ModelBSov'" 
-                                 class="group flex items-center justify-between p-4 rounded cursor-pointer transition-all hover:bg-gray-50">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #f3e5f5;">
-                                        <i data-feather="layers" class="w-5 h-5" style="color: #5c2d91;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium" style="color: var(--colorNeutralForeground1);">ModelBSov</h4>
-                                        <div class="flex items-center space-x-4 mt-1">
-                                            <span class="fluent-text-body1">65 services</span>
-                                            <span class="fluent-badge fluent-badge-neutral">B Type</span>
+                                <div class="favorite-item" data-navigate="ve-detail.html?ve=ModelBSov">
+                                    <div class="favorite-item-content">
+                                        <div class="favorite-details">
+                                            <h4 class="favorite-name">ModelBSov</h4>
+                                            <div class="favorite-meta">
+                                                <span class="fluent-text-body1">65 services</span>
+                                                <span class="fluent-badge fluent-badge-neutral">B Type</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="favorite-timestamp">
+                                        <span>4 hours ago</span>
+                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                                <div class="flex items-center space-x-3 fluent-text-body1">
-                                    <span>4 hours ago</span>
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
-                                </div>
-                            </div>
 
-                            <div onclick="window.location.href='ve-detail.html?ve=OwaMailB2-SOV'" 
-                                 class="group flex items-center justify-between p-4 rounded cursor-pointer transition-all hover:bg-gray-50">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #dff6dd;">
-                                        <i data-feather="mail" class="w-5 h-5" style="color: #107c10;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium" style="color: var(--colorNeutralForeground1);">OwaMailB2-SOV</h4>
-                                        <div class="flex items-center space-x-4 mt-1">
-                                            <span class="fluent-text-body1">1 service</span>
-                                            <span class="fluent-badge fluent-badge-success">B2 Type</span>
+                                <div class="favorite-item" data-navigate="ve-detail.html?ve=OwaMailB2-SOV">
+                                    <div class="favorite-item-content">
+                                        <div class="favorite-details">
+                                            <h4 class="favorite-name">OwaMailB2-SOV</h4>
+                                            <div class="favorite-meta">
+                                                <span class="fluent-text-body1">1 service</span>
+                                                <span class="fluent-badge fluent-badge-success">B2 Type</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="flex items-center space-x-3 fluent-text-body1">
-                                    <span>2 minutes ago</span>
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
+                                    <div class="favorite-timestamp">
+                                        <span>2 minutes ago</span>
+                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </article>
 
-                <!-- Favorite Services Section -->
-                <div class="fluent-card">
-                    <div class="px-6 py-4" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center space-x-3">
-                                <i data-feather="heart" class="w-5 h-5" style="color: #d13438;"></i>
+                    <!-- Favorite Services Section -->
+                    <article class="favorites-card">
+                        <header class="favorites-header">
+                            <div class="favorites-title">
+                                <i data-feather="heart" class="w-5 h-5 heart-icon" aria-hidden="true"></i>
                                 <h3 class="fluent-text-title2">Favorite Services</h3>
                             </div>
-                            <button onclick="window.location.href='services-management.html'" class="fluent-button fluent-button-subtle">View All</button>
-                        </div>
-                    </div>
-                    
-                    <div class="p-6">
-                        <div class="space-y-1">
-                            <div onclick="window.location.href='service-detail.html?service=OwaMailB2'" 
-                                 class="group flex items-center justify-between p-4 rounded cursor-pointer transition-all hover:bg-gray-50">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #dff6dd;">
-                                        <i data-feather="mail" class="w-5 h-5" style="color: #107c10;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium" style="color: var(--colorNeutralForeground1);">OwaMailB2</h4>
-                                        <div class="flex items-center space-x-4 mt-1">
-                                            <span class="fluent-text-body1">2 VE instances</span>
-                                            <span class="fluent-badge fluent-badge-success">Active</span>
+                            <button class="fluent-button fluent-button-subtle" data-navigate="services-management.html">View All</button>
+                        </header>
+                        
+                        <div class="favorites-content">
+                            <div class="favorites-list">
+                                <div class="favorite-item" data-navigate="service-detail.html?service=OwaMailB2">
+                                    <div class="favorite-item-content">
+                                        <div class="favorite-details">
+                                            <h4 class="favorite-name">OwaMailB2</h4>
+                                            <div class="favorite-meta">
+                                                <span class="fluent-text-body1">2 VE instances</span>
+                                                <span class="fluent-badge fluent-badge-success">Active</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="favorite-timestamp">
+                                        <span>1 hour ago</span>
+                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                                <div class="flex items-center space-x-3 fluent-text-body1">
-                                    <span>1 hour ago</span>
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
-                                </div>
-                            </div>
 
-                            <div onclick="window.location.href='service-detail.html?service=Exchange'" 
-                                 class="group flex items-center justify-between p-4 rounded cursor-pointer transition-all hover:bg-gray-50">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #f3e5f5;">
-                                        <i data-feather="server" class="w-5 h-5" style="color: #5c2d91;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium" style="color: var(--colorNeutralForeground1);">Exchange</h4>
-                                        <div class="flex items-center space-x-4 mt-1">
-                                            <span class="fluent-text-body1">2 VE instances</span>
-                                            <span class="fluent-badge fluent-badge-success">Active</span>
+                                <div class="favorite-item" data-navigate="service-detail.html?service=Exchange">
+                                    <div class="favorite-item-content">
+                                        <div class="favorite-details">
+                                            <h4 class="favorite-name">Exchange</h4>
+                                            <div class="favorite-meta">
+                                                <span class="fluent-text-body1">2 VE instances</span>
+                                                <span class="fluent-badge fluent-badge-success">Active</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="favorite-timestamp">
+                                        <span>3 hours ago</span>
+                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                                    </div>
                                 </div>
-                                <div class="flex items-center space-x-3 fluent-text-body1">
-                                    <span>3 hours ago</span>
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
-                                </div>
-                            </div>
 
-                            <div onclick="window.location.href='service-detail.html?service=GraphConnectors'" 
-                                 class="group flex items-center justify-between p-4 rounded cursor-pointer transition-all hover:bg-gray-50">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: #fff3e0;">
-                                        <i data-feather="zap" class="w-5 h-5" style="color: #e65100;"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-medium" style="color: var(--colorNeutralForeground1);">GraphConnectors</h4>
-                                        <div class="flex items-center space-x-4 mt-1">
-                                            <span class="fluent-text-body1">2 VE instances</span>
-                                            <span class="fluent-badge fluent-badge-neutral">Not Deployed</span>
+                                <div class="favorite-item" data-navigate="service-detail.html?service=GraphConnectors">
+                                    <div class="favorite-item-content">
+                                        <div class="favorite-details">
+                                            <h4 class="favorite-name">GraphConnectors</h4>
+                                            <div class="favorite-meta">
+                                                <span class="fluent-text-body1">2 VE instances</span>
+                                                <span class="fluent-badge fluent-badge-neutral">Not Deployed</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="flex items-center space-x-3 fluent-text-body1">
-                                    <span>6 hours ago</span>
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
+                                    <div class="favorite-timestamp">
+                                        <span>6 hours ago</span>
+                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </article>
                 </div>
-            </div>
+            </section>
         </div>
-    </div>
+    </main>
 
-    <script>
-        feather.replace();
-    </script>
+    <script src="./assets/js/dashboard.js"></script>
 </body>
 </html>

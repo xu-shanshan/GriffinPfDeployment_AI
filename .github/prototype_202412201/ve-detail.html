@@ -141,118 +141,19 @@
             background: var(--colorNeutralBackground1);
             border-right: 1px solid var(--colorNeutralStroke2);
             box-shadow: var(--shadow2);
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.33, 0, 0.67, 1);
             z-index: 1000;
             overflow-y: auto;
         }
         
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .sidebar-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
         .main-content {
-            min-height: 100vh;
-            transition: margin-left 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .main-content.sidebar-open {
             margin-left: 256px;
-        }
-        
-        .sidebar-nav-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            color: var(--colorNeutralForeground2);
-            text-decoration: none;
-            border-radius: var(--borderRadiusSmall);
-            margin: 2px 8px;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .sidebar-nav-item:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .sidebar-nav-item.active {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-            font-weight: 600;
-        }
-        
-        .sidebar-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--colorNeutralStroke2);
-        }
-        
-        .sidebar-section {
-            padding: 16px 0;
-            border-bottom: 1px solid var(--colorNeutralStroke2);
-        }
-        
-        .sidebar-section-title {
-            padding: 0 16px 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--colorNeutralForeground3);
-        }
-        
-        @media (min-width: 1024px) {
-            .sidebar {
-                position: fixed;
-                transform: translateX(0);
-                height: 100vh;
-                top: 0;
-            }
-            
-            .sidebar-overlay {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 256px;
-            }
-            
-            .sidebar-toggle {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 1023px) {
-            .main-content.sidebar-open {
-                margin-left: 0;
-            }
+            min-height: 100vh;
         }
     </style>
 </head>
 <body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <!-- ...existing code... -->
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
@@ -312,15 +213,12 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+    <div class="main-content">
         <!-- Fluent Navigation -->
         <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; position: sticky; top: 0; z-index: 40;">
             <div class="px-6">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center space-x-4">
-                        <button class="sidebar-toggle lg:hidden fluent-button fluent-button-subtle p-2" onclick="toggleSidebar()">
-                            <i data-feather="menu" class="fluent-icon"></i>
-                        </button>
                         <div class="flex items-center space-x-3">
                             <div>
                                 <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">SovBase - Virtual Environment</h1>
@@ -399,54 +297,17 @@
                 </div>
             </div>
 
-            <!-- Enhanced Services Table (keep existing functionality) -->
+            <!-- Enhanced Services Table -->
             <div class="fluent-card">
-                <!-- Improved Table Header with Bulk Actions -->
                 <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+                    <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                             <h2 class="fluent-text-title2">Services in SovBase VE</h2>
                             <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
                         </div>
-                        <div class="flex flex-col md:flex-row items-stretch md:items-center space-y-3 md:space-y-0 md:space-x-3">
-                            <!-- Enhanced Search with Suggestions -->
-                            <div class="relative">
-                                <i data-feather="search" class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                                <input type="text" id="searchInput" placeholder="Search services..." 
-                                       class="pl-10 pr-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                       oninput="performSearch()"
-                                       onkeydown="handleSearchKeydown(event)">
-                                <div id="searchSuggestions" class="hidden absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg mt-1 shadow-lg z-10"></div>
-                            </div>
-                            
-                            <!-- Smart Filters (keep existing) -->
-                            <select id="statusFilter" onchange="applyFilters()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">All Status</option>
-                                <option value="ready">Ready to Deploy</option>
-                                <option value="prepared">Prepared for Deployment</option>
-                                <option value="not-deployed">Not Deployed</option>
-                                <option value="missing-pfgold">Missing in PFGold</option>
-                                <option value="config-error">Configuration Error</option>
-                            </select>
-
-                            <select id="configFilter" onchange="applyFilters()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                                <option value="">All Configurations</option>
-                                <option value="both">In Both Files</option>
-                                <option value="dragon-only">Dragon Only</option>
-                                <option value="pfgold-only">PFGold Only</option>
-                            </select>
-
-                            <!-- Bulk Actions -->
-                            <div class="flex space-x-2">
-                                <button id="bulkDeployBtn" onclick="showBulkDeployModal()" 
-                                        class="fluent-button fluent-button-primary disabled:opacity-50 disabled:cursor-not-allowed" 
-                                        disabled>
-                                    <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy Selected
-                                </button>
-                                <button onclick="clearAllFilters()" class="fluent-button fluent-button-subtle">
-                                    Clear Filters
-                                </button>
-                            </div>
+                        <div class="flex items-center space-x-3">
+                            <!-- Remove responsive classes -->
+                            <!-- ...existing code... -->
                         </div>
                     </div>
                 </div>
@@ -1050,23 +911,6 @@
             if (window.innerWidth >= 1024) {
                 const sidebar = document.getElementById('sidebar');
                 sidebar.classList.add('open');
-            }
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const mainContent = document.getElementById('mainContent');
-            
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.add('open');
-                overlay.classList.remove('show');
-                mainContent.classList.add('sidebar-open');
-            } else {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-                mainContent.classList.remove('sidebar-open');
             }
         });
     </script>

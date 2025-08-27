@@ -178,41 +178,13 @@
             background: var(--colorNeutralBackground1);
             border-right: 1px solid var(--colorNeutralStroke2);
             box-shadow: var(--shadow2);
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.33, 0, 0.67, 1);
             z-index: 1000;
             overflow-y: auto;
         }
         
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .sidebar-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
         .main-content {
-            min-height: 100vh;
-            transition: margin-left 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .main-content.sidebar-open {
             margin-left: 256px;
+            min-height: 100vh;
         }
         
         .sidebar-nav-item {
@@ -286,76 +258,29 @@
         .table-row:hover .config-actions { opacity: 1; }
         .search-highlight { background: rgba(59, 130, 246, 0.1); border: 2px solid #3B82F6; }
         
-        @media (min-width: 1024px) {
-            .sidebar {
-                position: fixed;
-                transform: translateX(0);
-                height: 100vh;
-                top: 0;
-            }
-            
-            .sidebar-overlay {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 256px;
-            }
-            
-            .sidebar-toggle {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 1023px) {
-            .main-content.sidebar-open {
-                margin-left: 0;
-            }
-        }
-        
-        /* Fixed Pipeline Management Modal z-index */
-        #pipelineManagementModal {
-            z-index: 1050 !important;
-        }
-        
-        /* Error state styles */
-        .error-state {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            color: #dc2626;
-            padding: 16px;
-            border-radius: 8px;
-            margin-bottom: 16px;
-        }
-        
-        /* Loading state styles */
-        .loading-overlay {
+        /* Remove all responsive CSS */
+        .sidebar {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
+            height: 100vh;
+            width: 256px;
+            background: var(--colorNeutralBackground1);
+            border-right: 1px solid var(--colorNeutralStroke2);
+            box-shadow: var(--shadow2);
+            z-index: 1000;
+            overflow-y: auto;
         }
         
-        .loading-content {
-            background: white;
-            padding: 32px;
-            border-radius: 12px;
-            text-align: center;
+        .main-content {
+            margin-left: 256px;
+            min-height: 100vh;
         }
     </style>
 </head>
 <body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
@@ -414,15 +339,12 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+    <div class="main-content">
         <!-- Fluent Navigation -->
         <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
             <div class="container mx-auto px-6">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center space-x-4">
-                        <button class="sidebar-toggle lg:hidden fluent-button fluent-button-subtle p-2" onclick="toggleSidebar()">
-                            <i data-feather="menu" class="fluent-icon"></i>
-                        </button>
                         <div class="flex items-center space-x-3">
                             <div>
                                 <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Service Detail</h1>
@@ -513,8 +435,8 @@
             <!-- Search and Filters -->
             <div class="fluent-card mb-8">
                 <div class="p-6">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
-                        <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
                             <div class="relative">
                                 <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 transform -translate-y-1/2" style="color: var(--colorNeutralForeground3);"></i>
                                 <input type="text" 

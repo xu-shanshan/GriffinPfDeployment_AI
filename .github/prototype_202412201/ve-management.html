@@ -9,11 +9,8 @@
     <link rel="stylesheet" href="../../shared/fluent-ui.css">
 </head>
 <body>
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
@@ -72,15 +69,12 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+    <div class="main-content">
         <!-- Fluent Navigation -->
         <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
             <div class="container mx-auto px-6">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center space-x-4">
-                        <button class="sidebar-toggle lg:hidden fluent-button fluent-button-subtle p-2" onclick="toggleSidebar()">
-                            <i data-feather="menu" class="fluent-icon"></i>
-                        </button>
                         <div class="flex items-center space-x-3">
                             <div>
                                 <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Virtual Environment Management</h1>
@@ -102,8 +96,8 @@
             <!-- Search and Filters -->
             <div class="fluent-card mb-8">
                 <div class="p-6">
-                    <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
-                        <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
                             <div class="relative">
                                 <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 transform -translate-y-1/2" style="color: var(--colorNeutralForeground3);"></i>
                                 <input type="text" 
@@ -138,7 +132,7 @@
             </div>
 
             <!-- VE Cards Grid -->
-            <div id="veCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-3 gap-6 mb-8">
                 <!-- SovBase VE Card -->
                 <div class="fluent-card p-6 cursor-pointer" onclick="window.location.href='ve-detail.html?ve=SovBase'">
                     <div class="flex items-center justify-between mb-4">
@@ -400,37 +394,6 @@
     <script>
         feather.replace();
         
-        // Unified sidebar functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-        
-        // Initialize sidebar state
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth >= 1024) {
-                const sidebar = document.getElementById('sidebar');
-                sidebar.classList.add('open');
-            }
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.add('open');
-                overlay.classList.remove('show');
-            } else {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            }
-        });
-        
         // VE and Service data for search functionality
         const veData = {
             'SovBase': {
@@ -538,6 +501,43 @@
         }
         
         // Apply filters (existing functionality)
+        function applyFilters() {
+            // This would integrate with the existing filter logic
+            performSearch(); // Re-apply search after filter changes
+        }
+        
+        // Toggle star functionality
+        function toggleStar(button) {
+            const icon = button.querySelector('i');
+            const isStarred = button.classList.contains('text-yellow-500');
+            
+            if (isStarred) {
+                button.classList.remove('text-yellow-500');
+                button.classList.add('text-gray-400');
+                icon.classList.remove('fill-current');
+            } else {
+                button.classList.remove('text-gray-400');
+                button.classList.add('text-yellow-500');
+                icon.classList.add('fill-current');
+            }
+        }
+        
+        // Add stagger animation for cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card-hover');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
         function applyFilters() {
             // This would integrate with the existing filter logic
             performSearch(); // Re-apply search after filter changes

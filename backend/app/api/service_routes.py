@@ -57,3 +57,8 @@ async def set_default_pipeline(
     except Exception as e:
         logger.error(f"API层设置默认Pipeline错误: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+@router.get("/services/")
+async def list_services():
+    """获取服务列表"""
+    return {"message": "Service list placeholder"}

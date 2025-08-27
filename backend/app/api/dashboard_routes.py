@@ -28,3 +28,8 @@ async def get_dashboard_stats(
 @router.get("/")
 async def dashboard_root(dashboard_service: DashboardService = Depends(get_dashboard_service)):
     return dashboard_service.get_dashboard_info()
+
+@router.get("/stats")
+async def get_dashboard_stats():
+    """获取仪表板统计信息"""
+    return {"message": "Dashboard stats placeholder"}

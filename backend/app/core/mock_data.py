@@ -14,28 +14,28 @@ MOCK_DATA = {
             },
             "is_favorite": True,
             "last_updated": "2024-12-20T14:00:00Z"
-        },
-        {
-            "name": "ModelBSov",
-            "description": "Model B sovereign virtual environment",
-            "ve_type": "B Type",
-            "group": "ModelBSovVEs",
-            "stats": {
-                "total_services": 65,
-                "deployed_services": 58,
-                "dragon_services": 65,
-                "pfgold_services": 62,
-                "ready_to_deploy": 7
-            },
-            "is_favorite": True,
-            "last_updated": "2024-12-20T08:00:00Z"
-        },
-        {
-            "name": "OwaMailB2-SOV",
-            "description": "Outlook Web App Mail B2 services",
-            "ve_type": "B2 Type",
-            "group": "ModelB2SovVEs",
-            "stats": {
+        }
+    ],
+    "services": {
+        "SovBase": [
+            {
+                "id": "owamailb2",
+                "name": "OwaMailB2",
+                "description": "Outlook Web App Mail Backend",
+                "status": "ready",
+                "in_dragon": True,
+                "in_pfgold": True,
+                "current_version": "v2.1.234",
+                "pipeline": "ExchangeMailPipeline",
+                "pipeline_version": "v3.2.1",
+                "icon": "mail",
+                "icon_color": "blue",
+                "ready_to_deploy": True
+            }
+        ]
+    },
+    "deployment_history": []
+}
                 "total_services": 1,
                 "deployed_services": 1,
                 "dragon_services": 1,

@@ -9,6 +9,10 @@ from .core.logging import logger
 # 导入API路由
 from .api import dashboard_routes, ve_routes, service_routes
 
+# 导入模型（防止未引用警告）
+from .models.deployment import DeploymentRequest, ConfigUpdateRequest  # noqa: F401
+from .core.mock_data import MOCK_DATA  # noqa: F401
+
 # 创建FastAPI应用
 app = FastAPI(
     title=settings.app_name,

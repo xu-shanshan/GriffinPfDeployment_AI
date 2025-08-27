@@ -63,3 +63,13 @@ async def get_ve_services(
     except Exception as e:
         logger.error(f"API层获取VE服务列表错误: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+router = APIRouter(
+    prefix="/ves",
+    tags=["virtual-environments"]
+)
+
+@router.get("/")
+async def list_ves():
+    """获取VE列表"""
+    return {"message": "VE list placeholder"}

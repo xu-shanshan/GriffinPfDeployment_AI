@@ -23,3 +23,10 @@ class DeploymentCreateRequest(BaseModel):
     pipeline_id: Optional[int] = None
     build_version: Optional[str] = None
     ve_name: str
+
+class ConfigUpdateRequest(BaseModel):
+    config: Dict[str, Any]
+    create_pr: bool = True
+
+# Backward compatibility alias
+DeploymentRequest = DeploymentCreateRequest

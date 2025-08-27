@@ -1,17 +1,17 @@
 import logging
 import sys
-from .config import settings
+from typing import Any
 
-# 配置日志
+# 配置日志格式
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
 )
 
-def setup_logging():
-    """配置应用日志"""
-    # 创建logger
-    logger = logging.getLogger("griffin_pf")
+logger = logging.getLogger("griffin_pf_ai")
     logger.setLevel(getattr(logging, settings.log_level.upper()))
     
     # 避免重复添加handler

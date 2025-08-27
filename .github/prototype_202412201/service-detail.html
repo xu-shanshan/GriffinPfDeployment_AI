@@ -6,6 +6,7 @@
     <title>OwaMailB2 - Service Detail | Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="../../shared/fluent-ui.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
@@ -289,7 +290,7 @@
     
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
-        <!-- ...same sidebar content... -->
+        <!-- ...existing code... -->
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
@@ -977,45 +978,20 @@
                     }, 3000);
                 }
 
-                // Sidebar functionality
+                // Unified sidebar functionality
                 function toggleSidebar() {
                     const sidebar = document.getElementById('sidebar');
                     const overlay = document.getElementById('sidebarOverlay');
-                    const mainContent = document.getElementById('mainContent');
                     
                     sidebar.classList.toggle('open');
                     overlay.classList.toggle('show');
-                    
-                    // Only toggle main content margin on desktop
-                    if (window.innerWidth >= 1024) {
-                        mainContent.classList.toggle('sidebar-open');
-                    }
                 }
-                
-                // Handle window resize
-                window.addEventListener('resize', function() {
-                    const sidebar = document.getElementById('sidebar');
-                    const overlay = document.getElementById('sidebarOverlay');
-                    const mainContent = document.getElementById('mainContent');
-                    
-                    if (window.innerWidth >= 1024) {
-                        sidebar.classList.add('open');
-                        overlay.classList.remove('show');
-                        mainContent.classList.add('sidebar-open');
-                    } else {
-                        sidebar.classList.remove('open');
-                        overlay.classList.remove('show');
-                        mainContent.classList.remove('sidebar-open');
-                    }
-                });
                 
                 // Initialize sidebar state
                 document.addEventListener('DOMContentLoaded', function() {
                     if (window.innerWidth >= 1024) {
                         const sidebar = document.getElementById('sidebar');
-                        const mainContent = document.getElementById('mainContent');
                         sidebar.classList.add('open');
-                        mainContent.classList.add('sidebar-open');
                     }
                 });
             </script>

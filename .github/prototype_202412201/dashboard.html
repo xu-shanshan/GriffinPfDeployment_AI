@@ -6,112 +6,9 @@
     <title>Dashboard - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin:0; background: var(--colorNeutralBackground2); }
-
-        /* Fluent UI v9 Design System */
-        :root {
-            --colorNeutralForeground1: #242424;
-            --colorNeutralForeground2: #424242;
-            --colorNeutralForeground3: #616161;
-            --colorNeutralBackground1: #ffffff;
-            --colorNeutralBackground2: #f5f5f5;
-            --colorNeutralBackground3: #f0f0f0;
-            --colorBrandBackground: #0f6cbd;
-            --colorBrandBackgroundHover: #115ea3;
-            --colorBrandForeground1: #0f6cbd;
-            --colorNeutralStroke1: #d1d1d1;
-            --colorNeutralStroke2: #e0e0e0;
-            --borderRadiusSmall: 4px;
-            --borderRadiusMedium: 6px;
-            --borderRadiusLarge: 8px;
-            --borderRadiusXLarge: 12px;
-            --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
-            --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
-            --shadow8: 0 4px 8px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
-        }
-
-        /* Cards */
-        .fluent-card {
-            background: var(--colorNeutralBackground1);
-            border: 1px solid var(--colorNeutralStroke2);
-            border-radius: var(--borderRadiusLarge);
-            box-shadow: var(--shadow2);
-            transition: all 0.2s ease-in-out;
-            cursor: pointer;
-        }
-        .fluent-card:hover { box-shadow: var(--shadow4); }
-
-        /* Buttons */
-        .fluent-button { 
-            border-radius: var(--borderRadiusSmall); padding:5px 12px; font-weight:600; font-size:14px; line-height:20px; border:1px solid transparent; transition: all 0.2s ease; }
-        .fluent-button-primary { background: var(--colorBrandBackground); color:white; }
-        .fluent-button-primary:hover { background: var(--colorBrandBackgroundHover); }
-        .fluent-button-subtle { background:transparent; color: var(--colorNeutralForeground2); }
-        .fluent-button-subtle:hover { background: var(--colorNeutralBackground3); color: var(--colorNeutralForeground1); }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 256px;
-            height: 100vh;
-            background: var(--colorNeutralBackground1);
-            border-right:1px solid var(--colorNeutralStroke2);
-            box-shadow: var(--shadow2);
-            z-index:1000;
-            overflow-y:auto;
-            transition: transform 0.3s ease;
-            }
-        .sidebar.open { transform: translateX(0); }
-        .sidebar-overlay {
-            position: fixed;
-            top:0; left:0; width:100vw; height:100vh;
-            background: rgba(0,0,0,0.4);
-            z-index:999; opacity:0; visibility:hidden;
-            transition: all 0.3s ease;
-        }
-        .sidebar-overlay.show { opacity:1; visibility:visible; }
-
-        /* Main Content */
-        .main-content { margin-left:256px; transition: margin-left 0.3s ease; overflow:auto; height:100vh; }
-
-        /* Sidebar items */
-        .sidebar-nav-item { display:flex; align-items:center; padding:8px 16px; border-radius: var(--borderRadiusSmall); color:var(--colorNeutralForeground2); text-decoration:none; margin:2px 8px; transition: all 0.2s ease; }
-        .sidebar-nav-item:hover { background: var(--colorNeutralBackground3); color: var(--colorNeutralForeground1); }
-        .sidebar-nav-item.active { background:#e3f2fd; color: var(--colorBrandForeground1); font-weight:600; }
-
-        /* Sidebar headers */
-        .sidebar-header { padding:16px; border-bottom:1px solid var(--colorNeutralStroke2); }
-        .sidebar-section { padding:16px 0; border-bottom:1px solid var(--colorNeutralStroke2); }
-        .sidebar-section-title { padding:0 16px 8px 16px; font-size:12px; font-weight:600; text-transform:uppercase; color:var(--colorNeutralForeground3); }
-
-        /* Text styles */
-        .fluent-text-title1 { font-size:28px; font-weight:600; color: var(--colorNeutralForeground1); }
-        .fluent-text-title2 { font-size:20px; font-weight:600; color: var(--colorNeutralForeground1); }
-        .fluent-text-body1 { font-size:14px; font-weight:400; color: var(--colorNeutralForeground2); }
-        .fluent-text-caption1 { font-size:12px; font-weight:400; color: var(--colorNeutralForeground3); }
-
-        /* Badges */
-        .fluent-badge { padding:2px 8px; border-radius:12px; font-size:12px; font-weight:500; line-height:16px; }
-        .fluent-badge-success { background:#dff6dd; color:#107c10; }
-        .fluent-badge-info { background:#e3f2fd; color: var(--colorBrandForeground1); }
-        .fluent-badge-neutral { background: var(--colorNeutralBackground3); color: var(--colorNeutralForeground2); }
-
-        /* Divider */
-        .fluent-divider { height:1px; background: var(--colorNeutralStroke2); border:none; margin:0; }
-
-        /* Responsive tweaks */
-        @media (max-width: 1023px) {
-            .main-content { margin-left:0; }
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-        }
-    </style>
+    <link rel="stylesheet" href="../../shared/fluent-ui.css">
 </head>
-<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
+<body>
     <!-- Sidebar Overlay -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     
@@ -172,7 +69,7 @@
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
-        <!-- Fluent UI v9 Navigation -->
+        <!-- Fluent Navigation -->
         <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
             <div class="container mx-auto px-6">
                 <div class="flex justify-between items-center py-4">
@@ -198,13 +95,13 @@
         </nav>
 
         <div class="container mx-auto px-6 py-8">
-            <!-- Fluent Welcome Section -->
+            <!-- Welcome Section -->
             <div class="mb-8">
                 <h2 class="fluent-text-title1 mb-3">Good morning, John</h2>
                 <p class="fluent-text-body1">Here's what's happening with your virtual environments today.</p>
             </div>
 
-            <!-- Fluent Stats Cards -->
+            <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div onclick="window.location.href='ve-management.html'" class="fluent-card p-6 cursor-pointer">
                     <div class="flex items-center justify-between mb-4">
@@ -216,7 +113,7 @@
                             <div class="fluent-text-body1">Total VEs</div>
                         </div>
                     </div>
-                    <hr class="fluent-divider mb-4">
+                    <hr style="height:1px; background: var(--colorNeutralStroke2); border:none; margin-bottom:16px;">
                     <div class="flex items-center justify-between">
                         <span class="fluent-badge fluent-badge-success">+2 this month</span>
                         <i data-feather="trending-up" class="w-4 h-4" style="color: #107c10;"></i>
@@ -233,7 +130,7 @@
                             <div class="fluent-text-body1">Active Services</div>
                         </div>
                     </div>
-                    <hr class="fluent-divider mb-4">
+                    <hr style="height:1px; background: var(--colorNeutralStroke2); border:none; margin-bottom:16px;">
                     <div class="flex items-center justify-between">
                         <span class="fluent-badge fluent-badge-success">98.7% uptime</span>
                         <div class="w-2 h-2 rounded-full" style="background: #107c10;"></div>
@@ -250,7 +147,7 @@
                             <div class="fluent-text-body1">Recent Deployments</div>
                         </div>
                     </div>
-                    <hr class="fluent-divider mb-4">
+                    <hr style="height:1px; background: var(--colorNeutralStroke2); border:none; margin-bottom:16px;">
                     <div class="flex items-center justify-between">
                         <span class="fluent-badge fluent-badge-info">Last 24 hours</span>
                         <i data-feather="clock" class="w-4 h-4" style="color: var(--colorBrandForeground1);"></i>
@@ -258,7 +155,7 @@
                 </div>
             </div>
 
-            <!-- Fluent Favorite VEs Section -->
+            <!-- Favorite VEs Section -->
             <div class="fluent-card">
                 <div class="px-6 py-4" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
                     <div class="flex items-center justify-between">
@@ -348,53 +245,28 @@
             
             sidebar.classList.toggle('open');
             overlay.classList.toggle('show');
-            
-            // Only toggle main content margin on desktop
-            if (window.innerWidth >= 1024) {
-                mainContent.classList.toggle('sidebar-open');
-            }
         }
+        
+        // Initialize sidebar state for desktop
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth >= 1024) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.add('open');
+            }
+        });
         
         // Handle window resize
         window.addEventListener('resize', function() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            const mainContent = document.getElementById('mainContent');
             
             if (window.innerWidth >= 1024) {
                 sidebar.classList.add('open');
                 overlay.classList.remove('show');
-                mainContent.classList.add('sidebar-open');
             } else {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('show');
-                mainContent.classList.remove('sidebar-open');
             }
-        });
-        
-        // Initialize sidebar state
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth >= 1024) {
-                const sidebar = document.getElementById('sidebar');
-                const mainContent = document.getElementById('mainContent');
-                sidebar.classList.add('open');
-                mainContent.classList.add('sidebar-open');
-            }
-        });
-        
-        // Fluent UI v9 style interactions
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add ripple effect to cards
-            const cards = document.querySelectorAll('.fluent-card[onclick]');
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    // Add a subtle press animation
-                    this.style.transform = 'scale(0.98)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 100);
-                });
-            });
         });
     </script>
 </body>

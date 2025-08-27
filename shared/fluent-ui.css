@@ -1,0 +1,269 @@
+/* ====== Fluent UI v9 Unified Design System ====== */
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+
+/* CSS Variables */
+:root {
+    --colorNeutralForeground1: #242424;
+    --colorNeutralForeground2: #424242;
+    --colorNeutralForeground3: #616161;
+    --colorNeutralBackground1: #ffffff;
+    --colorNeutralBackground2: #f5f5f5;
+    --colorNeutralBackground3: #f0f0f0;
+    --colorBrandBackground: #0f6cbd;
+    --colorBrandBackgroundHover: #115ea3;
+    --colorBrandForeground1: #0f6cbd;
+    --colorNeutralStroke1: #d1d1d1;
+    --colorNeutralStroke2: #e0e0e0;
+    --borderRadiusSmall: 4px;
+    --borderRadiusMedium: 6px;
+    --borderRadiusLarge: 8px;
+    --borderRadiusXLarge: 12px;
+    --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12);
+    --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12);
+    --shadow8: 0 4px 8px rgba(0,0,0,0.14), 0 0 2px rgba(0,0,0,0.12);
+}
+
+/* Base Styles */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    background: var(--colorNeutralBackground2);
+    min-height: 100vh;
+}
+
+/* Cards */
+.fluent-card {
+    background: var(--colorNeutralBackground1);
+    border: 1px solid var(--colorNeutralStroke2);
+    border-radius: var(--borderRadiusLarge);
+    box-shadow: var(--shadow2);
+    transition: all 0.1s cubic-bezier(0.33,0,0.67,1);
+}
+.fluent-card:hover {
+    box-shadow: var(--shadow4);
+    border-color: var(--colorNeutralStroke1);
+}
+
+/* Buttons */
+.fluent-button {
+    border-radius: var(--borderRadiusSmall);
+    padding: 5px 12px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    transition: all 0.1s cubic-bezier(0.33,0,0.67,1);
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+.fluent-button-primary {
+    background: var(--colorBrandBackground);
+    color: white;
+    border-color: var(--colorBrandBackground);
+}
+.fluent-button-primary:hover {
+    background: var(--colorBrandBackgroundHover);
+    border-color: var(--colorBrandBackgroundHover);
+}
+.fluent-button-subtle {
+    background: transparent;
+    color: var(--colorNeutralForeground2);
+    border-color: var(--colorNeutralStroke1);
+}
+.fluent-button-subtle:hover {
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground1);
+}
+
+/* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 256px;
+    height: 100vh;
+    background: var(--colorNeutralBackground1);
+    border-right: 1px solid var(--colorNeutralStroke2);
+    box-shadow: var(--shadow2);
+    overflow-y: auto;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+.sidebar.open {
+    transform: translateX(0);
+}
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+}
+.sidebar-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+.sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+.sidebar-section {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+.sidebar-section-title {
+    padding: 0 16px 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--colorNeutralForeground3);
+}
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 2px 8px;
+    border-radius: var(--borderRadiusSmall);
+    text-decoration: none;
+    color: var(--colorNeutralForeground2);
+    font-weight: 500;
+    transition: all 0.1s ease;
+}
+.sidebar-nav-item:hover {
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground1);
+}
+.sidebar-nav-item.active {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+    font-weight: 600;
+}
+
+/* Main Content */
+.main-content {
+    margin-left: 256px;
+    min-height: 100vh;
+    overflow-y: auto;
+    transition: margin-left 0.3s ease;
+}
+.main-content.sidebar-open {
+    margin-left: 256px;
+}
+
+/* Navigation */
+.fluent-nav-item {
+    padding: 6px 12px;
+    border-radius: var(--borderRadiusSmall);
+    color: var(--colorNeutralForeground2);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+}
+.fluent-nav-item:hover {
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground1);
+}
+.fluent-nav-item.selected {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+    font-weight: 600;
+}
+
+/* Form Elements */
+.fluent-input, .fluent-select {
+    padding: 6px 8px;
+    border: 1px solid var(--colorNeutralStroke1);
+    border-radius: var(--borderRadiusSmall);
+    font-size: 14px;
+    line-height: 20px;
+    color: var(--colorNeutralForeground1);
+    background: var(--colorNeutralBackground1);
+    transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+}
+.fluent-input:focus, .fluent-select:focus {
+    outline: none;
+    border-color: var(--colorBrandForeground1);
+    box-shadow: 0 0 0 1px var(--colorBrandForeground1);
+}
+.fluent-input.with-icon {
+    padding-left: 32px;
+}
+
+/* Typography */
+.fluent-text-title1 {
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 36px;
+    color: var(--colorNeutralForeground1);
+}
+.fluent-text-title2 {
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 28px;
+    color: var(--colorNeutralForeground1);
+}
+.fluent-text-body1 {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--colorNeutralForeground2);
+}
+.fluent-text-caption1 {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    color: var(--colorNeutralForeground3);
+}
+
+/* Badges */
+.fluent-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+}
+.fluent-badge-success {
+    background: #dff6dd;
+    color: #107c10;
+}
+.fluent-badge-info {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+}
+.fluent-badge-neutral {
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground2);
+}
+
+/* Icons */
+.fluent-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 1023px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    .main-content {
+        margin-left: 0;
+    }
+    .sidebar-toggle {
+        display: block !important;
+    }
+}
+@media (min-width: 1024px) {
+    .sidebar {
+        transform: translateX(0);
+    }
+    .sidebar-toggle {
+        display: none;
+    }
+}

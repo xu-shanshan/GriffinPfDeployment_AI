@@ -86,26 +86,6 @@ body {
     box-shadow: var(--shadow2);
     overflow-y: auto;
     z-index: 1000;
-    transition: transform 0.3s ease;
-}
-.sidebar.open {
-    transform: translateX(0);
-}
-.sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.4);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    z-index: 999;
-}
-.sidebar-overlay.show {
-    opacity: 1;
-    visibility: visible;
 }
 .sidebar-header {
     padding: 16px;
@@ -149,10 +129,6 @@ body {
     margin-left: 256px;
     min-height: 100vh;
     overflow-y: auto;
-    transition: margin-left 0.3s ease;
-}
-.main-content.sidebar-open {
-    margin-left: 256px;
 }
 
 /* Navigation */
@@ -222,6 +198,30 @@ body {
 
 /* Badges */
 .fluent-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+}
+.fluent-badge-success {
+    background: #dff6dd;
+    color: #107c10;
+}
+.fluent-badge-info {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+}
+.fluent-badge-neutral {
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground2);
+}
+
+/* Icons */
+.fluent-icon {
+    width: 16px;
+    height: 16px;
+}
     padding: 2px 8px;
     border-radius: 12px;
     font-size: 12px;

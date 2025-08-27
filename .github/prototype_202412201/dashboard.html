@@ -9,11 +9,8 @@
     <link rel="stylesheet" href="../../shared/fluent-ui.css">
 </head>
 <body>
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    
     <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
+    <aside class="sidebar">
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
                 <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
@@ -72,15 +69,12 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+    <div class="main-content">
         <!-- Fluent Navigation -->
         <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
             <div class="container mx-auto px-6">
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center space-x-4">
-                        <button class="sidebar-toggle lg:hidden fluent-button fluent-button-subtle p-2" onclick="toggleSidebar()">
-                            <i data-feather="menu" class="fluent-icon"></i>
-                        </button>
                         <div class="flex items-center space-x-3">
                             <div>
                                 <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Dashboard</h1>
@@ -106,7 +100,7 @@
             </div>
 
             <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="grid grid-cols-3 gap-6 mb-8">
                 <div onclick="window.location.href='ve-management.html'" class="fluent-card p-6 cursor-pointer">
                     <div class="flex items-center justify-between mb-4">
                         <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #e3f2fd;">
@@ -160,7 +154,7 @@
             </div>
 
             <!-- Grid for Favorite Sections -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-2 gap-8">
                 <!-- Favorite VEs Section -->
                 <div class="fluent-card">
                     <div class="px-6 py-4" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
@@ -320,38 +314,6 @@
 
     <script>
         feather.replace();
-        
-        // Sidebar functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const mainContent = document.getElementById('mainContent');
-            
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-        
-        // Initialize sidebar state for desktop
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth >= 1024) {
-                const sidebar = document.getElementById('sidebar');
-                sidebar.classList.add('open');
-            }
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.add('open');
-                overlay.classList.remove('show');
-            } else {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            }
-        });
     </script>
 </body>
 </html>

@@ -8,8 +8,8 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; margin:0; background: var(--colorNeutralBackground2); }
+
         /* Fluent UI v9 Design System */
         :root {
             --colorNeutralForeground1: #242424;
@@ -31,243 +31,83 @@
             --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
             --shadow8: 0 4px 8px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
         }
-        
+
+        /* Cards */
         .fluent-card {
             background: var(--colorNeutralBackground1);
             border: 1px solid var(--colorNeutralStroke2);
             border-radius: var(--borderRadiusLarge);
             box-shadow: var(--shadow2);
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
         }
-        
-        .fluent-card:hover {
-            box-shadow: var(--shadow4);
-            border-color: var(--colorNeutralStroke1);
-        }
-        
-        .fluent-button {
-            border-radius: var(--borderRadiusSmall);
-            padding: 5px 12px;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 20px;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-            border: 1px solid transparent;
-        }
-        
-        .fluent-button-primary {
-            background: var(--colorBrandBackground);
-            color: white;
-        }
-        
-        .fluent-button-primary:hover {
-            background: var(--colorBrandBackgroundHover);
-        }
-        
-        .fluent-button-subtle {
-            background: transparent;
-            color: var(--colorNeutralForeground2);
-        }
-        
-        .fluent-button-subtle:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-nav-item {
-            padding: 6px 12px;
-            border-radius: var(--borderRadiusSmall);
-            color: var(--colorNeutralForeground2);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .fluent-nav-item:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-nav-item.selected {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-            font-weight: 600;
-        }
-        
-        .fluent-text-title1 {
-            font-size: 28px;
-            font-weight: 600;
-            line-height: 36px;
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-text-title2 {
-            font-size: 20px;
-            font-weight: 600;
-            line-height: 28px;
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-text-body1 {
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 20px;
-            color: var(--colorNeutralForeground2);
-        }
-        
-        .fluent-text-caption1 {
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 16px;
-            color: var(--colorNeutralForeground3);
-        }
-        
-        .fluent-badge {
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 16px;
-        }
-        
-        .fluent-badge-success {
-            background: #dff6dd;
-            color: #107c10;
-        }
-        
-        .fluent-badge-info {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-        }
-        
-        .fluent-badge-neutral {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground2);
-        }
-        
-        .fluent-divider {
-            height: 1px;
-            background: var(--colorNeutralStroke2);
-            border: none;
-        }
-        
-        .fluent-icon {
-            width: 16px;
-            height: 16px;
-        }
-        
-        /* Sidebar Styles */
+        .fluent-card:hover { box-shadow: var(--shadow4); }
+
+        /* Buttons */
+        .fluent-button { 
+            border-radius: var(--borderRadiusSmall); padding:5px 12px; font-weight:600; font-size:14px; line-height:20px; border:1px solid transparent; transition: all 0.2s ease; }
+        .fluent-button-primary { background: var(--colorBrandBackground); color:white; }
+        .fluent-button-primary:hover { background: var(--colorBrandBackgroundHover); }
+        .fluent-button-subtle { background:transparent; color: var(--colorNeutralForeground2); }
+        .fluent-button-subtle:hover { background: var(--colorNeutralBackground3); color: var(--colorNeutralForeground1); }
+
+        /* Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
             left: 0;
-            height: 100vh;
             width: 256px;
+            height: 100vh;
             background: var(--colorNeutralBackground1);
-            border-right: 1px solid var(--colorNeutralStroke2);
+            border-right:1px solid var(--colorNeutralStroke2);
             box-shadow: var(--shadow2);
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-            z-index: 1000;
-            overflow-y: auto;
-        }
-        
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        
+            z-index:1000;
+            overflow-y:auto;
+            transition: transform 0.3s ease;
+            }
+        .sidebar.open { transform: translateX(0); }
         .sidebar-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.33, 0, 0.67, 1);
+            top:0; left:0; width:100vw; height:100vh;
+            background: rgba(0,0,0,0.4);
+            z-index:999; opacity:0; visibility:hidden;
+            transition: all 0.3s ease;
         }
-        
-        .sidebar-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .main-content {
-            transition: margin-left 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .main-content.sidebar-open {
-            margin-left: 256px;
-        }
-        
-        .sidebar-nav-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            color: var(--colorNeutralForeground2);
-            text-decoration: none;
-            border-radius: var(--borderRadiusSmall);
-            margin: 2px 8px;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .sidebar-nav-item:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .sidebar-nav-item.active {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-            font-weight: 600;
-        }
-        
-        .sidebar-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--colorNeutralStroke2);
-        }
-        
-        .sidebar-section {
-            padding: 16px 0;
-            border-bottom: 1px solid var(--colorNeutralStroke2);
-        }
-        
-        .sidebar-section-title {
-            padding: 0 16px 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--colorNeutralForeground3);
-        }
-        
-        @media (min-width: 1024px) {
-            .sidebar {
-                position: static;
-                transform: translateX(0);
-                height: calc(100vh - 73px);
-                top: 73px;
-            }
-            
-            .sidebar-overlay {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 256px;
-            }
-            
-            .sidebar-toggle {
-                display: none;
-            }
-        }
-        
+        .sidebar-overlay.show { opacity:1; visibility:visible; }
+
+        /* Main Content */
+        .main-content { margin-left:256px; transition: margin-left 0.3s ease; overflow:auto; height:100vh; }
+
+        /* Sidebar items */
+        .sidebar-nav-item { display:flex; align-items:center; padding:8px 16px; border-radius: var(--borderRadiusSmall); color:var(--colorNeutralForeground2); text-decoration:none; margin:2px 8px; transition: all 0.2s ease; }
+        .sidebar-nav-item:hover { background: var(--colorNeutralBackground3); color: var(--colorNeutralForeground1); }
+        .sidebar-nav-item.active { background:#e3f2fd; color: var(--colorBrandForeground1); font-weight:600; }
+
+        /* Sidebar headers */
+        .sidebar-header { padding:16px; border-bottom:1px solid var(--colorNeutralStroke2); }
+        .sidebar-section { padding:16px 0; border-bottom:1px solid var(--colorNeutralStroke2); }
+        .sidebar-section-title { padding:0 16px 8px 16px; font-size:12px; font-weight:600; text-transform:uppercase; color:var(--colorNeutralForeground3); }
+
+        /* Text styles */
+        .fluent-text-title1 { font-size:28px; font-weight:600; color: var(--colorNeutralForeground1); }
+        .fluent-text-title2 { font-size:20px; font-weight:600; color: var(--colorNeutralForeground1); }
+        .fluent-text-body1 { font-size:14px; font-weight:400; color: var(--colorNeutralForeground2); }
+        .fluent-text-caption1 { font-size:12px; font-weight:400; color: var(--colorNeutralForeground3); }
+
+        /* Badges */
+        .fluent-badge { padding:2px 8px; border-radius:12px; font-size:12px; font-weight:500; line-height:16px; }
+        .fluent-badge-success { background:#dff6dd; color:#107c10; }
+        .fluent-badge-info { background:#e3f2fd; color: var(--colorBrandForeground1); }
+        .fluent-badge-neutral { background: var(--colorNeutralBackground3); color: var(--colorNeutralForeground2); }
+
+        /* Divider */
+        .fluent-divider { height:1px; background: var(--colorNeutralStroke2); border:none; margin:0; }
+
+        /* Responsive tweaks */
         @media (max-width: 1023px) {
-            .main-content.sidebar-open {
-                margin-left: 0;
-            }
+            .main-content { margin-left:0; }
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
         }
     </style>
 </head>

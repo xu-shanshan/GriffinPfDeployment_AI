@@ -44,7 +44,7 @@ Organize all output into a timestamped folder, for example:
 ## Workflow
 1. **Step 1 – Layout Exploration**  
    - Generate a single html file.  
-   - Include **3–4 different layout options** (e.g. vertical scroll, left sidebar + main content, top navigation + cards, grid-based layout).  
+   - Include **different layout options**. 
    - Each layout is separated visually (use `<section>` or `<hr>`).  
    - Provide placeholder components (navigation, table, chart, filters, etc.) so I can preview interaction zones.  
    - Add a short note inside each layout section (as comments or inline text) describing the intended use case.  

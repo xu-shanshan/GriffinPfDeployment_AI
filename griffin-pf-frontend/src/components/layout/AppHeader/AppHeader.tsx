@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Button,
   Text,
+  Subtitle1,
 } from '@fluentui/react-components';
 import {
   Navigation24Regular,
@@ -31,9 +32,7 @@ export const AppHeader: React.FC = () => {
         aria-label="Toggle sidebar"
         style={{ marginRight: '12px' }}
       />
-      <Text weight="semibold" size={400}>
-        Griffin PF Deployment AI
-      </Text>
+      <Subtitle1>Griffin PF Deployment AI</Subtitle1>
       <div style={{ flex: 1 }} />
       <Button
         icon={<Settings24Regular />}

@@ -3,6 +3,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Text,
   Button,
+  Subtitle1,
+  Caption1,
 } from '@fluentui/react-components';
 import {
   Home24Regular,
@@ -94,7 +96,7 @@ export const NavigationSidebar: React.FC = () => {
         boxShadow: shouldShowOverlay ? '2px 0 4px rgba(0,0,0,0.1)' : 'none',
       }}>
         <div style={{ marginBottom: '24px' }}>
-          <Text size={500} weight="bold">Griffin PF AI</Text>
+          <Subtitle1>Griffin PF AI</Subtitle1>
         </div>
         
         <nav style={{ flex: 1 }}>
@@ -132,13 +134,13 @@ export const NavigationSidebar: React.FC = () => {
 
           {favorites.ves.length > 0 && (
             <div style={{ marginTop: '24px' }}>
-              <Text size={300} weight="semibold" style={{ 
+              <Caption1 style={{ 
                 marginBottom: '8px', 
                 padding: '0 16px',
                 color: 'var(--colorNeutralForeground2)'
               }}>
                 Favorites
-              </Text>
+              </Caption1>
               {favorites.ves.map(veId => {
                 const ve = ves?.find(v => v.id === veId);
                 return ve ? (

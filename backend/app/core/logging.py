@@ -2,6 +2,12 @@ import logging
 import sys
 from .config import settings
 
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+
 def setup_logging():
     """配置应用日志"""
     # 创建logger

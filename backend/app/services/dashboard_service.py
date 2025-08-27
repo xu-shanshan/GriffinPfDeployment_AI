@@ -1,5 +1,6 @@
 from typing import Dict, Any
-from app.models.dashboard import DashboardStats, FavoriteVE, FavoriteVEStats
+from app.models.dashboard import DashboardStats
+from app.repositories.dashboard_repository import DashboardRepository
 import logging
 
 logger = logging.getLogger(__name__)
@@ -7,35 +8,17 @@ logger = logging.getLogger(__name__)
 class DashboardService:
     """Dashboard业务逻辑服务"""
     
-    def __init__(self):
-        self.mock_data = self._init_mock_data()
+    def __init__(self, repository: DashboardRepository = None):
+        self.repository = repository or DashboardRepository()
     
-    def _init_mock_data(self) -> dict:
-        """初始化模拟数据"""
-        return {
-            "favorite_ves": [
-                {
-                    "name": "SovBase",
-                    "description": "Base sovereign virtual environment",
-                    "ve_type": "B Type VE",
-                    "stats": {
-                        "total_services": 89,
-                        "deployed_services": 62,
-                        "ready_to_deploy": 15
-                    }
-                },
-                {
-                    "name": "ModelBSov",
-                    "description": "Model B sovereign environment",
-                    "ve_type": "B Type VE", 
-                    "stats": {
-                        "total_services": 45,
-                        "deployed_services": 30,
-                        "ready_to_deploy": 8
-                    }
-                }
-            ]
-        }
+    async def get_dashboard_stats(self) -> DashboardStats:
+        """获取Dashboard统计数据"""
+        logger.info("获取Dashboard统计数据")
+        return await self.repository.get_dashboard_stats()
+    
+    def get_dashboard_info(self):
+        """获取Dashboard信息"""
+        return self.repository.get_dashboard_info()
     
     async def get_dashboard_stats(self) -> DashboardStats:
         """获取Dashboard统计数据"""
@@ -57,4 +40,7 @@ class DashboardService:
             success_rate=98.5,
             favorite_ves=favorite_ves
         )
-        
+    
+    def get_dashboard_info(self):
+        """获取Dashboard信息"""
+        return self.repository.get_dashboard_info()

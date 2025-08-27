@@ -1,6 +1,6 @@
 import os
-from pydantic_settings import BaseSettings
-from typing import Optional
+from pydantic import BaseSettings
+from typing import List, Optional
 
 class Settings(BaseSettings):
     # 应用配置
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     api_prefix: str = "/api"
     
     # CORS配置
-    allowed_origins: list = ["http://localhost:3000", "http://127.0.0.1:3000"]
+    allowed_origins: List[str] = ["http://localhost:3000", "http://127.0.0.1:3000"]
     
     # 日志配置
     log_level: str = "INFO"

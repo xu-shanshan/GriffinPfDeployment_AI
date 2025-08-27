@@ -63,15 +63,3 @@ async def get_ve_services(
     except Exception as e:
         logger.error(f"API层获取VE服务列表错误: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
-    ve_service: VEService = Depends(get_ve_service)
-):
-    """获取VE下的服务列表"""
-    logger.info(f"API层: 获取VE服务列表请求 - {ve_name}, 状态:{status}, 配置:{config_filter}")
-    
-    try:
-        services = await ve_service.get_ve_services(ve_name, status, config_filter)
-        return services
-        
-    except Exception as e:
-        logger.error(f"API层获取VE服务列表错误: {str(e)}")
-        raise HTTPException(status_code=500, detail="Internal server error")

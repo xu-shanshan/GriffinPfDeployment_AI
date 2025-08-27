@@ -46,18 +46,7 @@
         
         <div class="sidebar-section">
             <div class="sidebar-section-title">Quick Access</div>
-            <a href="ve-detail.html?ve=SovBase" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>
-                SovBase
-            </a>
-            <a href="ve-detail.html?ve=ModelBSov" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>
-                ModelBSov
-            </a>
-            <a href="ve-detail.html?ve=OwaMailB2-SOV" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>
-                OwaMailB2-SOV
-            </a>
+            <div id="sidebarFavorites"></div>
         </div>
         
         <div class="sidebar-section">
@@ -236,6 +225,18 @@
         });
     }
 
+    function renderSidebarFavorites() {
+        const wrap = document.getElementById('sidebarFavorites');
+        if (!wrap) return;
+        mockData.favoriteVEs.forEach(v => {
+            const a = document.createElement('a');
+            a.href = `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
+            a.className = 'sidebar-nav-item';
+            a.innerHTML = `<i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}`;
+            wrap.appendChild(a);
+        });
+    }
+
     function enableNavigation() {
         document.body.addEventListener('click', e => {
             const t = e.target.closest('[data-navigate]');
@@ -247,6 +248,7 @@
         renderStats();
         renderFavoritesVE();
         renderFavoritesServices();
+        renderSidebarFavorites();
         enableNavigation();
         if (window.feather) feather.replace();
     });

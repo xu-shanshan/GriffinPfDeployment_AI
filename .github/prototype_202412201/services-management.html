@@ -7,44 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
-    <style>
-        /* Service cards grid */
-        #serviceCardsGrid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
-        /* VE badges in service cards */
-        .ve-badge {
-            padding: 2px 6px;
-            border-radius: 8px;
-            font-size: 10px;
-            font-weight: 500;
-            line-height: 14px;
-            margin: 1px;
-        }
-        .ve-badge-b-type {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-        }
-        .ve-badge-b2-type {
-            background: #dff6dd;
-            color: #107c10;
-        }
-    </style>
+    <link rel="stylesheet" href="./shared/dashboard.css"><!-- added shared styles -->
 </head>
 <body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
     <!-- Sidebar -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
+                <div class="brand-icon"><!-- replaced generic div with brand-icon class -->
                     <i data-feather="layers" class="fluent-icon text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-sm font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF AI</h1>
-                    <p style="font-size: 10px; color: var(--colorNeutralForeground3);">Deployment Platform</p>
+                    <h1 class="text-sm font-semibold brand-title">Griffin PF AI</h1><!-- added brand-title class -->
+                    <p class="brand-subtitle">Deployment Platform</p><!-- added brand-subtitle class -->
                 </div>
             </div>
         </div>
@@ -96,37 +71,27 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Fluent Navigation -->
-        <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
-            <div class="container mx-auto px-6">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div>
-                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Services Management</h1>
-                                <p class="fluent-text-caption1">Manage and monitor all services across virtual environments</p>
-                            </div>
-                        </div>
+        <!-- Header refactored to top-bar like dashboard -->
+        <header class="top-bar" role="banner">
+            <div class="web-container">
+                <div class="flex justify-between items-center h-app-header">
+                    <div>
+                        <h1 class="text-lg font-semibold page-title">Services Management</h1>
+                        <p class="fluent-text-caption1">Manage and monitor all services across virtual environments</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
-                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i data-feather="user" class="fluent-icon user-icon"></i>
                         </div>
-                        <span class="text-sm" style="color: var(--colorNeutralForeground2);">John Doe</span>
+                        <span class="text-sm user-name">John Doe</span>
                     </div>
                 </div>
             </div>
-        </nav>
+        </header>
 
-        <div class="container mx-auto px-6 py-8">
-            <!-- Header Section -->
-            <div class="mb-8">
-                <h2 class="fluent-text-title1 mb-3">Services Management</h2>
-                <p class="fluent-text-body1">Manage and monitor all services and their deployments across different virtual environments.</p>
-            </div>
-
+        <div class="web-container content-area">
             <!-- Search and Filters -->
-            <div class="fluent-card mb-8">
+            <div class="fluent-card section-spacing">
                 <div class="p-6">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
@@ -161,236 +126,7 @@
             </div>
 
             <!-- Services Cards Grid -->
-            <div class="grid grid-cols-3 gap-6 mb-8">
-                <!-- OwaMailB2 Service Card -->
-                <div class="fluent-card p-6 cursor-pointer" onclick="window.location.href='service-detail.html?service=OwaMailB2'">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #dff6dd;">
-                            <i data-feather="mail" class="w-6 h-6" style="color: #107c10;"></i>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="fluent-badge fluent-badge-success">Active</span>
-                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color: #faa06b;">
-                                <i data-feather="star" class="w-4 h-4 fill-current"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <h3 class="fluent-text-title2 mb-2">OwaMailB2</h3>
-                    <p class="fluent-text-body1 mb-4">Outlook Web App Mail Backend Service</p>
-                    
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
-                        <div class="flex flex-wrap gap-1">
-                            <span class="ve-badge ve-badge-b-type">SovBase</span>
-                            <span class="ve-badge ve-badge-b2-type">OwaMailB2-SOV</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">2</div>
-                            <div class="fluent-text-caption1">VE Instances</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: #107c10;">2</div>
-                            <div class="fluent-text-caption1">Deployed</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorBrandForeground1);">v2.1.234</div>
-                            <div class="fluent-text-caption1">Latest Version</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                        <span class="fluent-text-body1">Click to explore</span>
-                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                    </div>
-                </div>
-
-                <!-- GraphConnectors Service Card -->
-                <div class="fluent-card p-6 cursor-pointer" onclick="window.location.href='service-detail.html?service=GraphConnectors'">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #fff3e0;">
-                            <i data-feather="zap" class="w-6 h-6" style="color: #e65100;"></i>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="fluent-badge fluent-badge-neutral">Not Deployed</span>
-                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color: var(--colorNeutralForeground3);">
-                                <i data-feather="star" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <h3 class="fluent-text-title2 mb-2">GraphConnectors</h3>
-                    <p class="fluent-text-body1 mb-4">Graph Connectors Service for data integration</p>
-                    
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
-                        <div class="flex flex-wrap gap-1">
-                            <span class="ve-badge ve-badge-b-type">SovBase</span>
-                            <span class="ve-badge ve-badge-b2-type">GraphConnectorsB2-SOV</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">1</div>
-                            <div class="fluent-text-caption1">VE Instance</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground3);">0</div>
-                            <div class="fluent-text-caption1">Deployed</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground3);">N/A</div>
-                            <div class="fluent-text-caption1">Latest Version</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                        <span class="fluent-text-body1">Click to explore</span>
-                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                    </div>
-                </div>
-
-                <!-- FlowControl Service Card -->
-                <div class="fluent-card p-6 cursor-pointer" onclick="window.location.href='service-detail.html?service=FlowControl'">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #e8f5e9;">
-                            <i data-feather="activity" class="w-6 h-6" style="color: #2e7d32;"></i>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="fluent-badge" style="background: #fff4ce; color: #ca5010;">Config Issue</span>
-                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color: var(--colorNeutralForeground3);">
-                                <i data-feather="star" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <h3 class="fluent-text-title2 mb-2">FlowControl</h3>
-                    <p class="fluent-text-body1 mb-4">Flow Control Service for managing data streams</p>
-                    
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
-                        <div class="flex flex-wrap gap-1">
-                            <span class="ve-badge ve-badge-b-type">SovBase</span>
-                            <span class="ve-badge ve-badge-b2-type">FlowControlB2-SOV</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">1</div>
-                            <div class="fluent-text-caption1">VE Instance</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: #ca5010;">1</div>
-                            <div class="fluent-text-caption1">Config Issue</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground3);">N/A</div>
-                            <div class="fluent-text-caption1">Latest Version</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                        <span class="fluent-text-body1">Click to explore</span>
-                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                    </div>
-                </div>
-
-                <!-- Todo Service Card -->
-                <div class="fluent-card p-6 cursor-pointer" onclick="window.location.href='service-detail.html?service=Todo'">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #e8f0fe;">
-                            <i data-feather="check-square" class="w-6 h-6" style="color: #1e88e5;"></i>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="fluent-badge fluent-badge-success">Active</span>
-                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color: var(--colorNeutralForeground3);">
-                                <i data-feather="star" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <h3 class="fluent-text-title2 mb-2">Todo</h3>
-                    <p class="fluent-text-body1 mb-4">Task management and todo list service</p>
-                    
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
-                        <div class="flex flex-wrap gap-1">
-                            <span class="ve-badge ve-badge-b2-type">TodoB2-SOV</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">1</div>
-                            <div class="fluent-text-caption1">VE Instance</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: #107c10;">1</div>
-                            <div class="fluent-text-caption1">Deployed</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorBrandForeground1);">v1.0.0</div>
-                            <div class="fluent-text-caption1">Latest Version</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                        <span class="fluent-text-body1">Click to explore</span>
-                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                    </div>
-                </div>
-
-                <!-- Exchange Service Card -->
-                <div class="fluent-card p-6 cursor-pointer" onclick="window.location.href='service-detail.html?service=Exchange'">
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: #f3e5f5;">
-                            <i data-feather="server" class="w-6 h-6" style="color: #5c2d91;"></i>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="fluent-badge fluent-badge-success">Active</span>
-                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color: var(--colorNeutralForeground3);">
-                                <i data-feather="star" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <h3 class="fluent-text-title2 mb-2">Exchange</h3>
-                    <p class="fluent-text-body1 mb-4">Core Exchange Server services and components</p>
-                    
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
-                        <div class="flex flex-wrap gap-1">
-                            <span class="ve-badge ve-badge-b-type">SovBase</span>
-                            <span class="ve-badge ve-badge-b-type">ModelBSov</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">2</div>
-                            <div class="fluent-text-caption1">VE Instances</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: #107c10;">2</div>
-                            <div class="fluent-text-caption1">Deployed</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorBrandForeground1);">v15.2.234</div>
-                            <div class="fluent-text-caption1">Latest Version</div>
-                        </div>
-                    </div>
-                    
-                    <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                        <span class="fluent-text-body1">Click to explore</span>
-                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                    </div>
-                </div>
-            </div>
+            <div id="servicesGrid" class="services-grid section-spacing"></div><!-- replaced static hard-coded cards -->
 
             <!-- Pagination -->
             <div class="flex items-center justify-between">
@@ -413,17 +149,130 @@
     </div>
 
     <script>
-        feather.replace();
-        
-        // Search functionality
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            // Search implementation would go here
+        // Mock services data (dynamic)
+        const serviceMockData = [
+            {
+                name: 'OwaMailB2',
+                description: 'Outlook Web App Mail Backend Service',
+                icon: { name: 'mail', bg: '#dff6dd', color: '#107c10' },
+                status: 'Active', statusClass: 'success',
+                instances: 2, deployed: 2, version: 'v2.1.234',
+                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'OwaMailB2-SOV', type: 'b2' }],
+                favorite: true
+            },
+            {
+                name: 'GraphConnectors',
+                description: 'Graph Connectors Service for data integration',
+                icon: { name: 'zap', bg: '#fff3e0', color: '#e65100' },
+                status: 'Not Deployed', statusClass: 'neutral',
+                instances: 1, deployed: 0, version: null,
+                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'GraphConnectorsB2-SOV', type: 'b2' }],
+                favorite: false
+            },
+            {
+                name: 'FlowControl',
+                description: 'Flow Control Service for managing data streams',
+                icon: { name: 'activity', bg: '#e8f5e9', color: '#2e7d32' },
+                status: 'Config Issue', statusClass: 'warning',
+                instances: 1, deployed: 0, version: null,
+                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'FlowControlB2-SOV', type: 'b2' }],
+                favorite: false
+            },
+            {
+                name: 'Todo',
+                description: 'Task management and todo list service',
+                icon: { name: 'check-square', bg: '#e8f0fe', color: '#1e88e5' },
+                status: 'Active', statusClass: 'success',
+                instances: 1, deployed: 1, version: 'v1.0.0',
+                veBadges: [{ name: 'TodoB2-SOV', type: 'b2' }],
+                favorite: false
+            },
+            {
+                name: 'Exchange',
+                description: 'Core Exchange Server services and components',
+                icon: { name: 'server', bg: '#f3e5f5', color: '#5c2d91' },
+                status: 'Active', statusClass: 'success',
+                instances: 2, deployed: 2, version: 'v15.2.234',
+                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'ModelBSov', type: 'b' }],
+                favorite: false
+            }
+        ];
+
+        function serviceStatusBadge(s) {
+            if (s.statusClass === 'success') return `<span class="fluent-badge fluent-badge-success">${s.status}</span>`;
+            if (s.statusClass === 'neutral') return `<span class="fluent-badge fluent-badge-neutral">${s.status}</span>`;
+            if (s.statusClass === 'warning') return `<span class="fluent-badge" style="background:#fff4ce;color:#ca5010;">${s.status}</span>`;
+            return `<span class="fluent-badge">${s.status}</span>`;
         }
 
-        // Filter functionality
+        function renderServices(list = serviceMockData) {
+            const wrap = document.getElementById('servicesGrid');
+            if (!wrap) return;
+            wrap.innerHTML = '';
+            list.forEach(s => {
+                const card = document.createElement('div');
+                card.className = 'service-card fluent-card';
+                card.onclick = () => window.location.href = `service-detail.html?service=${encodeURIComponent(s.name)}`;
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:${s.icon.bg};">
+                            <i data-feather="${s.icon.name}" class="w-6 h-6" style="color:${s.icon.color};"></i>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            ${serviceStatusBadge(s)}
+                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color:${s.favorite ? '#faa06b':'var(--colorNeutralForeground3)'};">
+                                <i data-feather="star" class="w-4 h-4 ${s.favorite ? 'fill-current':''}"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <h3 class="fluent-text-title2 mb-2">${s.name}</h3>
+                    <p class="fluent-text-body1 mb-4">${s.description}</p>
+                    <div class="mb-4">
+                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
+                        <div class="flex flex-wrap gap-1">
+                            ${s.veBadges.map(v => `<span class="ve-badge ve-badge-${v.type==='b2'?'b2':'b'}-type">${v.name}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between mb-6">
+                        <div class="text-center">
+                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">${s.instances}</div>
+                            <div class="fluent-text-caption1">VE ${s.instances===1?'Instance':'Instances'}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-semibold" style="color:${s.statusClass==='success' ? '#107c10' : (s.statusClass==='warning' ? '#ca5010' : 'var(--colorNeutralForeground3)')};">
+                                ${s.deployed}
+                            </div>
+                            <div class="fluent-text-caption1">${s.statusClass==='warning'?'Config Issue': (s.statusClass==='neutral'?'Deployed':'Deployed')}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-semibold" style="color:${s.version ? 'var(--colorBrandForeground1)':'var(--colorNeutralForeground3)'};">${s.version || 'N/A'}</div>
+                            <div class="fluent-text-caption1">Latest Version</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-4" style="border-top:1px solid var(--colorNeutralStroke2);">
+                        <span class="fluent-text-body1">Click to explore</span>
+                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                    </div>
+                `;
+                wrap.appendChild(card);
+            });
+            if (window.feather) feather.replace();
+        }
+
+        // Override search to filter mock list
+        function performSearch() {
+            const term = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!term) return renderServices();
+            const filtered = serviceMockData.filter(s =>
+                s.name.toLowerCase().includes(term) ||
+                s.veBadges.some(v => v.name.toLowerCase().includes(term))
+            );
+            renderServices(filtered);
+        }
+
         function applyFilters() {
-            // Filter implementation would go here
+            // Placeholder: extend with real filter logic later
+            renderServices();
         }
 
         // Clear search
@@ -443,6 +292,9 @@
                 button.style.color = '#faa06b';
             }
         }
+
+        feather.replace();
+        renderServices(); // initial render
     </script>
 </body>
 </html>

@@ -154,10 +154,48 @@
     align-items: start;
 }
 
-/* Responsive adjustments */
+/* Services Management specific (migrated from inline in services-management.html) */
+.services-grid {
+    display: grid;
+    gap: var(--gap-md);
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+
+.service-card {
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+}
+
+/* VE badges inside service cards */
+.ve-badge {
+    padding: 2px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 14px;
+    margin: 1px;
+    display: inline-block;
+}
+.ve-badge-b-type {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+}
+.ve-badge-b2-type {
+    background: #dff6dd;
+    color: #107c10;
+}
+
 @media (max-width: 900px) {
     :root { --page-gutter: 20px; }
     .favorites-grid-wrap { grid-template-columns: 1fr; }
+    .services-grid {
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    }
 }
 
 /* Error notification */

@@ -40,9 +40,7 @@ Organize all output into a timestamped folder, for example:
       ├── project-detail.html
       ├── reports.html
       └── UI_UX_Design.md
-      └── Frontend_Architecture.md
-
-4. Layout： Left, right header, right content (Left only shows modul link, no tree)
+      └── Frontend_Architecture.m
 
 
 ---
@@ -62,12 +60,12 @@ Deployment Rules:
 - Model B → must use B type VE
 - Model B2 → can use B type VE or B2 VE
 
-GriffinPfDeployment_AI: Web project for VE & Service deployment. Users can:
+GriffinPfDeployment_AI: Web application for VE & Service deployment. Users can:
 - View VE list and associated Services
 - Favorite VEs for quick access
 - Check each service’s Build info and Drop URLs; services have multiple pipelines and Drop URLs
 - Trigger deployment for single service or all services under a VE
-- Select a pipeline/build for a service deployment, or use default pipeline for batch deployment(muti VE muti service)
+- Select a pipeline/build for a service deployment, or use default pipeline for batch deployment(multi VE multi service)
 
 ### Currently Mock Data:
 
@@ -183,3 +181,7 @@ Notes:
 
 
 ## Additional Instructions
+
+
+1. this is a web application, not desktop software, open with a browser
+2.  Layout： Left, right header, right content (Left only shows module link, no tree)

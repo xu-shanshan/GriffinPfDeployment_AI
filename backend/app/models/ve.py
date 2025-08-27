@@ -36,22 +36,26 @@ class ServiceModel(BaseModel):
     icon_color: str
     ready_to_deploy: bool
 
-class VEDetailResponse(BaseModel):
+class VEItem(BaseModel):
     name: str
-    description: str
-    ve_type: VEType
+    type: str
     group: str
-    stats: VEStats
-    is_favorite: Optional[bool] = False
-    last_updated: Optional[str] = None
+    status: str
 
 class VEListResponse(BaseModel):
-    items: List[VEModel]
-    total_count: int
-    page: int
-    page_size: int
-    has_next: bool
-    has_previous: bool
+    ves: List[VEItem]
+    total: int
+
+class VEDetailResponse(BaseModel):
+    name: str
+    type: str
+    group: str
+    status: str
+    services: Optional[list] = []
+
+class VEServiceItem(BaseModel):
+    name: str
+    status: str
 
 class VEServicesResponse(BaseModel):
-    services: List[ServiceModel]
+    services: List[VEServiceItem]

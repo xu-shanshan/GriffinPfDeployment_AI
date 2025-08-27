@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Any, List
 import logging
+from app.models.ve import VEListResponse, VEDetailResponse, VEServicesResponse
 
 logger = logging.getLogger(__name__)
 
@@ -204,3 +205,33 @@ class VERepository:
         except Exception as e:
             logger.error(f"获取收藏VE列表Repository层错误: {str(e)}")
             raise
+
+    async def fetch_list(self, search, ve_type, group, page, page_size) -> VEListResponse:
+        # 简单 mock 过滤
+        items = []
+        for ve in self._mock_ves.values():
+            if search and search not in ve["name"]:
+                continue
+            if ve_type and ve_type != ve["type"]:
+                continue
+            if group and group != ve["group"]:
+                continue
+            items.append({"name": ve["name"], "type": ve["type"], "group": ve["group"], "status": ve["status"]})
+        total = len(items)
+        return VEListResponse(ves=items[(page-1)*page_size:page*page_size], total=total)
+
+    async def fetch_detail(self, ve_name: str) -> Optional[VEDetailResponse]:
+        ve = self._mock_ves.get(ve_name)
+        if not ve:
+            return None
+        return VEDetailResponse(**ve)
+
+    async def fetch_services(self, ve_name: str, status: Optional[str], config_filter: Optional[str]) -> VEServicesResponse:
+        ve = self._mock_ves.get(ve_name)
+        if not ve:
+            return VEServicesResponse(services=[])
+        services = ve.get("services", [])
+        if status:
+            services = [s for s in services if s["status"] == status]
+        # config_filter 可按需实现
+        return VEServicesResponse(services=services)

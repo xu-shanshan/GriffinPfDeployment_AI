@@ -36,6 +36,10 @@
                 <i data-feather="server" class="fluent-icon mr-3"></i>
                 VE Management
             </a>
+            <a href="services-management.html" class="sidebar-nav-item">
+                <i data-feather="layers" class="fluent-icon mr-3"></i>
+                Services Management
+            </a>
             <a href="deployment-history.html" class="sidebar-nav-item">
                 <i data-feather="clock" class="fluent-icon mr-3"></i>
                 History
@@ -405,30 +409,25 @@
             overlay.classList.toggle('show');
         }
         
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const mainContent = document.getElementById('mainContent');
-            
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.add('open');
-                overlay.classList.remove('show');
-                mainContent.classList.add('sidebar-open');
-            } else {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-                mainContent.classList.remove('sidebar-open');
-            }
-        });
-        
         // Initialize sidebar state
         document.addEventListener('DOMContentLoaded', function() {
             if (window.innerWidth >= 1024) {
                 const sidebar = document.getElementById('sidebar');
-                const mainContent = document.getElementById('mainContent');
                 sidebar.classList.add('open');
-                mainContent.classList.add('sidebar-open');
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.add('open');
+                overlay.classList.remove('show');
+            } else {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
             }
         });
         
@@ -575,4 +574,5 @@
         });
     </script>
 </body>
+</html>
 </html>

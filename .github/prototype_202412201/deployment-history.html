@@ -6,150 +6,150 @@
     <title>Deployment History - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    <link rel="stylesheet" href="../../shared/fluent-ui.css">
+</head>
+<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
+                    <i data-feather="layers" class="fluent-icon text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF AI</h1>
+                    <p style="font-size: 10px; color: var(--colorNeutralForeground3);">Deployment Platform</p>
+                </div>
+            </div>
+        </div>
         
-        /* Fluent UI v9 Design System */
-        :root {
-            --colorNeutralForeground1: #242424;
-            --colorNeutralForeground2: #424242;
-            --colorNeutralForeground3: #616161;
-            --colorNeutralBackground1: #ffffff;
-            --colorNeutralBackground2: #f5f5f5;
-            --colorNeutralBackground3: #f0f0f0;
-            --colorBrandBackground: #0f6cbd;
-            --colorBrandBackgroundHover: #115ea3;
-            --colorBrandForeground1: #0f6cbd;
-            --colorNeutralStroke1: #d1d1d1;
-            --colorNeutralStroke2: #e0e0e0;
-            --borderRadiusSmall: 4px;
-            --borderRadiusLarge: 8px;
-            --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+        <nav class="sidebar-section">
+            <div class="sidebar-section-title">Main Navigation</div>
+            <a href="dashboard.html" class="sidebar-nav-item">
+                <i data-feather="home" class="fluent-icon mr-3"></i>
+                Dashboard
+            </a>
+            <a href="ve-management.html" class="sidebar-nav-item">
+                <i data-feather="server" class="fluent-icon mr-3"></i>
+                VE Management
+            </a>
+            <a href="services-management.html" class="sidebar-nav-item">
+                <i data-feather="layers" class="fluent-icon mr-3"></i>
+                Services Management
+            </a>
+            <a href="deployment-history.html" class="sidebar-nav-item active">
+                <i data-feather="clock" class="fluent-icon mr-3"></i>
+                History
+            </a>
+        </nav>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Quick Access</div>
+            <a href="ve-detail.html?ve=SovBase" class="sidebar-nav-item">
+                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
+                SovBase
+            </a>
+            <a href="ve-detail.html?ve=ModelBSov" class="sidebar-nav-item">
+                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
+                ModelBSov
+            </a>
+            <a href="ve-detail.html?ve=OwaMailB2-SOV" class="sidebar-nav-item">
+                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
+                OwaMailB2-SOV
+            </a>
+        </div>
+        
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Account</div>
+            <a href="login.html" class="sidebar-nav-item">
+                <i data-feather="log-out" class="fluent-icon mr-3"></i>
+                Logout
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Fluent Navigation -->
+        <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; position: sticky; top: 0; z-index: 40;">
+            <div class="px-6">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center space-x-4">
+                        <button class="sidebar-toggle lg:hidden fluent-button fluent-button-subtle p-2" onclick="toggleSidebar()">
+                            <i data-feather="menu" class="fluent-icon"></i>
+                        </button>
+                        <div class="flex items-center space-x-3">
+                            <div>
+                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Deployment History</h1>
+                                <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
+                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                        </div>
+                        <span class="text-sm" style="color: var(--colorNeutralForeground2);">John Doe</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="px-6 py-6">
+            <!-- Header -->
+            <div class="mb-8">
+                <h2 class="fluent-text-title1 mb-3">Deployment History</h2>
+                <p class="fluent-text-body1">Track and review all deployment activities across virtual environments.</p>
+            </div>
+
+            <!-- Content placeholder -->
+            <div class="fluent-card p-8 text-center">
+                <i data-feather="clock" class="w-16 h-16 mx-auto mb-4" style="color: var(--colorNeutralForeground3);"></i>
+                <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">Deployment History</h3>
+                <p class="fluent-text-body1">This page will display deployment logs and history.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        
+        // Unified sidebar functionality
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('show');
         }
         
-        .fluent-card {
-            background: var(--colorNeutralBackground1);
-            border: 1px solid var(--colorNeutralStroke2);
-            border-radius: var(--borderRadiusLarge);
-            box-shadow: var(--shadow2);
-        }
+        // Initialize sidebar state
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.innerWidth >= 1024) {
+                const sidebar = document.getElementById('sidebar');
+                sidebar.classList.add('open');
+            }
+        });
         
-        .fluent-nav-item {
-            padding: 6px 12px;
-            border-radius: var(--borderRadiusSmall);
-            color: var(--colorNeutralForeground2);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .fluent-nav-item:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-nav-item.selected {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-            font-weight: 600;
-        }
-        
-        .fluent-text-title1 {
-            font-size: 28px;
-            font-weight: 600;
-            line-height: 36px;
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-text-body1 {
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 20px;
-            color: var(--colorNeutralForeground2);
-        }
-        
-        .fluent-icon {
-            width: 16px;
-            height: 16px;
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 256px;
-            background: var(--colorNeutralBackground1);
-            border-right: 1px solid var(--colorNeutralStroke2);
-            box-shadow: var(--shadow2);
-            transform: translateX(-100%);
-            transition: transform 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-            z-index: 1000;
-            overflow-y: auto;
-        }
-        
-        .sidebar.open {
-            transform: translateX(0);
-        }
-        
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .sidebar-overlay.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .main-content {
-            min-height: 100vh;
-            transition: margin-left 0.3s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .main-content.sidebar-open {
-            margin-left: 256px;
-        }
-        
-        .sidebar-nav-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            color: var(--colorNeutralForeground2);
-            text-decoration: none;
-            border-radius: var(--borderRadiusSmall);
-            margin: 2px 8px;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .sidebar-nav-item:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .sidebar-nav-item.active {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-            font-weight: 600;
-        }
-        
-        .sidebar-header {
-            padding: 16px;
-            border-bottom: 1px solid var(--colorNeutralStroke2);
-        }
-        
-        .sidebar-section {
-            padding: 16px 0;
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.add('open');
+                overlay.classList.remove('show');
+            } else {
+                sidebar.classList.remove('open');
+                overlay.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
             border-bottom: 1px solid var(--colorNeutralStroke2);
         }
         

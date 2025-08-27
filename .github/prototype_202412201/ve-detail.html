@@ -276,6 +276,10 @@
                 <i data-feather="server" class="fluent-icon mr-3"></i>
                 VE Management
             </a>
+            <a href="services-management.html" class="sidebar-nav-item">
+                <i data-feather="layers" class="fluent-icon mr-3"></i>
+                Services Management
+            </a>
             <a href="deployment-history.html" class="sidebar-nav-item">
                 <i data-feather="clock" class="fluent-icon mr-3"></i>
                 History
@@ -401,7 +405,7 @@
                 <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
                     <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
                         <div class="flex items-center space-x-4">
-                            <h2 class="fluent-text-title2">Services Management</h2>
+                            <h2 class="fluent-text-title2">Services in SovBase VE</h2>
                             <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
                         </div>
                         <div class="flex flex-col md:flex-row items-stretch md:items-center space-y-3 md:space-y-0 md:space-x-3">
@@ -637,7 +641,7 @@
                             <i data-feather="${service.icon}" class="w-4 h-4 text-${service.iconColor}-600"></i>
                         </div>
                         <div>
-                            <a href="service-detail.html?service=${service.id}" 
+                            <a href="ve-service-detail.html?ve=SovBase&service=${service.id}" 
                                class="text-gray-900 font-medium hover:text-blue-600 transition-colors">${service.name}</a>
                             <p class="text-sm text-gray-500">${service.description}</p>
                         </div>

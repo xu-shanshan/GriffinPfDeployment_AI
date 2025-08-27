@@ -96,28 +96,33 @@
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                             <div class="relative">
-                                <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 transform -translate-y-1/2" style="color: var(--colorNeutralForeground3);"></i>
-                                <input type="text" 
+                                <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 transform -translate-y-1/2 icon-muted"></i>
+                                <input type="text"
                                        id="searchInput"
-                                       placeholder="Search by service name or VE name..." 
+                                       aria-label="Search services or virtual environments"
+                                       placeholder="Search by service name or VE name..."
                                        class="fluent-input with-icon w-80"
                                        oninput="performSearch()">
                             </div>
-                            <select class="fluent-select" onchange="applyFilters()">
+                            <select class="fluent-select"
+                                    aria-label="Filter by service type"
+                                    onchange="applyFilters()">
                                 <option>All Service Types</option>
                                 <option>Exchange Services</option>
                                 <option>Graph Services</option>
                                 <option>Outlook Services</option>
                                 <option>Core Services</option>
                             </select>
-                            <select class="fluent-select" onchange="applyFilters()">
+                            <select class="fluent-select"
+                                    aria-label="Filter by deployment status"
+                                    onchange="applyFilters()">
                                 <option>All Deployment Status</option>
                                 <option>Ready to Deploy</option>
                                 <option>Deployed</option>
                                 <option>Not Deployed</option>
                                 <option>Configuration Issues</option>
                             </select>
-                            <button onclick="clearSearch()" class="fluent-button fluent-button-subtle">
+                            <button type="button" onclick="clearSearch()" class="fluent-button fluent-button-subtle">
                                 Clear All
                             </button>
                         </div>
@@ -126,7 +131,7 @@
             </div>
 
             <!-- Services Cards Grid -->
-            <div id="servicesGrid" class="services-grid section-spacing"></div><!-- replaced static hard-coded cards -->
+            <div id="servicesGrid" class="services-grid section-spacing"></div>
 
             <!-- Pagination -->
             <div class="flex items-center justify-between">
@@ -134,13 +139,13 @@
                     Showing 1-6 of 156 services
                 </div>
                 <nav class="flex space-x-1">
-                    <button class="fluent-button fluent-button-subtle px-3 py-2" style="color: var(--colorNeutralForeground3);">
+                    <button type="button" aria-label="Previous page" class="fluent-button fluent-button-subtle px-3 py-2 icon-muted">
                         <i data-feather="chevron-left" class="fluent-icon"></i>
                     </button>
-                    <button class="fluent-button fluent-button-primary px-3 py-2 text-sm">1</button>
-                    <button class="fluent-button fluent-button-subtle px-3 py-2 text-sm">2</button>
-                    <button class="fluent-button fluent-button-subtle px-3 py-2 text-sm">3</button>
-                    <button class="fluent-button fluent-button-subtle px-3 py-2">
+                    <button type="button" class="fluent-button fluent-button-primary px-3 py-2 text-sm">1</button>
+                    <button type="button" class="fluent-button fluent-button-subtle px-3 py-2 text-sm">2</button>
+                    <button type="button" class="fluent-button fluent-button-subtle px-3 py-2 text-sm">3</button>
+                    <button type="button" aria-label="Next page" class="fluent-button fluent-button-subtle px-3 py-2 icon-muted">
                         <i data-feather="chevron-right" class="fluent-icon"></i>
                     </button>
                 </nav>
@@ -149,59 +154,47 @@
     </div>
 
     <script>
-        // Mock services data (dynamic)
+        // Mock services data updated to use class-based icon backgrounds (no inline styles)
         const serviceMockData = [
             {
                 name: 'OwaMailB2',
                 description: 'Outlook Web App Mail Backend Service',
-                icon: { name: 'mail', bg: '#dff6dd', color: '#107c10' },
+                icon: { name: 'mail', class: 'icon-bg-green' },
                 status: 'Active', statusClass: 'success',
                 instances: 2, deployed: 2, version: 'v2.1.234',
                 veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'OwaMailB2-SOV', type: 'b2' }],
                 favorite: true
             },
-            {
-                name: 'GraphConnectors',
-                description: 'Graph Connectors Service for data integration',
-                icon: { name: 'zap', bg: '#fff3e0', color: '#e65100' },
-                status: 'Not Deployed', statusClass: 'neutral',
-                instances: 1, deployed: 0, version: null,
-                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'GraphConnectorsB2-SOV', type: 'b2' }],
-                favorite: false
-            },
-            {
-                name: 'FlowControl',
-                description: 'Flow Control Service for managing data streams',
-                icon: { name: 'activity', bg: '#e8f5e9', color: '#2e7d32' },
-                status: 'Config Issue', statusClass: 'warning',
-                instances: 1, deployed: 0, version: null,
-                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'FlowControlB2-SOV', type: 'b2' }],
-                favorite: false
-            },
-            {
-                name: 'Todo',
-                description: 'Task management and todo list service',
-                icon: { name: 'check-square', bg: '#e8f0fe', color: '#1e88e5' },
-                status: 'Active', statusClass: 'success',
-                instances: 1, deployed: 1, version: 'v1.0.0',
-                veBadges: [{ name: 'TodoB2-SOV', type: 'b2' }],
-                favorite: false
-            },
-            {
-                name: 'Exchange',
-                description: 'Core Exchange Server services and components',
-                icon: { name: 'server', bg: '#f3e5f5', color: '#5c2d91' },
-                status: 'Active', statusClass: 'success',
-                instances: 2, deployed: 2, version: 'v15.2.234',
-                veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'ModelBSov', type: 'b' }],
-                favorite: false
-            }
+            { name: 'GraphConnectors', description: 'Graph Connectors Service for data integration',
+              icon: { name: 'zap', class: 'icon-bg-orange' },
+              status: 'Not Deployed', statusClass: 'neutral',
+              instances: 1, deployed: 0, version: null,
+              veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'GraphConnectorsB2-SOV', type: 'b2' }],
+              favorite: false },
+            { name: 'FlowControl', description: 'Flow Control Service for managing data streams',
+              icon: { name: 'activity', class: 'icon-bg-activity' },
+              status: 'Config Issue', statusClass: 'warning',
+              instances: 1, deployed: 0, version: null,
+              veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'FlowControlB2-SOV', type: 'b2' }],
+              favorite: false },
+            { name: 'Todo', description: 'Task management and todo list service',
+              icon: { name: 'check-square', class: 'icon-bg-blue' },
+              status: 'Active', statusClass: 'success',
+              instances: 1, deployed: 1, version: 'v1.0.0',
+              veBadges: [{ name: 'TodoB2-SOV', type: 'b2' }],
+              favorite: false },
+            { name: 'Exchange', description: 'Core Exchange Server services and components',
+              icon: { name: 'server', class: 'icon-bg-purple' },
+              status: 'Active', statusClass: 'success',
+              instances: 2, deployed: 2, version: 'v15.2.234',
+              veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'ModelBSov', type: 'b' }],
+              favorite: false }
         ];
 
         function serviceStatusBadge(s) {
             if (s.statusClass === 'success') return `<span class="fluent-badge fluent-badge-success">${s.status}</span>`;
             if (s.statusClass === 'neutral') return `<span class="fluent-badge fluent-badge-neutral">${s.status}</span>`;
-            if (s.statusClass === 'warning') return `<span class="fluent-badge" style="background:#fff4ce;color:#ca5010;">${s.status}</span>`;
+            if (s.statusClass === 'warning') return `<span class="fluent-badge badge-warning">${s.status}</span>`;
             return `<span class="fluent-badge">${s.status}</span>`;
         }
 
@@ -215,43 +208,43 @@
                 card.onclick = () => window.location.href = `service-detail.html?service=${encodeURIComponent(s.name)}`;
                 card.innerHTML = `
                     <div class="flex items-center justify-between mb-4">
-                        <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:${s.icon.bg};">
-                            <i data-feather="${s.icon.name}" class="w-6 h-6" style="color:${s.icon.color};"></i>
+                        <div class="service-icon ${s.icon.class}">
+                            <i data-feather="${s.icon.name}" class="w-6 h-6"></i>
                         </div>
                         <div class="flex items-center space-x-2">
                             ${serviceStatusBadge(s)}
-                            <button onclick="event.stopPropagation(); toggleStar(this)" class="hover:opacity-80" style="color:${s.favorite ? '#faa06b':'var(--colorNeutralForeground3)'};">
-                                <i data-feather="star" class="w-4 h-4 ${s.favorite ? 'fill-current':''}"></i>
+                            <button type="button" aria-label="Toggle favorite for ${s.name}" class="star-toggle ${s.favorite ? 'active':''}" onclick="event.stopPropagation(); toggleStar(this)">
+                                <i data-feather="star" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
                     <h3 class="fluent-text-title2 mb-2">${s.name}</h3>
                     <p class="fluent-text-body1 mb-4">${s.description}</p>
                     <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2" style="color: var(--colorNeutralForeground2);">Present in VEs:</h4>
+                        <h4 class="text-sm font-medium mb-2 text-muted">Present in VEs:</h4>
                         <div class="flex flex-wrap gap-1">
                             ${s.veBadges.map(v => `<span class="ve-badge ve-badge-${v.type==='b2'?'b2':'b'}-type">${v.name}</span>`).join('')}
                         </div>
                     </div>
                     <div class="flex items-center justify-between mb-6">
                         <div class="text-center">
-                            <div class="text-xl font-semibold" style="color: var(--colorNeutralForeground1);">${s.instances}</div>
+                            <div class="text-xl font-semibold text-fg-strong">${s.instances}</div>
                             <div class="fluent-text-caption1">VE ${s.instances===1?'Instance':'Instances'}</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xl font-semibold" style="color:${s.statusClass==='success' ? '#107c10' : (s.statusClass==='warning' ? '#ca5010' : 'var(--colorNeutralForeground3)')};">
+                            <div class="text-xl font-semibold ${s.statusClass==='success' ? 'text-success' : (s.statusClass==='warning' ? 'text-warning' : 'text-muted')}">
                                 ${s.deployed}
                             </div>
-                            <div class="fluent-text-caption1">${s.statusClass==='warning'?'Config Issue': (s.statusClass==='neutral'?'Deployed':'Deployed')}</div>
+                            <div class="fluent-text-caption1">${s.statusClass==='warning'?'Config Issue':'Deployed'}</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xl font-semibold" style="color:${s.version ? 'var(--colorBrandForeground1)':'var(--colorNeutralForeground3)'};">${s.version || 'N/A'}</div>
+                            <div class="text-xl font-semibold ${s.version ? 'text-accent':'text-muted'}">${s.version || 'N/A'}</div>
                             <div class="fluent-text-caption1">Latest Version</div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between pt-4" style="border-top:1px solid var(--colorNeutralStroke2);">
+                    <div class="flex items-center justify-between pt-4 divider-top">
                         <span class="fluent-text-body1">Click to explore</span>
-                        <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                        <i data-feather="chevron-right" class="fluent-icon icon-muted"></i>
                     </div>
                 `;
                 wrap.appendChild(card);
@@ -259,7 +252,6 @@
             if (window.feather) feather.replace();
         }
 
-        // Override search to filter mock list
         function performSearch() {
             const term = document.getElementById('searchInput').value.trim().toLowerCase();
             if (!term) return renderServices();
@@ -270,31 +262,20 @@
             renderServices(filtered);
         }
 
-        function applyFilters() {
-            // Placeholder: extend with real filter logic later
-            renderServices();
-        }
+        function applyFilters() { renderServices(); }
 
-        // Clear search
         function clearSearch() {
             document.getElementById('searchInput').value = '';
             document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
+            renderServices();
         }
 
-        // Toggle star functionality
-        function toggleStar(button) {
-            const icon = button.querySelector('i');
-            if (icon.classList.contains('fill-current')) {
-                icon.classList.remove('fill-current');
-                button.style.color = 'var(--colorNeutralForeground3)';
-            } else {
-                icon.classList.add('fill-current');
-                button.style.color = '#faa06b';
-            }
+        function toggleStar(btn) {
+            btn.classList.toggle('active');
         }
 
         feather.replace();
-        renderServices(); // initial render
+        renderServices();
     </script>
 </body>
 </html>

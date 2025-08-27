@@ -1,13 +1,10 @@
 from typing import Optional, Dict, Any, List
 import logging
-from ..models.service import Service
-from ..core.mock_data import MOCK_DATA
-from .base_repository import BaseRepository
 
 logger = logging.getLogger(__name__)
 
-class ServiceRepository(BaseRepository):
-    """服务数据访问层"""
+class ServiceRepository:
+    """Service数据访问层"""
     
     def __init__(self):
         # Mock数据存储 - 在实际项目中这里会连接真实数据库
@@ -148,23 +145,3 @@ class ServiceRepository(BaseRepository):
         except Exception as e:
             logger.error(f"设置默认Pipeline Repository层错误: {str(e)}")
             raise
-    
-    async def get_services_by_ve(self, ve_name: str) -> List[Service]:
-        """根据VE名称获取服务列表"""
-        services_data = MOCK_DATA["services"].get(ve_name, [])
-        services = []
-        for service_data in services_data:
-            service = Service(**service_data)
-            services.append(service)
-        return services
-    
-    async def get_service_by_id(self, service_id: str, ve_name: str) -> Optional[Service]:
-        """根据ID获取服务"""
-        services = await self.get_services_by_ve(ve_name)
-        for service in services:
-            if service.id == service_id:
-                return service
-        return None
-    
-    async def get_data(self):
-        return MOCK_DATA["services"]

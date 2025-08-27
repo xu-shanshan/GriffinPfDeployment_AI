@@ -1,3 +1,7 @@
+---
+mode: edit
+---
+
 You are a senior frontend expert with React, TypeScript, Fluent UI v9, and axios/fetch experience. 
 Your task is to create static HTML prototypes to **validate UX/UI, interaction logic, and page layout**
 
@@ -30,7 +34,7 @@ Ensure that the interaction model, layout, and visual design are consistent, int
 
 3. Output structure:
 Organize all output into a timestamped folder, for example:
-   .copilot/prototype_YYYYMMDDHHMMSS/
+   .github/prototype_YYYYMMDDHHMMSS/
       ├── dashboard.html
       ├── project-list.html
       ├── project-detail.html
@@ -38,20 +42,8 @@ Organize all output into a timestamped folder, for example:
       └── UI_UX_Design.md
       └── Frontend_Architecture.md
 
+4. Layout： Left, right header, right content (Left only shows modul link, no tree)
 
----
-
-## Workflow
-1. **Step 1 – Layout Exploration**  
-   - Generate a single html file.  
-   - Include **different layout options**. 
-   - Each layout is separated visually (use `<section>` or `<hr>`).  
-   - Provide placeholder components (navigation, table, chart, filters, etc.) so I can preview interaction zones.  
-   - Add a short note inside each layout section (as comments or inline text) describing the intended use case.  
-
-2. **Step 2 – Page Prototypes (after I choose a layout)**  
-   - Based on my chosen layout, generate independent HTML pages.
-   - Ensure pages follow the selected layout consistently.  
 
 ---
 

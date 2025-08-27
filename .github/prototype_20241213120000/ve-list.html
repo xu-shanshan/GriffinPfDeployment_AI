@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Environments - Griffin Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="flex h-screen">
+        <!-- Left Sidebar -->
+        <div class="w-64 bg-white shadow-lg">
+            <div class="p-4 border-b">
+                <h1 class="text-xl font-bold text-gray-800">Griffin Platform</h1>
+            </div>
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <i data-lucide="home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="ve-list.html" class="flex items-center space-x-3 p-2 rounded-lg bg-blue-50 text-blue-700">
+                    <i data-lucide="server"></i>
+                    <span>Virtual Environments</span>
+                </a>
+                <a href="service-list.html" class="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <i data-lucide="layers"></i>
+                    <span>Services</span>
+                </a>
+                <a href="deployment-history.html" class="flex items-center space-x-3 p-2 rounded-lg text-gray-700 hover:bg-gray-100">
+                    <i data-lucide="history"></i>
+                    <span>Deployment History</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <header class="bg-white border-b px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-semibold text-gray-800">Virtual Environments</h2>
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                            <input type="text" placeholder="Search VEs..." class="pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <select class="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Types</option>
+                            <option value="base">Base VEs</option>
+                            <option value="b2">Model B2 VEs</option>
+                        </select>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="flex-1 p-6 overflow-auto">
+                <!-- Filters -->
+                <div class="mb-6 flex items-center space-x-4">
+                    <button class="px-4 py-2 bg-blue-600 text-white rounded-lg">All (17)</button>
+                    <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Favorites (2)</button>
+                    <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Base VEs (2)</button>
+                    <button class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Model B2 (15)</button>
+                </div>
+
+                <!-- VE Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- SovBase VE -->
+                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">SovBase</h3>
+                                    <span class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Base VE</span>
+                                </div>
+                                <button class="text-gray-400 hover:text-yellow-500">
+                                    <i data-lucide="star"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                                    <span>65 services</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                    <span>Last deployed 2h ago</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="openVeDetail('SovBase')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                                    View Details
+                                </button>
+                                <button onclick="deployVe('SovBase')" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">
+                                    Deploy All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ModelBSov VE -->
+                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">ModelBSov</h3>
+                                    <span class="inline-block px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">Base VE</span>
+                                </div>
+                                <button class="text-gray-400 hover:text-yellow-500">
+                                    <i data-lucide="star"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                                    <span>57 services</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                    <span>Last deployed 1d ago</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="openVeDetail('ModelBSov')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                                    View Details
+                                </button>
+                                <button onclick="deployVe('ModelBSov')" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">
+                                    Deploy All
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OwaMailB2-SOV VE -->
+                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">OwaMailB2-SOV</h3>
+                                    <span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Model B2</span>
+                                </div>
+                                <button class="text-yellow-500">
+                                    <i data-lucide="star" class="fill-current"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                                    <span>1 service</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                    <span>Last deployed 2m ago</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="openVeDetail('OwaMailB2-SOV')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                                    View Details
+                                </button>
+                                <button onclick="deployVe('OwaMailB2-SOV')" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">
+                                    Deploy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- More B2 VEs -->
+                    <div class="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">TodoB2-SOV</h3>
+                                    <span class="inline-block px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">Model B2</span>
+                                </div>
+                                <button class="text-gray-400 hover:text-yellow-500">
+                                    <i data-lucide="star"></i>
+                                </button>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="layers" class="w-4 h-4 mr-2"></i>
+                                    <span>1 service</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i data-lucide="activity" class="w-4 h-4 mr-2"></i>
+                                    <span>Last deployed 3h ago</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="openVeDetail('TodoB2-SOV')" class="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
+                                    View Details
+                                </button>
+                                <button onclick="deployVe('TodoB2-SOV')" class="px-4 py-2 border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50">
+                                    Deploy
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add more VE cards as needed -->
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-8 flex items-center justify-between">
+                    <p class="text-sm text-gray-600">Showing 1-12 of 17 environments</p>
+                    <div class="flex space-x-2">
+                        <button class="px-3 py-2 border rounded-lg text-gray-400" disabled>Previous</button>
+                        <button class="px-3 py-2 bg-blue-600 text-white rounded-lg">1</button>
+                        <button class="px-3 py-2 border rounded-lg text-gray-700 hover:bg-gray-50">2</button>
+                        <button class="px-3 py-2 border rounded-lg text-blue-600 hover:bg-blue-50">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deploy Modal -->
+    <div id="deployModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 class="text-lg font-semibold mb-4">Deploy All Services</h3>
+            <p class="text-gray-600 mb-6">Are you sure you want to deploy all services in <span id="deployVeName" class="font-medium"></span>?</p>
+            <div class="flex space-x-4">
+                <button onclick="closeModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">Cancel</button>
+                <button onclick="confirmDeploy()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Deploy</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        function openVeDetail(veName) {
+            window.location.href = `ve-detail.html?ve=${veName}`;
+        }
+
+        function deployVe(veName) {
+            document.getElementById('deployVeName').textContent = veName;
+            document.getElementById('deployModal').classList.remove('hidden');
+            document.getElementById('deployModal').classList.add('flex');
+        }
+
+        function closeModal() {
+            document.getElementById('deployModal').classList.add('hidden');
+            document.getElementById('deployModal').classList.remove('flex');
+        }
+
+        function confirmDeploy() {
+            // Add deployment logic here
+            closeModal();
+        }
+    </script>
+</body>
+</html>

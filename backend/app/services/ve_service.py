@@ -3,224 +3,224 @@ from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import random
 
-from ..models import *
-from .base_service import BaseService
+from ..models.ve import VE, VEStats, VEListResponse, VEDetail
+from ..models.service import Service, ServiceListResponse
+from ..core.logging import logger
 
-class VEService(BaseService):
-    def __init__(self, settings):
-        super().__init__(settings)
-        
-        # Mock favorite VEs (in production this would be in database)
-        self.favorite_ves = {"SovBase", "ModelBSov", "OwaMailB2-SOV"}
-
-    async def get_dashboard_stats(self) -> DashboardStats:
-        """Get dashboard statistics"""
-        config_data = self.load_config_data()
-        
-        # Calculate stats from config
-        all_ves = []
-        for group_name, ves in config_data["ExpectedVEs"].items():
-            for ve_name in ves:
-                ve_type = VEType.B2_TYPE if ve_name.endswith("-SOV") else VEType.B_TYPE
-                services = config_data["ExpectedServices"].get(ve_name, [])
-                
-                stats = VEStats(
-                    total_services=len(services),
-                    deployed_services=random.randint(0, len(services)),
-                    dragon_services=len(services),
-                    pfgold_services=random.randint(0, len(services)),
-                    ready_to_deploy=random.randint(0, 5)
-                )
-                
-                all_ves.append(VEListItem(
-                    name=ve_name,
-                    description=self._get_ve_description(ve_name),
-                    ve_type=ve_type,
-                    group=group_name,
-                    stats=stats,
-                    is_favorite=ve_name in self.favorite_ves,
-                    last_updated=datetime.now() - timedelta(hours=random.randint(1, 24))
-                ))
-        
-        # Get favorite VEs
-        favorite_ves = [ve for ve in all_ves if ve.is_favorite][:5]
-        
-        return DashboardStats(
-            total_ves=len(all_ves),
-            active_services=sum(ve.stats.deployed_services for ve in all_ves),
-            recent_deployments=random.randint(15, 30),
-            success_rate=95.6,
-            favorite_ves=favorite_ves
-        )
-
-    async def search_ves(self, filters: SearchFilters) -> SearchResults:
-        """Search virtual environments with filters"""
-        config_data = self.load_config_data()
-        
-        all_ves = []
-        for group_name, ves in config_data["ExpectedVEs"].items():
-            for ve_name in ves:
-                # Apply filters
-                if filters.query and filters.query.lower() not in ve_name.lower():
+class VEService:
+    """VE业务逻辑服务"""
+    
+    def __init__(self):
+        self.mock_data = self._initialize_mock_data()
+    
+    def _initialize_mock_data(self) -> Dict[str, Any]:
+        """初始化模拟数据"""
+        return {
+            "ves": [
+                {
+                    "name": "SovBase",
+                    "description": "Base sovereign virtual environment for core services",
+                    "ve_type": "B Type",
+                    "group": "Core",
+                    "stats": {
+                        "total_services": 89,
+                        "deployed_services": 67,
+                        "dragon_services": 89,
+                        "pfgold_services": 67,
+                        "ready_to_deploy": 15
+                    },
+                    "is_favorite": True,
+                    "last_updated": "2 hours ago"
+                },
+                {
+                    "name": "ModelBSov",
+                    "description": "Model B sovereign environment",
+                    "ve_type": "B Type",
+                    "group": "Core",
+                    "stats": {
+                        "total_services": 45,
+                        "deployed_services": 32,
+                        "dragon_services": 45,
+                        "pfgold_services": 32,
+                        "ready_to_deploy": 8
+                    },
+                    "is_favorite": True,
+                    "last_updated": "4 hours ago"
+                },
+                {
+                    "name": "OwaMailB2-SOV",
+                    "description": "OWA Mail B2 sovereign environment",
+                    "ve_type": "B2 Type",
+                    "group": "Mail",
+                    "stats": {
+                        "total_services": 22,
+                        "deployed_services": 19,
+                        "dragon_services": 22,
+                        "pfgold_services": 19,
+                        "ready_to_deploy": 2
+                    },
+                    "is_favorite": True,
+                    "last_updated": "1 hour ago"
+                }
+            ],
+            "services": {
+                "SovBase": [
+                    {
+                        "id": "owamailb2",
+                        "name": "OwaMailB2",
+                        "description": "Outlook Web App Mail Backend",
+                        "status": "ready",
+                        "in_dragon": True,
+                        "in_pfgold": True,
+                        "current_version": "v2.1.234",
+                        "pipeline": "ExchangeMailPipeline",
+                        "pipeline_version": "v3.2.1",
+                        "icon": "mail",
+                        "icon_color": "blue",
+                        "ready_to_deploy": True
+                    },
+                    {
+                        "id": "graphconnectors",
+                        "name": "GraphConnectors", 
+                        "description": "Graph Connectors Service",
+                        "status": "not-deployed",
+                        "in_dragon": True,
+                        "in_pfgold": True,
+                        "current_version": None,
+                        "pipeline": "GraphConnectorsPipeline",
+                        "pipeline_version": "v2.8.5",
+                        "icon": "flash",
+                        "icon_color": "orange",
+                        "ready_to_deploy": False
+                    }
+                ]
+            }
+        }
+    
+    async def get_ves(
+        self, 
+        search: Optional[str] = None,
+        ve_type: Optional[str] = None,
+        group: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 50
+    ) -> VEListResponse:
+        """获取VE列表"""
+        try:
+            logger.info(f"获取VE列表，搜索: {search}, 类型: {ve_type}, 组: {group}")
+            
+            # 过滤数据
+            filtered_ves = []
+            for ve_data in self.mock_data["ves"]:
+                if search and search.lower() not in ve_data["name"].lower() and search.lower() not in ve_data["description"].lower():
+                    continue
+                if ve_type and ve_data["ve_type"] != ve_type:
+                    continue
+                if group and ve_data["group"] != group:
                     continue
                 
-                ve_type = VEType.B2_TYPE if ve_name.endswith("-SOV") else VEType.B_TYPE
-                if filters.ve_type and filters.ve_type != ve_type:
+                ve = VE(
+                    name=ve_data["name"],
+                    description=ve_data["description"],
+                    ve_type=ve_data["ve_type"],
+                    group=ve_data["group"],
+                    stats=VEStats(**ve_data["stats"]),
+                    is_favorite=ve_data["is_favorite"],
+                    last_updated=ve_data["last_updated"]
+                )
+                filtered_ves.append(ve)
+            
+            # 分页处理
+            total_count = len(filtered_ves)
+            start_idx = (page - 1) * page_size
+            end_idx = start_idx + page_size
+            paged_ves = filtered_ves[start_idx:end_idx]
+            
+            result = VEListResponse(
+                items=paged_ves,
+                total_count=total_count,
+                page=page,
+                page_size=page_size,
+                has_next=end_idx < total_count,
+                has_previous=page > 1
+            )
+            
+            logger.info(f"成功返回{len(paged_ves)}个VE，总共{total_count}个")
+            return result
+            
+        except Exception as e:
+            logger.error(f"获取VE列表失败: {str(e)}")
+            raise
+    
+    async def get_ve_detail(self, ve_name: str) -> VEDetail:
+        """获取VE详情"""
+        try:
+            logger.info(f"获取VE详情: {ve_name}")
+            
+            # 查找VE数据
+            ve_data = None
+            for ve in self.mock_data["ves"]:
+                if ve["name"] == ve_name:
+                    ve_data = ve
+                    break
+            
+            if not ve_data:
+                raise ValueError(f"VE '{ve_name}' not found")
+            
+            ve_detail = VEDetail(
+                name=ve_data["name"],
+                description=ve_data["description"],
+                ve_type=ve_data["ve_type"],
+                group=ve_data["group"],
+                stats=VEStats(**ve_data["stats"]),
+                is_favorite=ve_data["is_favorite"],
+                last_updated=ve_data["last_updated"]
+            )
+            
+            logger.info(f"成功返回VE详情: {ve_name}")
+            return ve_detail
+            
+        except Exception as e:
+            logger.error(f"获取VE详情失败: {str(e)}")
+            raise
+    
+    async def get_ve_services(
+        self,
+        ve_name: str,
+        status: Optional[str] = None,
+        config_filter: Optional[str] = None
+    ) -> ServiceListResponse:
+        """获取VE的服务列表"""
+        try:
+            logger.info(f"获取VE服务列表: {ve_name}, 状态过滤: {status}, 配置过滤: {config_filter}")
+            
+            # 获取服务数据
+            services_data = self.mock_data["services"].get(ve_name, [])
+            
+            # 过滤服务
+            filtered_services = []
+            for service_data in services_data:
+                if status and service_data["status"] != status:
                     continue
                     
-                if filters.group and filters.group != group_name:
-                    continue
+                if config_filter:
+                    if config_filter == "dragon-only" and (not service_data["in_dragon"] or service_data["in_pfgold"]):
+                        continue
+                    elif config_filter == "pfgold-only" and (not service_data["in_pfgold"] or service_data["in_dragon"]):
+                        continue
+                    elif config_filter == "both" and (not service_data["in_dragon"] or not service_data["in_pfgold"]):
+                        continue
                 
-                services = config_data["ExpectedServices"].get(ve_name, [])
-                stats = VEStats(
-                    total_services=len(services),
-                    deployed_services=random.randint(0, len(services)),
-                    dragon_services=len(services),
-                    pfgold_services=random.randint(0, len(services)),
-                    ready_to_deploy=random.randint(0, 5)
-                )
-                
-                all_ves.append(VEListItem(
-                    name=ve_name,
-                    description=self._get_ve_description(ve_name),
-                    ve_type=ve_type,
-                    group=group_name,
-                    stats=stats,
-                    is_favorite=ve_name in self.favorite_ves,
-                    last_updated=datetime.now() - timedelta(hours=random.randint(1, 24))
-                ))
-        
-        # Pagination
-        total_count = len(all_ves)
-        start_idx = (filters.page - 1) * filters.page_size
-        end_idx = start_idx + filters.page_size
-        items = all_ves[start_idx:end_idx]
-        
-        return SearchResults(
-            items=items,
-            total_count=total_count,
-            page=filters.page,
-            page_size=filters.page_size,
-            has_next=end_idx < total_count,
-            has_previous=filters.page > 1
-        )
-
-    async def get_ve_details(self, ve_name: str) -> Optional[VEResponse]:
-        """Get detailed VE information"""
-        config_data = self.load_config_data()
-        
-        # Find VE in config
-        ve_group = None
-        for group_name, ves in config_data["ExpectedVEs"].items():
-            if ve_name in ves:
-                ve_group = group_name
-                break
-        
-        if not ve_group:
-            return None
-        
-        services = config_data["ExpectedServices"].get(ve_name, [])
-        service_responses = []
-        
-        for service_name in services:
-            service_config = config_data["Services"].get(service_name)
-            pipelines = []
+                service = Service(**service_data)
+                filtered_services.append(service)
             
-            if service_config:
-                # Create pipeline info
-                if service_config.get("PipelineId"):
-                    pipelines.append(PipelineInfo(
-                        pipeline_id=service_config["PipelineId"],
-                        name="Main Pipeline",
-                        latest_build=f"20241220.{random.randint(1, 9)}",
-                        drop_url=service_config.get("BuildPathPattern", "").replace("<BuildVersion>", f"20241220.{random.randint(1, 9)}"),
-                        build_type=BuildType.RING_PROMOTION,
-                        is_default=True
-                    ))
-                
-                if service_config.get("IncrementalBuildPipelineId"):
-                    pipelines.append(PipelineInfo(
-                        pipeline_id=service_config["IncrementalBuildPipelineId"],
-                        name="Incremental Build",
-                        latest_build=f"20241220.{random.randint(1, 9)}",
-                        drop_url=service_config.get("BuildPathPattern", "").replace("<BuildVersion>", f"20241220.{random.randint(1, 9)}"),
-                        build_type=BuildType.INCREMENTAL,
-                        is_default=False
-                    ))
+            result = ServiceListResponse(services=filtered_services)
+            logger.info(f"成功返回{len(filtered_services)}个服务")
+            return result
             
-            # Mock service status
-            status = random.choice(list(ServiceStatus))
-            
-            service_responses.append(ServiceResponse(
-                id=service_name.lower().replace(" ", "_"),
-                name=service_name,
-                description=self._get_service_description(service_name),
-                status=status,
-                in_dragon=True,
-                in_pfgold=random.choice([True, False]),
-                current_version=f"v{random.randint(1, 5)}.{random.randint(0, 9)}.{random.randint(100, 999)}" if status == ServiceStatus.DEPLOYED else None,
-                pipelines=pipelines,
-                ready_to_deploy=random.choice([True, False]) if status == ServiceStatus.NOT_DEPLOYED else False,
-                last_deployment=datetime.now() - timedelta(hours=random.randint(1, 72)) if status == ServiceStatus.DEPLOYED else None
-            ))
-        
-        stats = VEStats(
-            total_services=len(services),
-            deployed_services=len([s for s in service_responses if s.status == ServiceStatus.DEPLOYED]),
-            dragon_services=len([s for s in service_responses if s.in_dragon]),
-            pfgold_services=len([s for s in service_responses if s.in_pfgold]),
-            ready_to_deploy=len([s for s in service_responses if s.ready_to_deploy])
-        )
-        
-        ve_type = VEType.B2_TYPE if ve_name.endswith("-SOV") else VEType.B_TYPE
-        
-        return VEResponse(
-            name=ve_name,
-            description=self._get_ve_description(ve_name),
-            ve_type=ve_type,
-            group=ve_group,
-            services=service_responses,
-            stats=stats,
-            is_favorite=ve_name in self.favorite_ves,
-            last_updated=datetime.now() - timedelta(hours=random.randint(1, 24))
-        )
-
-    async def get_ve_services(self, ve_name: str) -> List[ServiceResponse]:
-        """Get services for a specific VE"""
-        ve_details = await self.get_ve_details(ve_name)
-        return ve_details.services if ve_details else []
-
-    async def get_service_detail(self, service_name: str) -> Optional[ServiceDetail]:
-        """Get detailed service information"""
-        config_data = self.load_config_data()
-        service_config = config_data["Services"].get(service_name)
-        
-        if not service_config:
-            return None
-        
-        # Create pipeline info
-        pipelines = []
-        if service_config.get("PipelineId"):
-            pipelines.append(PipelineInfo(
-                pipeline_id=service_config["PipelineId"],
-                name="Main Pipeline",
-                latest_build=f"20241220.{random.randint(1, 9)}",
-                drop_url=service_config.get("BuildPathPattern", "").replace("<BuildVersion>", f"20241220.{random.randint(1, 9)}"),
-                build_type=BuildType.RING_PROMOTION,
-                is_default=True
-            ))
-        
-        # Mock deployment history
-        deployment_history = [
-            {
-                "deployment_id": f"deploy-{random.randint(1000, 9999)}",
-                "timestamp": (datetime.now() - timedelta(hours=i)).isoformat(),
-                "status": random.choice(["success", "failed"]),
-                "version": f"20241220.{random.randint(1, 9)}",
-                "pipeline_id": service_config.get("PipelineId")
-            }
-            for i in range(1, 6)
-        ]
+        except Exception as e:
+            logger.error(f"获取VE服务列表失败: {str(e)}")
+            raise
         
         return ServiceDetail(
             id=service_name.lower().replace(" ", "_"),

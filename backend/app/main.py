@@ -1,85 +1,85 @@
-from fastapi import FastAPI, HTTPException, Query, Path
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional, Dict, Any
-from datetime import datetime
-import logging
-from enum import Enum
+from fastapi.responses import JSONResponse
 
-# 配置日志
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+# 导入配置和日志
+from .core.config import settings
+from .core.logging import logger
+
+# 导入API路由
+from .api import dashboard, ve, service
 
 # 创建FastAPI应用
 app = FastAPI(
-    title="Griffin PF Deployment AI",
-    description="Virtual Environment Management API",
-    version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    title=settings.app_name,
+    description=settings.description,
+    version=settings.version,
+    debug=settings.debug
 )
 
-# CORS中间件
+# 配置CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=settings.allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 数据模型定义
-class DeploymentStatus(str, Enum):
-    pending = "pending"
-    running = "running"
-    success = "success"
-    failed = "failed"
-    cancelled = "cancelled"
+# 注册路由
+app.include_router(dashboard.router, prefix=settings.api_prefix)
+app.include_router(ve.router, prefix=settings.api_prefix)
+app.include_router(service.router, prefix=settings.api_prefix)
 
-class ServiceStatus(str, Enum):
-    ready = "ready"
-    not_deployed = "not-deployed"
-    missing_pfgold = "missing-pfgold"
-    config_error = "config-error"
+@app.get("/")
+async def root():
+    """根路径"""
+    return {
+        "message": "Griffin PF Deployment AI Backend",
+        "version": settings.version,
+        "docs_url": "/docs"
+    }
 
-class VEType(str, Enum):
-    b_type = "B Type"
-    b2_type = "B2 Type"
+@app.get("/health")
+async def health_check():
+    """健康检查"""
+    return {
+        "status": "healthy",
+        "message": "Griffin PF Deployment AI Backend is running",
+        "version": settings.version
+    }
 
-class ServiceModel(BaseModel):
-    id: str
-    name: str
-    description: str
-    status: ServiceStatus
-    in_dragon: bool
-    in_pfgold: bool
-    current_version: Optional[str]
-    pipeline: Optional[str]
-    pipeline_version: Optional[str]
-    icon: str
-    icon_color: str
-    ready_to_deploy: bool
+@app.on_event("startup")
+async def startup_event():
+    """应用启动事件"""
+    logger.info("🚀 Griffin PF Deployment AI 启动中...")
+    logger.info(f"📍 API地址: http://{settings.host}:{settings.port}")
+    logger.info(f"📚 API文档: http://{settings.host}:{settings.port}/docs")
+    logger.info(f"🔍 健康检查: http://{settings.host}:{settings.port}/health")
 
-class PipelineModel(BaseModel):
-    id: int
-    name: str
-    description: str
-    type: str
-    is_default: bool
-    latest_build: str
-    drop_url: str
-    icon: str
+@app.on_event("shutdown")
+async def shutdown_event():
+    """应用关闭事件"""
+    logger.info("👋 Griffin PF Deployment AI 正在关闭...")
 
-class ServiceDetailModel(BaseModel):
-    name: str
-    description: str
-    status: str
-    version: str
-    build_type: str
-    service_type: str
+# 全局异常处理
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"未处理的异常: {str(exc)}")
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal server error", "detail": str(exc)}
+    )
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        "app.main:app",
+        host=settings.host,
+        port=settings.port,
+        reload=settings.debug,
+        log_level=settings.log_level.lower()
+    )
     last_deploy: str
     active_pipelines: int
     is_favorite: bool
@@ -343,6 +343,7 @@ MOCK_DATA = {
 async def startup_event():
     logger.info("Griffin PF Deployment AI 启动中...")
     logger.info("API文档地址: http://localhost:8000/docs")
+    logger.info("健康检查: http://localhost:8000/health")
 
 @app.get("/")
 async def root():
@@ -417,9 +418,9 @@ async def get_ve_detail(ve_name: str = Path(...)):
 
 @app.get("/api/ve/{ve_name}/services")
 async def get_ve_services(
-    ve_name: str = Path(...),
-    status: Optional[str] = Query(None),
-    config_filter: Optional[str] = Query(None)
+    ve_name: str,
+    status: str = None,
+    config_filter: str = None
 ):
     """获取VE下的服务列表"""
     services = MOCK_DATA["services"].get(ve_name, [])
@@ -442,8 +443,8 @@ async def get_ve_services(
 # Service Detail API
 @app.get("/api/service/{service_name}")
 async def get_service_detail(
-    service_name: str = Path(...),
-    ve_name: Optional[str] = Query(None)
+    service_name: str,
+    ve_name: str = None
 ):
     """获取服务详细信息"""
     service_detail = MOCK_DATA["service_details"].get(service_name)
@@ -453,93 +454,95 @@ async def get_service_detail(
 
 @app.put("/api/service/{service_name}/config")
 async def update_service_config(
-    service_name: str = Path(...),
+    service_name: str,
     config_request: ConfigUpdateRequest
 ):
     """更新服务配置"""
-    if service_name not in MOCK_DATA["service_details"]:
-        raise HTTPException(status_code=404, detail="Service not found")
+    logger.info(f"更新服务配置: {service_name}")
     
-    # 更新配置
-    MOCK_DATA["service_details"][service_name]["config"] = config_request.config
+    # 模拟配置更新操作
+    config_data = config_request.config
+    create_pr = config_request.create_pr
+    
+    # 这里应该实现实际的配置更新逻辑
+    # 1. 验证配置数据
+    # 2. 更新配置文件
+    # 3. 如果create_pr为True，创建Pull Request
     
     return {
-        "message": "Configuration updated successfully",
-        "service": service_name,
-        "create_pr": config_request.create_pr
+        "success": True,
+        "message": f"Service {service_name} configuration updated successfully",
+        "pr_created": create_pr
     }
 
 @app.put("/api/service/{service_name}/pipeline/{pipeline_id}/default")
 async def set_default_pipeline(
-    service_name: str = Path(...),
-    pipeline_id: int = Path(...)
+    service_name: str, 
+    pipeline_id: int
 ):
     """设置默认Pipeline"""
-    service_detail = MOCK_DATA["service_details"].get(service_name)
-    if not service_detail:
-        raise HTTPException(status_code=404, detail="Service not found")
+    logger.info(f"设置服务 {service_name} 的默认Pipeline为: {pipeline_id}")
     
-    # 更新默认Pipeline
-    for pipeline in service_detail["pipelines"]:
-        pipeline["is_default"] = (pipeline["id"] == pipeline_id)
-    
+    # 模拟设置默认pipeline的操作
     return {
-        "message": "Default pipeline updated successfully",
-        "service": service_name,
-        "pipeline_id": pipeline_id
+        "success": True,
+        "message": f"Pipeline {pipeline_id} set as default for service {service_name}",
+        "service_name": service_name,
+        "default_pipeline_id": pipeline_id
     }
 
 # Deployment API
 @app.get("/api/deployments")
 async def get_deployment_history(
-    ve_name: Optional[str] = Query(None),
-    status: Optional[DeploymentStatus] = Query(None),
-    limit: int = Query(50, le=100)
+    ve_name: str = None,
+    status: str = None,
+    limit: int = 50
 ):
     """获取部署历史"""
-    deployments = MOCK_DATA["deployment_history"]
+    deployments = MOCK_DATA["deployment_history"]deployments = MOCK_DATA["deployment_history"]
     
     # 应用过滤器
     if ve_name:
-        deployments = [d for d in deployments if d["ve_name"] == ve_name]
+        deployments = [d for d in deployments if d["ve_name"] == ve_name]ments = [d for d in deployments if d["ve_name"] == ve_name]
     if status:
-        deployments = [d for d in deployments if d["status"] == status.value]
+        deployments = [d for d in deployments if d["status"] == status.value]    deployments = [d for d in deployments if d["status"] == status.value]
     
     return {
         "items": deployments[:limit],
-        "total_count": len(deployments),
+        "total_count": len(deployments),nt": len(deployments),
         "page": 1,
-        "page_size": limit
-    }
+        "page_size": limit   "page_size": limit
+    }    }
 
 @app.post("/api/deployments")
-async def create_deployment(deployment_request: DeploymentRequest):
+async def create_deployment(deployment_request: DeploymentRequest):_deployment(deployment_request: DeploymentRequest):
     """创建新的部署"""
-    deployment_id = f"deploy-{len(MOCK_DATA['deployment_history']) + 1:03d}"
+    deployment_id = f"deploy-{len(MOCK_DATA['deployment_history']) + 1:03d}"deployment_id = f"deploy-{len(MOCK_DATA['deployment_history']) + 1:03d}"
     
     new_deployment = {
         "id": deployment_id,
         "ve_name": deployment_request.ve_name,
-        "service_names": deployment_request.service_names,
+        "service_names": deployment_request.service_names,loyment_request.service_names,
         "status": "pending",
-        "started_at": datetime.utcnow().isoformat() + "Z",
+        "started_at": datetime.utcnow().isoformat() + "Z",e.utcnow().isoformat() + "Z",
         "completed_at": None,
-        "build_version": deployment_request.build_version or "latest",
-        "deployed_by": "api.user@example.com",
+        "build_version": deployment_request.build_version or "latest",ild_version or "latest",
+        "deployed_by": "api.user@example.com",pi.user@example.com",
         "duration": None,
-        "pipeline_id": deployment_request.pipeline_id
-    }
+        "pipeline_id": deployment_request.pipeline_id   "pipeline_id": deployment_request.pipeline_id
+    }}
     
-    MOCK_DATA["deployment_history"].insert(0, new_deployment)
+    MOCK_DATA["deployment_history"].insert(0, new_deployment)MOCK_DATA["deployment_history"].insert(0, new_deployment)
     
     return {
         "deployment_id": deployment_id,
-        "message": "Deployment initiated successfully",
+        "message": "Deployment initiated successfully",nt initiated successfully",
         "status": "pending",
-        "services": deployment_request.service_names
-    }
+        "services": deployment_request.service_names   "services": deployment_request.service_names
+    }    }
 
-if __name__ == "__main__":
+if __name__ == "__main__":main__":
     import uvicorn
-    logger.info("直接运行FastAPI应用")
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    logger.info("启动FastAPI服务器...")
+    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", reload=True)    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", reload=True)
+

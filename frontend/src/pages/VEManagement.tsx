@@ -84,13 +84,47 @@ const VEManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [favorites, setFavorites] = useState(new Set(['SovBase', 'ModelBSov', 'OwaMailB2-SOV']))
 
-  // 使用真实API而不是mock数据
-  const { data: veData, isLoading, error } = useQuery({
+  const { data: veData, isLoading, error, refetch } = useQuery({
     queryKey: ['ves', searchQuery],
     queryFn: () => veApi.getVEs({
       search: searchQuery || undefined
     }),
+    retry: 2,
+    retryDelay: 1000,
   })
+
+  // Debug信息
+  console.log('🎯 VE Management状态:', { veData, isLoading, error })
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '48px', textAlign: 'center' }}>
+        <Title2 style={{ marginBottom: '16px' }}>🔄 加载虚拟环境数据...</Title2>
+        <Body1>请稍等，正在从后端获取VE列表</Body1>
+      </div>
+    )
+  }
+
+  if (error) {
+    console.error('❌ VE Management错误:', error)
+    return (
+      <div style={{ padding: '48px', textAlign: 'center', color: '#d13438' }}>
+        <Title2 style={{ marginBottom: '16px' }}>❌ VE数据加载失败</Title2>
+        <Body1 style={{ marginBottom: '24px' }}>错误: {error.message}</Body1>
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <Button onClick={() => refetch()}>
+            重试加载
+          </Button>
+          <Button appearance="secondary" onClick={() => window.open('http://localhost:8000/api/ve', '_blank')}>
+            检查VE API
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const veList = veData?.items || []
+  console.log('✅ VE列表数据:', veList)
 
   const toggleFavorite = (veName: string, event: React.MouseEvent) => {
     event.stopPropagation()
@@ -117,17 +151,6 @@ const VEManagement: React.FC = () => {
     if (veName === 'SovBase') return { backgroundColor: '#e3f2fd', color: '#0f6cbd' }
     return { backgroundColor: '#f3e5f5', color: '#5c2d91' }
   }
-
-  if (isLoading) {
-    return <div style={{ padding: '24px' }}>Loading...</div>
-  }
-
-  if (error) {
-    return <div style={{ padding: '24px' }}>Error loading VE data: {error.message}</div>
-  }
-
-  // 使用API返回的数据
-  const veList = veData?.items || []
 
   return (
     <div>
@@ -159,67 +182,99 @@ const VEManagement: React.FC = () => {
         </div>
       </Card>
 
+      {/* Debug信息 */}
+      {process.env.NODE_ENV === 'development' && (
+        <Card style={{ marginBottom: '24px', padding: '16px', backgroundColor: '#f0f8ff' }}>
+          <Body1><strong>🔍 Debug信息:</strong></Body1>
+          <Body1>• VE数量: {veList.length}</Body1>
+          <Body1>• 后端状态: {error ? '❌ 连接失败' : '✅ 连接正常'}</Body1>
+          <Body1>• API响应: {veData ? '✅ 有数据' : '❌ 无数据'}</Body1>
+        </Card>
+      )}
+
       {/* VE Cards Grid */}
       <div className={styles.veGrid}>
-        {veList.map((ve) => {
-          const iconStyle = getIconColor(ve.name)
-          return (
-            <Card 
-              key={ve.name}
-              className={styles.veCard}
-              onClick={() => navigate(`/ve/${ve.name}`)}
-            >
-              <div className={styles.veHeader}>
-                <div className={styles.veIcon} style={iconStyle}>
-                  {getVEIcon(ve.name)}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span style={{ 
-                    padding: '2px 8px', 
-                    borderRadius: '12px', 
-                    fontSize: '12px', 
-                    fontWeight: '500',
-                    backgroundColor: ve.ve_type === 'B2 Type' ? '#dff6dd' : '#f0f0f0',
-                    color: ve.ve_type === 'B2 Type' ? '#107c10' : '#424242'
-                  }}>
-                    {ve.ve_type}
-                  </span>
-                  <button 
-                    onClick={(e) => toggleFavorite(ve.name, e)}
-                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#faa06b' }}
-                  >
-                    {favorites.has(ve.name) ? <Star24Filled /> : <Star24Regular />}
-                  </button>
-                </div>
-              </div>
-
-              <div style={{ marginBottom: '24px' }}>
-                <Title2 style={{ marginBottom: '8px' }}>{ve.name}</Title2>
-                <Body1>{ve.description}</Body1>
-              </div>
-
-              <div className={styles.veStats}>
-                <div className={styles.statItem}>
-                  <div style={{ fontSize: '24px', fontWeight: '600', color: '#242424' }}>
-                    {ve.stats.deployed_services}
+        {veList.length > 0 ? (
+          veList.map((ve) => {
+            const iconStyle = getIconColor(ve.name)
+            return (
+              <Card 
+                key={ve.name}
+                className={styles.veCard}
+                onClick={() => navigate(`/ve/${ve.name}`)}
+              >
+                <div className={styles.veHeader}>
+                  <div className={styles.veIcon} style={iconStyle}>
+                    {getVEIcon(ve.name)}
                   </div>
-                  <Caption1>Deployment</Caption1>
-                </div>
-                <div className={styles.statItem}>
-                  <div style={{ fontSize: '24px', fontWeight: '600', color: '#0f6cbd' }}>
-                    {ve.stats.dragon_services}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ 
+                      padding: '2px 8px', 
+                      borderRadius: '12px', 
+                      fontSize: '12px', 
+                      fontWeight: '500',
+                      backgroundColor: ve.ve_type === 'B2 Type' ? '#dff6dd' : '#f0f0f0',
+                      color: ve.ve_type === 'B2 Type' ? '#107c10' : '#424242'
+                    }}>
+                      {ve.ve_type}
+                    </span>
+                    <button 
+                      onClick={(e) => toggleFavorite(ve.name, e)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#faa06b' }}
+                    >
+                      {favorites.has(ve.name) ? <Star24Filled /> : <Star24Regular />}
+                    </button>
                   </div>
-                  <Caption1>Griffin Services</Caption1>
                 </div>
-              </div>
 
-              <div className={styles.veFooter}>
-                <Body1>Click to explore</Body1>
-                <ChevronRight24Regular style={{ color: '#616161' }} />
-              </div>
-            </Card>
-          )
-        })}
+                <div style={{ marginBottom: '24px' }}>
+                  <Title2 style={{ marginBottom: '8px' }}>{ve.name}</Title2>
+                  <Body1>{ve.description}</Body1>
+                </div>
+
+                <div className={styles.veStats}>
+                  <div className={styles.statItem}>
+                    <div style={{ fontSize: '24px', fontWeight: '600', color: '#242424' }}>
+                      {ve.stats.deployed_services}
+                    </div>
+                    <Caption1>Deployment</Caption1>
+                  </div>
+                  <div className={styles.statItem}>
+                    <div style={{ fontSize: '24px', fontWeight: '600', color: '#0f6cbd' }}>
+                      {ve.stats.dragon_services}
+                    </div>
+                    <Caption1>Griffin Services</Caption1>
+                  </div>
+                </div>
+
+                <div className={styles.veFooter}>
+                  <Body1>Click to explore</Body1>
+                  <ChevronRight24Regular style={{ color: '#616161' }} />
+                </div>
+              </Card>
+            )
+          })
+        ) : (
+          <div style={{ 
+            gridColumn: '1 / -1', 
+            textAlign: 'center', 
+            padding: '60px',
+            color: '#616161'
+          }}>
+            <Title2 style={{ marginBottom: '16px' }}>
+              {error ? '❌ 加载失败' : '📭 暂无数据'}
+            </Title2>
+            <Body1 style={{ marginBottom: '24px' }}>
+              {error 
+                ? '无法从后端获取VE数据，请检查后端服务是否正常运行' 
+                : '没有找到虚拟环境，请尝试调整搜索条件或联系管理员'
+              }
+            </Body1>
+            <Button onClick={() => refetch()}>
+              🔄 重新加载
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Pagination */}
@@ -236,4 +291,5 @@ const VEManagement: React.FC = () => {
     </div>
   )
 }
+
 export default VEManagement

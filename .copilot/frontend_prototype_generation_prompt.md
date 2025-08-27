@@ -1,43 +1,67 @@
-假设你是一个超级厉害的前端专家，精通 React 全家桶，但现在我们先要生成原型图，用 HTML 原型快速展示页面和交互逻辑。
-你是专业的交互师，你需要将交互逻辑更合理化。交互流程，UI 设计是否合理。
-你是专业的设计师，确定整个项目的 的视觉设计和用户体验。
+You are a senior frontend expert with React, TypeScript, Fluent UI v9, and axios/fetch experience. 
+Your task is to create static HTML prototypes to **validate UX/UI, interaction logic, and page layout**
 
-需求：
-1. 请仔细阅读以下功能需求（我会提供），总结出核心交互逻辑：
-   - 页面功能模块（如表单、列表、按钮、导航、图表等）
-   - 用户操作流程（点击、输入、筛选、分页、弹窗等）
-   - 数据展示方式（表格、卡片、图表、弹窗等）
-   - 页面之间的跳转或联动逻辑
 
-2. 为每个页面生成独立 HTML 文件：
-   - HTML 文件名应与页面功能匹配
-   - 使用 TailwindCSS 或简易 CSS
-   - 页面应体现主要交互和布局，不需要真实数据，可用示例内容
-   - 每个页面的 HTML 可以在浏览器直接打开查看效果
+You will take on the roles of:
 
-3. 输出要求：
-   - 首先输出交互逻辑总结（中文 + 简单英文）
-   - 然后输出多页面 HTML 原型，每个页面独立 HTML
-   - 指定统一文件夹存放，如 /prototype_YYYYMMDDHHMMSS/
+1. Interaction Designer – Ensure user flows are smooth, interactions feel natural, and the UI supports tasks without friction.
+2. Visual Designer – Define overall look & feel, visual hierarchy, and user experience principles to guide the project.
 
-4. 示例输出结构：
-.copilot/prototype_YYYYMMDDHHHMMSS/
-   ├── dashboard.html
-   ├── project-list.html
-   ├── project-detail.html
-   ├── reports.html
-   |--- project_readme.md
+Goal:
 
-5. 输出示例 HTML：
-- dashboard.html：导航栏 + 统计卡片 + 项目入口
-- project-list.html：表格 + 筛选 + 分页 + 操作按钮
-- project-detail.html：卡片展示详情 + 编辑/删除按钮 + 弹窗
-- reports.html：图表 + 筛选条件
-- project_readme.md: 整个项目的设计风格，每个原型图的架构，交互逻辑
+Ensure that the interaction model, layout, and visual design are consistent, intuitive, and user-friendly before moving to full React implementation.
 
-请根据我提供的具体需求生成原型图，确保每个页面的布局和交互逻辑清晰，HTML 可直接在浏览器打开，并保持每个页面独立文件。
 
-真是功能需求如下：
+
+Task Requirements：
+
+1. Interaction summary:
+   - For each page, provide a structured interaction summary including:
+    - Functional modules: List modules (form, table, button, navigation, chart, etc.) and their purpose.
+    - User action flows: Step-by-step interactions (click, input, filter, pagination, modal) and expected system responses.
+    - Data presentation: How data is displayed (table, card, chart, modal).
+    - Page navigation/linkage: How pages connect or respond to actions.
+
+2. HTML prototype pages:
+   - Each page is an independent HTML file, openable in browser
+   - Use TailwindCSS or simple CSS
+   - Include interactive elements (buttons, modals, filters, pagination) with sample content
+   - File names should match page functionality
+
+3. Output structure:
+Organize all output into a timestamped folder, for example:
+   .copilot/prototype_YYYYMMDDHHMMSS/
+      ├── dashboard.html
+      ├── project-list.html
+      ├── project-detail.html
+      ├── reports.html
+      └── UI_UX_Design.md
+      └── Frontend_Architecture.md
+---
+
+## Project Background Knowledge
+Service Deployment Types:
+  - Model B → deployed on AutoPilot Physical Environment (APE).
+  - Model B2 → deployed in AutoPilot Container Environment (ACE), which runs on APE.
+
+Virtual Environment (VE): Abstracts shared configurations for PE/CE; allows reuse.
+- B type VE
+  for example：SovBase, ModelBSov
+- B2 type VE 
+  for example：OwaMailB2-SOV, TodoB2-SOV
+
+Deployment Rules:
+- Model B → must use B type VE
+- Model B2 → can use B type VE or B2 VE
+
+GriffinPfDeployment_AI: Tool for VE & Service deployment. Users can:
+- View VE list and associated Services
+- Favorite VEs for quick access
+- Check each service’s Build info and Drop URLs; services have multiple pipelines and Drop URLs
+- Trigger deployment for single service or all services under a VE
+- Select a pipeline/build for a service deployment, or use default pipeline for batch deployment(muti VE muti service)
+
+### Currently Mock Data:
 
 ```json
 {
@@ -143,47 +167,7 @@
 }
 
 ```
-
-
-- 给一些基础背景知识：
-Service 的部署方式有2类：Model B, Model B2
-Model B服务部署在物理机上，物理环境 就是 APE (AutoPilot Pichical Environment (APE))
-Model B2 服务部署在物理机上的某一个容器上，容器环境 就是 ACE(AutoPilot container Environment (ACE))
-
-Virtual Environment (VE):就是由此引出的逻辑概念。会将很多公共的配置 抽出来，让 PE/CE 来集成，就不需要每个PE/CE 都写一遍。
-由此就有了也就有2类： for Model B service 的 VE; for Model B2 的 B2 VE。我们的数据结构里其实 并没有关注Service 的部署类型。就像ExpectedVEs 也只是人为的划分了而已。
-
-Model B Service must deployed by B type VE
-Model B2 Service can deployed by B type VE or B2 VE
-
-VE types:
-- B type VE
-    - SovBase
-    - ModelBSov
-- B2 type VE
-    - OwaMailB2-SOV
-    - TodoB2-SOV
-
-GriffinPfDeployment_AI is a deployment management tool for Virtual Environments (VE) and services. Users can:
-- View all VE and their associated services
-- Check Build information and Drop URL of a service 
-- Trigger deployment for individual services or all services under some VE 
-- ExpectedVEs 
-本质上是VE 集合的分组，主要用于定义部署范围（deployment scope）和组织管理。
-前端的核心需求是展示 用户可以操作的 VE 列表 和其对应的 Services，而不是强制按照集合显示。
-也就是说，前端只需要知道有哪些 VE 可供选择，以及每个 VE 下有哪些 Service。
-
-- ExpectedServices
-这是 VE → Service 的映射。key:Ve name value：该VE 下有哪些 Service
-前端必须使用这个数据来动态生成 VE 树结构或下拉菜单。
-
-- Services
-每个 Service 的具体信息（Build、Pipeline、Drop URL 等）。
-前端需要显示和操作这些信息（触发部署、选择 Build 等）。
-
-- Each service 会有多个 pipelines ，每个pipline 都会有自己的 drop url list.用户可以自由选择 使用哪个 pipline 的buildnumber 的dropurl 来部署。用户也可以自己设置哪个pipelines作为默认的pipline 部署，这样就可以不需要每次都选了，如果用户没有选，那么系统漠然采取最新的buildnumber部署
-
-
-- 用户可以选择Favorite VE
-
-
+Notes:
+- ExpectedVEs: Defines VE groups for deployment scope; front-end displays VE list.
+- ExpectedServices: Maps VE → Services; front-end shows available Services under each VE.
+- Services: Each service’s info (Build, Pipeline, Drop URL). Front-end does not need to consider deployment type.

@@ -21,7 +21,7 @@
    - 指定统一文件夹存放，如 /prototype_YYYYMMDDHHMMSS/
 
 4. 示例输出结构：
-/prototype_YYYYMMDDHHHMMSS/
+.copilot/prototype_YYYYMMDDHHHMMSS/
    ├── dashboard.html
    ├── project-list.html
    ├── project-detail.html

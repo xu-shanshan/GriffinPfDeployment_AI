@@ -445,7 +445,7 @@
                     </div>
                     
                     <!-- Service Stats Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div class="text-center p-4 rounded-lg border transition-all" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);">
                             <p class="text-3xl font-bold mb-2" style="color: var(--colorBrandForeground1);" id="totalVEs">2</p>
                             <p class="text-sm" style="color: var(--colorNeutralForeground2);">Total VE Instances</p>
@@ -454,13 +454,10 @@
                             <p class="text-3xl font-bold mb-2" style="color: #107c10;" id="deployedVEs">2</p>
                             <p class="text-sm" style="color: var(--colorNeutralForeground2);">Deployed VEs</p>
                         </div>
-                        <div class="text-center p-4 rounded-lg border transition-all" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);">
-                            <p class="text-3xl font-bold mb-2" style="color: #ca5010;" id="pendingVEs">0</p>
-                            <p class="text-sm" style="color: var(--colorNeutralForeground2);">Pending Deployment</p>
-                        </div>
-                        <div class="text-center p-4 rounded-lg border transition-all" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);">
-                            <p class="text-3xl font-bold mb-2" style="color: var(--colorBrandForeground1);" id="latestVersion">v2.1.234</p>
-                            <p class="text-sm" style="color: var(--colorNeutralForeground2);">Latest Version</p>
+                        <div onclick="showPipelineManagementModal()" class="text-center p-4 rounded-lg border transition-all cursor-pointer hover:bg-blue-50" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorBrandForeground1)'" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'">
+                            <p class="text-3xl font-bold mb-2" style="color: #5c2d91;" id="activePipelines">3</p>
+                            <p class="text-sm" style="color: var(--colorNeutralForeground2);">Active Pipelines</p>
+                            <p class="text-xs mt-1 opacity-75" style="color: #5c2d91;">Click to view</p>
                         </div>
                     </div>
                 </div>
@@ -592,6 +589,36 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Pipeline Management Modal -->
+            <div id="pipelineManagementModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" style="z-index: 1050;">
+                <div class="bg-white rounded-xl shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] flex flex-col">
+                    <div class="p-6 border-b border-gray-100 flex-shrink-0">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <i data-feather="layers" class="w-6 h-6" style="color: var(--colorBrandForeground1);"></i>
+                                <h3 class="text-lg font-semibold text-gray-900">Pipeline Management - <span id="modalServiceName">OwaMailB2</span></h3>
+                            </div>
+                            <button onclick="closePipelineManagementModal()" class="text-gray-400 hover:text-gray-600">
+                                <i data-feather="x" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">View all active pipelines for this service across virtual environments</p>
+                    </div>
+                    
+                    <div class="flex-1 p-6 overflow-y-auto">
+                        <div id="modalPipelineCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Pipeline cards will be generated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="px-6 py-4 border-t border-gray-100 flex justify-end flex-shrink-0">
+                        <button onclick="closePipelineManagementModal()" class="fluent-button fluent-button-subtle">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -608,6 +635,7 @@
                 iconColor: '#107c10',
                 iconBg: '#dff6dd',
                 latestVersion: 'v2.1.234',
+                activePipelines: 3,
                 ves: [
                     {
                         id: 'sovbase',
@@ -668,17 +696,15 @@
             document.getElementById('serviceTitle').textContent = service.name;
             document.getElementById('serviceDescription').textContent = service.description;
             document.getElementById('serviceType').textContent = service.type;
-            document.getElementById('latestVersion').textContent = service.latestVersion;
             document.getElementById('serviceTitleForModal').textContent = service.name;
             
             // Update stats
             const totalVEs = service.ves.length;
             const deployedVEs = service.ves.filter(ve => ve.status === 'deployed').length;
-            const pendingVEs = service.ves.filter(ve => ve.status === 'pending').length;
             
             document.getElementById('totalVEs').textContent = totalVEs;
             document.getElementById('deployedVEs').textContent = deployedVEs;
-            document.getElementById('pendingVEs').textContent = pendingVEs;
+            document.getElementById('activePipelines').textContent = service.activePipelines;
             document.getElementById('veCount').textContent = `${totalVEs} VEs`;
         }
 
@@ -766,7 +792,7 @@
                 return `
                     <div class="flex space-x-2">
                         <button onclick="deployToVE('${ve.id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
-                            <i data-feather="upload" class="w-3 h-3 inline mr-1"></i>Deploy
+                            <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy
                         </button>
                     </div>
                 `;
@@ -999,6 +1025,139 @@
             } else {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('show');
+            }
+        });
+
+        // Pipeline data for the service
+        const pipelineConfigs = {
+            1418: {
+                name: "Main Pipeline",
+                description: "Primary build pipeline for OwaMailB2",
+                type: "main",
+                color: "blue",
+                icon: "zap",
+                latestBuild: "20241220.5",
+                dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot"
+            },
+            33874: {
+                name: "Incremental Build",
+                description: "Fast incremental build pipeline",
+                type: "incremental",
+                color: "purple",
+                icon: "refresh-cw",
+                latestBuild: "20241220.3",
+                dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot"
+            },
+            31234: {
+                name: "Incremental Build Alt",
+                description: "Alternative incremental build",
+                type: "incremental",
+                color: "green", 
+                icon: "refresh-cw",
+                latestBuild: "20241220.2",
+                dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot"
+            }
+        };
+
+        // Show Pipeline Management Modal
+        function showPipelineManagementModal() {
+            document.getElementById('modalServiceName').textContent = appState.currentService.name;
+            
+            const container = document.getElementById('modalPipelineCardsContainer');
+            container.innerHTML = '';
+            
+            // Get all pipeline IDs for this service
+            const pipelineIds = [1418, 33874, 31234]; // From the service data
+            
+            pipelineIds.forEach(pipelineId => {
+                const config = pipelineConfigs[pipelineId];
+                if (config) {
+                    const card = createViewOnlyPipelineCard(pipelineId, config);
+                    container.appendChild(card);
+                }
+            });
+            
+            document.getElementById('pipelineManagementModal').classList.remove('hidden');
+            feather.replace();
+        }
+
+        // Close Pipeline Management Modal
+        function closePipelineManagementModal() {
+            document.getElementById('pipelineManagementModal').classList.add('hidden');
+        }
+
+        // Create view-only pipeline card (without default setting functionality)
+        function createViewOnlyPipelineCard(pipelineId, config) {
+            const card = document.createElement('div');
+            card.className = 'fluent-card p-4 cursor-default';
+
+            const colorClasses = {
+                'blue': 'bg-blue-100 text-blue-700',
+                'purple': 'bg-purple-100 text-purple-700',
+                'green': 'bg-green-100 text-green-700'
+            };
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                            <i data-feather="${config.icon}" class="w-3 h-3 text-gray-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900">${config.name}</h4>
+                            <p class="text-xs text-gray-500">ID: ${pipelineId}</p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-1 ${colorClasses[config.color] || 'bg-gray-100 text-gray-700'} text-xs rounded">${config.type}</span>
+                </div>
+                <p class="text-xs text-gray-600 mb-3">${config.description}</p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Latest Build:</span>
+                        <span class="font-mono text-gray-900">${config.latestBuild}</span>
+                    </div>
+                    <div class="bg-gray-50 rounded p-2">
+                        <div class="flex items-center justify-between">
+                            <p class="font-mono text-xs text-gray-700 break-all flex-1 mr-2">${config.dropUrl}</p>
+                            <button onclick="copyDropUrl('${config.dropUrl}')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
+                                <i data-feather="copy" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-gray-100 text-center">
+                    <span class="text-xs text-gray-500">Pipeline Status: Active</span>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Copy drop URL functionality
+        function copyDropUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('URL Copied', 'Drop URL has been copied to clipboard');
+            }, (err) => {
+                console.error('Copy failed', err);
+                showNotification('Copy Failed', 'Unable to copy URL to clipboard');
+            });
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('pipelineManagementModal');
+            if (event.target === modal) {
+                closePipelineManagementModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('pipelineManagementModal');
+                if (!modal.classList.contains('hidden')) {
+                    closePipelineManagementModal();
+                }
             }
         });
     </script>

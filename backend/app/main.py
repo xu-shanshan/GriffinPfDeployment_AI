@@ -7,7 +7,7 @@ from .core.config import settings
 from .core.logging import logger
 
 # 导入API路由
-from .api import dashboard, ve, service
+from .api import dashboard_routes, ve_routes, service_routes
 
 # 创建FastAPI应用
 app = FastAPI(
@@ -27,9 +27,9 @@ app.add_middleware(
 )
 
 # 注册路由
-app.include_router(dashboard.router, prefix=settings.api_prefix)
-app.include_router(ve.router, prefix=settings.api_prefix)
-app.include_router(service.router, prefix=settings.api_prefix)
+app.include_router(dashboard_routes.router, prefix=settings.api_prefix)
+app.include_router(ve_routes.router, prefix=settings.api_prefix)
+app.include_router(service_routes.router, prefix=settings.api_prefix)
 
 @app.get("/")
 async def root():
@@ -86,14 +86,6 @@ if __name__ == "__main__":
     pipelines: List[PipelineModel]
     config: Dict[str, Any]
 
-class VEModel(BaseModel):
-    name: str
-    description: str
-    ve_type: VEType
-    group: str
-    stats: Dict[str, int]
-    is_favorite: Optional[bool] = False
-    last_updated: Optional[str] = None
 
 class DeploymentRequest(BaseModel):
     service_names: List[str]
@@ -259,60 +251,6 @@ MOCK_DATA = {
             }
         ]
     },
-    "service_details": {
-        "OwaMailB2": {
-            "name": "OwaMailB2",
-            "description": "Outlook Web App Mail Backend Service",
-            "status": "healthy",
-            "version": "20241220.5",
-            "build_type": "RingPromotion",
-            "service_type": "B2 Type",
-            "last_deploy": "2h",
-            "active_pipelines": 3,
-            "is_favorite": False,
-            "pipelines": [
-                {
-                    "id": 1418,
-                    "name": "Main Pipeline",
-                    "description": "Primary build pipeline for OwaMailB2",
-                    "type": "main",
-                    "is_default": True,
-                    "latest_build": "20241220.5",
-                    "drop_url": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot",
-                    "icon": "zap"
-                },
-                {
-                    "id": 33874,
-                    "name": "Incremental Build",
-                    "description": "Fast incremental build pipeline",
-                    "type": "incremental",
-                    "is_default": False,
-                    "latest_build": "20241220.3",
-                    "drop_url": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot",
-                    "icon": "refresh-cw"
-                },
-                {
-                    "id": 31234,
-                    "name": "Incremental Build Alt",
-                    "description": "Alternative incremental build",
-                    "type": "incremental",
-                    "is_default": False,
-                    "latest_build": "20241220.2",
-                    "drop_url": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot",
-                    "icon": "refresh-cw"
-                }
-            ],
-            "config": {
-                "BuildType": "RingPromotion",
-                "PipelineId": 1418,
-                "IncrementalBuildPipelineId": 33874,
-                "RingPromotionRootPath": "autopilot",
-                "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
-                "PpeVeName": "OwaMailB2-PPE",
-                "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
-            }
-        }
-    },
     "deployment_history": [
         {
             "id": "deploy-001",
@@ -363,186 +301,4 @@ async def health_check():
         "version": "1.0.0"
     }
 
-# Dashboard API
-@app.get("/api/dashboard")
-async def get_dashboard():
-    """获取仪表板数据"""
-    total_ves = len(MOCK_DATA["ves"])
-    total_services = sum(ve["stats"]["total_services"] for ve in MOCK_DATA["ves"])
-    active_services = sum(ve["stats"]["deployed_services"] for ve in MOCK_DATA["ves"])
-    recent_deployments = len([d for d in MOCK_DATA["deployment_history"] 
-                             if d["started_at"] > "2024-12-19T00:00:00Z"])
-    
-    return {
-        "total_ves": total_ves,
-        "active_services": active_services,
-        "recent_deployments": recent_deployments,
-        "success_rate": 95.6,
-        "favorite_ves": [ve for ve in MOCK_DATA["ves"] if ve.get("is_favorite", False)][:3]
-    }
-
-# VE Management API
-@app.get("/api/ve")
-async def get_virtual_environments(
-    search: Optional[str] = Query(None),
-    ve_type: Optional[str] = Query(None),
-    group: Optional[str] = Query(None)
-):
-    """获取虚拟环境列表"""
-    ves = MOCK_DATA["ves"]
-    
-    # 应用过滤器
-    if search:
-        ves = [ve for ve in ves if search.lower() in ve["name"].lower() or search.lower() in ve["description"].lower()]
-    if ve_type:
-        ves = [ve for ve in ves if ve["ve_type"] == ve_type]
-    if group:
-        ves = [ve for ve in ves if ve["group"] == group]
-    
-    return {
-        "items": ves,
-        "total_count": len(ves),
-        "page": 1,
-        "page_size": 20,
-        "has_next": False,
-        "has_previous": False
-    }
-
-@app.get("/api/ve/{ve_name}")
-async def get_ve_detail(ve_name: str = Path(...)):
-    """获取VE详细信息"""
-    ve = next((v for v in MOCK_DATA["ves"] if v["name"] == ve_name), None)
-    if not ve:
-        raise HTTPException(status_code=404, detail="VE not found")
-    return ve
-
-@app.get("/api/ve/{ve_name}/services")
-async def get_ve_services(
-    ve_name: str,
-    status: str = None,
-    config_filter: str = None
-):
-    """获取VE下的服务列表"""
-    services = MOCK_DATA["services"].get(ve_name, [])
-    
-    # 应用状态过滤器
-    if status:
-        services = [s for s in services if s["status"] == status]
-    
-    # 应用配置过滤器
-    if config_filter:
-        if config_filter == "both":
-            services = [s for s in services if s["in_dragon"] and s["in_pfgold"]]
-        elif config_filter == "dragon-only":
-            services = [s for s in services if s["in_dragon"] and not s["in_pfgold"]]
-        elif config_filter == "pfgold-only":
-            services = [s for s in services if not s["in_dragon"] and s["in_pfgold"]]
-    
-    return {"services": services}
-
-# Service Detail API
-@app.get("/api/service/{service_name}")
-async def get_service_detail(
-    service_name: str,
-    ve_name: str = None
-):
-    """获取服务详细信息"""
-    service_detail = MOCK_DATA["service_details"].get(service_name)
-    if not service_detail:
-        raise HTTPException(status_code=404, detail="Service not found")
-    return service_detail
-
-@app.put("/api/service/{service_name}/config")
-async def update_service_config(
-    service_name: str,
-    config_request: ConfigUpdateRequest
-):
-    """更新服务配置"""
-    logger.info(f"更新服务配置: {service_name}")
-    
-    # 模拟配置更新操作
-    config_data = config_request.config
-    create_pr = config_request.create_pr
-    
-    # 这里应该实现实际的配置更新逻辑
-    # 1. 验证配置数据
-    # 2. 更新配置文件
-    # 3. 如果create_pr为True，创建Pull Request
-    
-    return {
-        "success": True,
-        "message": f"Service {service_name} configuration updated successfully",
-        "pr_created": create_pr
-    }
-
-@app.put("/api/service/{service_name}/pipeline/{pipeline_id}/default")
-async def set_default_pipeline(
-    service_name: str, 
-    pipeline_id: int
-):
-    """设置默认Pipeline"""
-    logger.info(f"设置服务 {service_name} 的默认Pipeline为: {pipeline_id}")
-    
-    # 模拟设置默认pipeline的操作
-    return {
-        "success": True,
-        "message": f"Pipeline {pipeline_id} set as default for service {service_name}",
-        "service_name": service_name,
-        "default_pipeline_id": pipeline_id
-    }
-
-# Deployment API
-@app.get("/api/deployments")
-async def get_deployment_history(
-    ve_name: str = None,
-    status: str = None,
-    limit: int = 50
-):
-    """获取部署历史"""
-    deployments = MOCK_DATA["deployment_history"]deployments = MOCK_DATA["deployment_history"]
-    
-    # 应用过滤器
-    if ve_name:
-        deployments = [d for d in deployments if d["ve_name"] == ve_name]ments = [d for d in deployments if d["ve_name"] == ve_name]
-    if status:
-        deployments = [d for d in deployments if d["status"] == status.value]    deployments = [d for d in deployments if d["status"] == status.value]
-    
-    return {
-        "items": deployments[:limit],
-        "total_count": len(deployments),nt": len(deployments),
-        "page": 1,
-        "page_size": limit   "page_size": limit
-    }    }
-
-@app.post("/api/deployments")
-async def create_deployment(deployment_request: DeploymentRequest):_deployment(deployment_request: DeploymentRequest):
-    """创建新的部署"""
-    deployment_id = f"deploy-{len(MOCK_DATA['deployment_history']) + 1:03d}"deployment_id = f"deploy-{len(MOCK_DATA['deployment_history']) + 1:03d}"
-    
-    new_deployment = {
-        "id": deployment_id,
-        "ve_name": deployment_request.ve_name,
-        "service_names": deployment_request.service_names,loyment_request.service_names,
-        "status": "pending",
-        "started_at": datetime.utcnow().isoformat() + "Z",e.utcnow().isoformat() + "Z",
-        "completed_at": None,
-        "build_version": deployment_request.build_version or "latest",ild_version or "latest",
-        "deployed_by": "api.user@example.com",pi.user@example.com",
-        "duration": None,
-        "pipeline_id": deployment_request.pipeline_id   "pipeline_id": deployment_request.pipeline_id
-    }}
-    
-    MOCK_DATA["deployment_history"].insert(0, new_deployment)MOCK_DATA["deployment_history"].insert(0, new_deployment)
-    
-    return {
-        "deployment_id": deployment_id,
-        "message": "Deployment initiated successfully",nt initiated successfully",
-        "status": "pending",
-        "services": deployment_request.service_names   "services": deployment_request.service_names
-    }    }
-
-if __name__ == "__main__":main__":
-    import uvicorn
-    logger.info("启动FastAPI服务器...")
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", reload=True)    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info", reload=True)
 

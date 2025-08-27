@@ -2,29 +2,31 @@ import asyncio
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
 import random
+from app.models.ve import VE, VEDetail, VEStats, VEListResponse
+from app.models.service import Service, ServiceListResponse
+from typing import Optional, List
+import logging
 
-from ..models.ve import VE, VEStats, VEListResponse, VEDetail
-from ..models.service import Service, ServiceListResponse
-from ..core.logging import logger
+logger = logging.getLogger(__name__)
 
 class VEService:
     """VE业务逻辑服务"""
     
     def __init__(self):
-        self.mock_data = self._initialize_mock_data()
+        self.mock_data = self._init_mock_data()
     
-    def _initialize_mock_data(self) -> Dict[str, Any]:
+    def _init_mock_data(self) -> dict:
         """初始化模拟数据"""
         return {
             "ves": [
                 {
                     "name": "SovBase",
                     "description": "Base sovereign virtual environment for core services",
-                    "ve_type": "B Type",
+                    "ve_type": "B Type VE",
                     "group": "Core",
                     "stats": {
                         "total_services": 89,
-                        "deployed_services": 67,
+                        "deployed_services": 62,
                         "dragon_services": 89,
                         "pfgold_services": 67,
                         "ready_to_deploy": 15
@@ -35,32 +37,17 @@ class VEService:
                 {
                     "name": "ModelBSov",
                     "description": "Model B sovereign environment",
-                    "ve_type": "B Type",
+                    "ve_type": "B Type VE",
                     "group": "Core",
                     "stats": {
                         "total_services": 45,
-                        "deployed_services": 32,
+                        "deployed_services": 30,
                         "dragon_services": 45,
-                        "pfgold_services": 32,
+                        "pfgold_services": 35,
                         "ready_to_deploy": 8
                     },
                     "is_favorite": True,
-                    "last_updated": "4 hours ago"
-                },
-                {
-                    "name": "OwaMailB2-SOV",
-                    "description": "OWA Mail B2 sovereign environment",
-                    "ve_type": "B2 Type",
-                    "group": "Mail",
-                    "stats": {
-                        "total_services": 22,
-                        "deployed_services": 19,
-                        "dragon_services": 22,
-                        "pfgold_services": 19,
-                        "ready_to_deploy": 2
-                    },
-                    "is_favorite": True,
-                    "last_updated": "1 hour ago"
+                    "last_updated": "5 hours ago"
                 }
             ],
             "services": {
@@ -78,20 +65,6 @@ class VEService:
                         "icon": "mail",
                         "icon_color": "blue",
                         "ready_to_deploy": True
-                    },
-                    {
-                        "id": "graphconnectors",
-                        "name": "GraphConnectors", 
-                        "description": "Graph Connectors Service",
-                        "status": "not-deployed",
-                        "in_dragon": True,
-                        "in_pfgold": True,
-                        "current_version": None,
-                        "pipeline": "GraphConnectorsPipeline",
-                        "pipeline_version": "v2.8.5",
-                        "icon": "flash",
-                        "icon_color": "orange",
-                        "ready_to_deploy": False
                     }
                 ]
             }
@@ -99,27 +72,15 @@ class VEService:
     
     async def get_ves(
         self, 
-        search: Optional[str] = None,
-        ve_type: Optional[str] = None,
-        group: Optional[str] = None,
-        page: int = 1,
-        page_size: int = 50
+        search: Optional[str] = None
     ) -> VEListResponse:
         """获取VE列表"""
-        try:
-            logger.info(f"获取VE列表，搜索: {search}, 类型: {ve_type}, 组: {group}")
-            
-            # 过滤数据
-            filtered_ves = []
-            for ve_data in self.mock_data["ves"]:
-                if search and search.lower() not in ve_data["name"].lower() and search.lower() not in ve_data["description"].lower():
-                    continue
-                if ve_type and ve_data["ve_type"] != ve_type:
-                    continue
-                if group and ve_data["group"] != group:
-                    continue
-                
-                ve = VE(
+        logger.info(f"获取VE列表, 搜索: {search}")
+        
+        ves = []
+        for ve_data in self.mock_data["ves"]:
+            if not search or search.lower() in ve_data["name"].lower():
+                ves.append(VE(
                     name=ve_data["name"],
                     description=ve_data["description"],
                     ve_type=ve_data["ve_type"],
@@ -127,12 +88,51 @@ class VEService:
                     stats=VEStats(**ve_data["stats"]),
                     is_favorite=ve_data["is_favorite"],
                     last_updated=ve_data["last_updated"]
-                )
-                filtered_ves.append(ve)
-            
-            # 分页处理
-            total_count = len(filtered_ves)
-            start_idx = (page - 1) * page_size
+                ))
+        
+        return VEListResponse(
+            items=ves,
+            total_count=len(ves),
+            page=1,
+            page_size=10,
+            has_next=False,
+            has_previous=False
+        )
+    
+    async def get_ve_detail(self, ve_name: str) -> Optional[VEDetail]:
+        """获取VE详情"""
+        logger.info(f"获取VE详情: {ve_name}")
+        
+        ve_data = next((ve for ve in self.mock_data["ves"] if ve["name"] == ve_name), None)
+        if not ve_data:
+            return None
+        
+        return VEDetail(
+            name=ve_data["name"],
+            description=ve_data["description"],
+            ve_type=ve_data["ve_type"],
+            group=ve_data["group"],
+            stats=VEStats(**ve_data["stats"]),
+            is_favorite=ve_data["is_favorite"],
+            last_updated=ve_data["last_updated"]
+        )
+    
+    async def get_ve_services(
+        self,
+        ve_name: str,
+        status: Optional[str] = None
+    ) -> ServiceListResponse:
+        """获取VE下的服务列表"""
+        logger.info(f"获取VE服务列表: {ve_name}, 状态: {status}")
+        
+        services_data = self.mock_data["services"].get(ve_name, [])
+        services = []
+        
+        for service_data in services_data:
+            if not status or service_data["status"] == status:
+                services.append(Service(**service_data))
+        
+        return ServiceListResponse(services=services)
             end_idx = start_idx + page_size
             paged_ves = filtered_ves[start_idx:end_idx]
             

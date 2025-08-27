@@ -29,14 +29,17 @@ class ServiceDetail(BaseModel):
     name: str
     description: str
     status: str
-    version: str
+    version: Optional[str]  # 修复：允许为 None
     build_type: str
     service_type: str
-    last_deploy: str
+    last_deploy: Optional[str]  # 修复：允许为 None
     active_pipelines: int
     is_favorite: bool
     pipelines: List[Pipeline]
     config: dict
+
+class ServiceDetailResponse(BaseModel):
+    data: ServiceDetail
 
 class ServiceListResponse(BaseModel):
     services: List[Service]

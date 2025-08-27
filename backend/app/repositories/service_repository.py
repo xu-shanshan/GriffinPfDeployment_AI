@@ -4,9 +4,15 @@ import logging
 logger = logging.getLogger(__name__)
 
 class ServiceRepository:
+    """Service数据访问层"""
+    
     def __init__(self):
         # Mock数据存储 - 在实际项目中这里会连接真实数据库
-        self._mock_services = {
+        self._mock_services = self._init_mock_data()
+    
+    def _init_mock_data(self) -> Dict[str, Any]:
+        """初始化Mock数据"""
+        return {
             "OwaMailB2": {
                 "name": "OwaMailB2",
                 "description": "Outlook Web App Mail Backend Service",
@@ -37,6 +43,16 @@ class ServiceRepository:
                         "latest_build": "20241220.3",
                         "drop_url": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot",
                         "icon": "refresh-cw"
+                    },
+                    {
+                        "id": 31234,
+                        "name": "Incremental Build Alt",
+                        "description": "Alternative incremental build",
+                        "type": "incremental",
+                        "is_default": False,
+                        "latest_build": "20241220.2",
+                        "drop_url": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot",
+                        "icon": "refresh-cw"
                     }
                 ],
                 "config": {
@@ -48,10 +64,37 @@ class ServiceRepository:
                     "PpeVeName": "OwaMailB2-PPE",
                     "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
                 }
+            },
+            "GraphConnectors": {
+                "name": "GraphConnectors",
+                "description": "Graph Connectors Service",
+                "status": "not-deployed",
+                "version": None,
+                "build_type": "RingPromotion",
+                "service_type": "B Type",
+                "last_deploy": None,
+                "active_pipelines": 2,
+                "is_favorite": False,
+                "pipelines": [
+                    {
+                        "id": 2001,
+                        "name": "Main Pipeline",
+                        "description": "Primary build pipeline for GraphConnectors",
+                        "type": "main",
+                        "is_default": True,
+                        "latest_build": "20241220.2",
+                        "drop_url": "VSO://https://graphconnectors.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/graphconnectors_ms/20241220.2?root=autopilot",
+                        "icon": "zap"
+                    }
+                ],
+                "config": {
+                    "BuildType": "RingPromotion",
+                    "PipelineId": 2001
+                }
             }
         }
     
-    async def get_service_by_name(self, service_name: str) -> Optional[Dict[str, Any]]:
+    async def fetch_by_name(self, service_name: str) -> Optional[Dict[str, Any]]:
         """根据服务名获取服务数据"""
         try:
             logger.info(f"Repository层: 获取服务数据 - {service_name}")
@@ -60,7 +103,7 @@ class ServiceRepository:
             logger.error(f"获取服务数据Repository层错误: {str(e)}")
             raise
     
-    async def update_service_config(self, service_name: str, config: Dict[str, Any]) -> bool:
+    async def update_config(self, service_name: str, config: Dict[str, Any]) -> bool:
         """更新服务配置"""
         try:
             logger.info(f"Repository层: 更新服务配置 - {service_name}")

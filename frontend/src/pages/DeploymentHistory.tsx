@@ -1,5 +1,6 @@
 import React from 'react'
 import { Title1, Body1, Card } from '@fluentui/react-components'
+import { deploymentApi } from '../services/deploymentApi'
 
 const DeploymentHistory: React.FC = () => {
   return (

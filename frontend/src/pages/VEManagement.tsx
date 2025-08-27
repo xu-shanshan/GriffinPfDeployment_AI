@@ -22,7 +22,7 @@ import {
   Search24Regular,
   Filter24Regular,
 } from '@fluentui/react-icons'
-import { veApi } from '../services/api'
+import { veApi } from '../services/veApi'
 
 const useStyles = makeStyles({
   header: {
@@ -84,9 +84,12 @@ const VEManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [favorites, setFavorites] = useState(new Set(['SovBase', 'ModelBSov', 'OwaMailB2-SOV']))
 
-  const { data: veData, isLoading } = useQuery({
-    queryKey: ['ves'],
-    queryFn: veApi.getVEs,
+  // 使用真实API而不是mock数据
+  const { data: veData, isLoading, error } = useQuery({
+    queryKey: ['ves', searchQuery],
+    queryFn: () => veApi.getVEs({
+      search: searchQuery || undefined
+    }),
   })
 
   const toggleFavorite = (veName: string, event: React.MouseEvent) => {
@@ -119,50 +122,12 @@ const VEManagement: React.FC = () => {
     return <div style={{ padding: '24px' }}>Loading...</div>
   }
 
-  const mockVEs = [
-    {
-      name: 'SovBase',
-      description: 'Base sovereign virtual environment for core services',
-      ve_type: 'B Type',
-      group: 'SovBaseVEs',
-      stats: { total_services: 67, deployed_services: 62, dragon_services: 89, pfgold_services: 67, ready_to_deploy: 5 },
-    },
-    {
-      name: 'ModelBSov',
-      description: 'Model B sovereign virtual environment',
-      ve_type: 'B Type',
-      group: 'ModelBSovVEs',
-      stats: { total_services: 65, deployed_services: 58, dragon_services: 65, pfgold_services: 62, ready_to_deploy: 7 },
-    },
-    {
-      name: 'OwaMailB2-SOV',
-      description: 'Outlook Web App Mail B2 services',
-      ve_type: 'B2 Type',
-      group: 'ModelB2SovVEs',
-      stats: { total_services: 1, deployed_services: 1, dragon_services: 1, pfgold_services: 1, ready_to_deploy: 0 },
-    },
-    {
-      name: 'GraphConnectorsB2-SOV',
-      description: 'Graph Connectors B2 services',
-      ve_type: 'B2 Type',
-      group: 'ModelB2SovVEs',
-      stats: { total_services: 1, deployed_services: 0, dragon_services: 1, pfgold_services: 0, ready_to_deploy: 1 },
-    },
-    {
-      name: 'FlowControlB2-SOV',
-      description: 'Flow Control B2 services',
-      ve_type: 'B2 Type',
-      group: 'ModelB2SovVEs',
-      stats: { total_services: 1, deployed_services: 0, dragon_services: 1, pfgold_services: 0, ready_to_deploy: 0 },
-    },
-    {
-      name: 'TodoB2-SOV',
-      description: 'Todo B2 services',
-      ve_type: 'B2 Type',
-      group: 'ModelB2SovVEs',
-      stats: { total_services: 1, deployed_services: 1, dragon_services: 1, pfgold_services: 1, ready_to_deploy: 0 },
-    },
-  ]
+  if (error) {
+    return <div style={{ padding: '24px' }}>Error loading VE data: {error.message}</div>
+  }
+
+  // 使用API返回的数据
+  const veList = veData?.items || []
 
   return (
     <div>
@@ -196,7 +161,7 @@ const VEManagement: React.FC = () => {
 
       {/* VE Cards Grid */}
       <div className={styles.veGrid}>
-        {mockVEs.map((ve) => {
+        {veList.map((ve) => {
           const iconStyle = getIconColor(ve.name)
           return (
             <Card 
@@ -259,7 +224,7 @@ const VEManagement: React.FC = () => {
 
       {/* Pagination */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Body1>Showing 1-6 of 18 virtual environments</Body1>
+        <Body1>Showing 1-{veList.length} of {veData?.total_count || 0} virtual environments</Body1>
         <div style={{ display: 'flex', gap: '4px' }}>
           <Button appearance="subtle" size="small">‹</Button>
           <Button appearance="primary" size="small">1</Button>

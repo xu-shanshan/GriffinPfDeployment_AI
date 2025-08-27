@@ -19,7 +19,7 @@ import {
   Clock24Regular,
   Server24Regular,
 } from '@fluentui/react-icons'
-import { dashboardApi } from '../services/api'
+import { dashboardApi } from '../services/dashboardApi'
 
 const useStyles = makeStyles({
   header: {

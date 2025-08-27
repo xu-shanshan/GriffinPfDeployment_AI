@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { 
   Title1, 
   Title2,
@@ -27,29 +28,7 @@ import {
   ArrowClockwise20Regular,
   Copy20Regular
 } from '@fluentui/react-icons'
-
-interface PipelineConfig {
-  id: number
-  name: string
-  description: string
-  type: string
-  isDefault: boolean
-  latestBuild: string
-  dropUrl: string
-  icon: string
-}
-
-interface ServiceDetail {
-  name: string
-  description: string
-  status: 'healthy' | 'warning' | 'error'
-  version: string
-  buildType: string
-  serviceType: string
-  lastDeploy: string
-  activePipelines: number
-  isFavorite: boolean
-}
+import { serviceApi } from '../services/serviceApi'
 
 const ServiceDetail: React.FC = () => {
   const { serviceName, veName } = useParams<{ serviceName: string; veName: string }>()
@@ -59,52 +38,6 @@ const ServiceDetail: React.FC = () => {
   const [pendingDefaultPipeline, setPendingDefaultPipeline] = useState<{ id: number; name: string } | null>(null)
   const [quickPipelineId, setQuickPipelineId] = useState('1418')
   const [quickVersion, setQuickVersion] = useState('latest')
-
-  const [serviceDetail] = useState<ServiceDetail>({
-    name: serviceName || 'OwaMailB2',
-    description: 'Outlook Web App Mail Backend Service',
-    status: 'healthy',
-    version: '20241220.5',
-    buildType: 'RingPromotion',
-    serviceType: 'B2 Type',
-    lastDeploy: '2h',
-    activePipelines: 3,
-    isFavorite: false
-  })
-
-  const [pipelines] = useState<PipelineConfig[]>([
-    {
-      id: 1418,
-      name: 'Main Pipeline',
-      description: 'Primary build pipeline for OwaMailB2',
-      type: 'main',
-      isDefault: true,
-      latestBuild: '20241220.5',
-      dropUrl: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot',
-      icon: 'zap'
-    },
-    {
-      id: 33874,
-      name: 'Incremental Build',
-      description: 'Fast incremental build pipeline',
-      type: 'incremental',
-      isDefault: false,
-      latestBuild: '20241220.3',
-      dropUrl: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot',
-      icon: 'refresh-cw'
-    },
-    {
-      id: 31234,
-      name: 'Incremental Build Alt',
-      description: 'Alternative incremental build',
-      type: 'incremental',
-      isDefault: false,
-      latestBuild: '20241220.2',
-      dropUrl: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot',
-      icon: 'refresh-cw'
-    }
-  ])
-
   const [configJson, setConfigJson] = useState(`{
   "BuildType": "RingPromotion",
   "PipelineId": 1418,
@@ -115,11 +48,66 @@ const ServiceDetail: React.FC = () => {
   "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
 }`)
 
+  // 使用真实API数据
+  const { data: serviceData, isLoading } = useQuery({
+    queryKey: ['service-detail', veName, serviceName],
+    queryFn: () => serviceApi.getServiceDetail(serviceName!, veName),
+    enabled: !!(veName && serviceName)
+  })
+
+  // 使用API数据替换硬编码数据
+  const serviceDetail = serviceData || {
+    name: serviceName || 'OwaMailB2',
+    description: 'Outlook Web App Mail Backend Service',
+    status: 'healthy',
+    version: '20241220.5',
+    build_type: 'RingPromotion',
+    service_type: 'B2 Type',
+    last_deploy: '2h',
+    active_pipelines: 3,
+    is_favorite: false,
+    pipelines: [
+      {
+        id: 1418,
+        name: 'Main Pipeline',
+        description: 'Primary build pipeline for OwaMailB2',
+        type: 'main',
+        is_default: true,
+        latest_build: '20241220.5',
+        drop_url: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot',
+        icon: 'zap'
+      },
+      {
+        id: 33874,
+        name: 'Incremental Build',
+        description: 'Fast incremental build pipeline',
+        type: 'incremental',
+        is_default: false,
+        latest_build: '20241220.3',
+        drop_url: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot',
+        icon: 'refresh-cw'
+      },
+      {
+        id: 31234,
+        name: 'Incremental Build Alt',
+        description: 'Alternative incremental build',
+        type: 'incremental',
+        is_default: false,
+        latest_build: '20241220.2',
+        drop_url: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot',
+        icon: 'refresh-cw'
+      }
+    ],
+    config: {}
+  }
+
+  const pipelines = serviceDetail.pipelines || []
+
   const getStatusBadge = (status: string) => {
     const configs = {
-      healthy: { color: '#107c10', text: 'Healthy', icon: <CheckmarkCircle20Filled /> },
-      warning: { color: '#f7b500', text: 'Warning', icon: <CheckmarkCircle20Filled /> },
-      error: { color: '#d13438', text: 'Error', icon: <CheckmarkCircle20Filled /> }
+      healthy: { color: '#107c10', text: 'Healthy' },
+      warning: { color: '#f7b500', text: 'Warning' },
+      error: { color: '#d13438', text: 'Error' }
     }
     const config = configs[status as keyof typeof configs] || configs.healthy
     return (
@@ -145,10 +133,24 @@ const ServiceDetail: React.FC = () => {
     setShowSetDefaultModal(true)
   }
 
-  const confirmSetDefault = () => {
+  const handleServiceConfig = async () => {
+    try {
+      await serviceApi.updateServiceConfig(serviceName!, JSON.parse(configJson), true)
+      setShowConfigModal(false)
+      console.log('Configuration updated successfully')
+    } catch (error) {
+      console.error('Failed to update configuration:', error)
+    }
+  }
+
+  const confirmSetDefault = async () => {
     if (pendingDefaultPipeline) {
-      console.log(`Setting pipeline ${pendingDefaultPipeline.id} as default`)
-      // Update pipeline default status logic here
+      try {
+        await serviceApi.setDefaultPipeline(serviceName!, pendingDefaultPipeline.id)
+        console.log(`Pipeline ${pendingDefaultPipeline.id} set as default`)
+      } catch (error) {
+        console.error('Failed to set default pipeline:', error)
+      }
     }
     setShowSetDefaultModal(false)
     setPendingDefaultPipeline(null)
@@ -187,6 +189,10 @@ const ServiceDetail: React.FC = () => {
     }
   }
 
+  if (isLoading) {
+    return <div style={{ padding: '24px' }}>Loading...</div>
+  }
+
   return (
     <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
       {/* Breadcrumb */}
@@ -222,14 +228,14 @@ const ServiceDetail: React.FC = () => {
                 <Title1>{serviceDetail.name}</Title1>
                 <Button
                   appearance="subtle"
-                  icon={serviceDetail.isFavorite ? <Star20Filled /> : <Star20Regular />}
-                  style={{ padding: '4px', minWidth: 'auto', color: serviceDetail.isFavorite ? '#faa06b' : '#616161' }}
+                  icon={serviceDetail.is_favorite ? <Star20Filled /> : <Star20Regular />}
+                  style={{ padding: '4px', minWidth: 'auto', color: serviceDetail.is_favorite ? '#faa06b' : '#616161' }}
                 />
               </div>
               <Body1 style={{ marginBottom: '12px' }}>{serviceDetail.description}</Body1>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Badge appearance="filled" color="important">{serviceDetail.buildType}</Badge>
-                <Badge appearance="filled" color="success">{serviceDetail.serviceType}</Badge>
+                <Badge appearance="filled" color="important">{serviceDetail.build_type}</Badge>
+                <Badge appearance="filled" color="success">{serviceDetail.service_type}</Badge>
               </div>
             </div>
           </div>
@@ -255,11 +261,11 @@ const ServiceDetail: React.FC = () => {
             <div style={{ fontSize: '14px', color: '#616161' }}>Current Build</div>
           </div>
           <div style={{ textAlign: 'center', padding: '16px', borderRadius: '8px', backgroundColor: '#f5f5f5' }}>
-            <div style={{ fontSize: '24px', fontWeight: '600', color: '#0f6cbd', marginBottom: '4px' }}>{serviceDetail.activePipelines}</div>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: '#0f6cbd', marginBottom: '4px' }}>{serviceDetail.active_pipelines}</div>
             <div style={{ fontSize: '14px', color: '#616161' }}>Active Pipelines</div>
           </div>
           <div style={{ textAlign: 'center', padding: '16px', borderRadius: '8px', backgroundColor: '#f5f5f5' }}>
-            <div style={{ fontSize: '24px', fontWeight: '600', color: '#242424', marginBottom: '4px' }}>{serviceDetail.lastDeploy}</div>
+            <div style={{ fontSize: '24px', fontWeight: '600', color: '#242424', marginBottom: '4px' }}>{serviceDetail.last_deploy}</div>
             <div style={{ fontSize: '14px', color: '#616161' }}>Last Deploy</div>
           </div>
         </div>
@@ -329,8 +335,8 @@ const ServiceDetail: React.FC = () => {
                 style={{ 
                   padding: '16px', 
                   cursor: 'pointer',
-                  border: pipeline.isDefault ? '2px solid #0f6cbd' : '1px solid #e0e0e0',
-                  backgroundColor: pipeline.isDefault ? '#e3f2fd' : 'white'
+                  border: pipeline.is_default ? '2px solid #0f6cbd' : '1px solid #e0e0e0',
+                  backgroundColor: pipeline.is_default ? '#e3f2fd' : 'white'
                 }}
               >
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -343,8 +349,8 @@ const ServiceDetail: React.FC = () => {
                       <div style={{ fontSize: '12px', color: '#616161' }}>ID: {pipeline.id}</div>
                     </div>
                   </div>
-                  <Badge appearance={pipeline.isDefault ? "filled" : "outline"} color={pipeline.isDefault ? "brand" : "subtle"}>
-                    {pipeline.isDefault ? (
+                  <Badge appearance={pipeline.is_default ? "filled" : "outline"} color={pipeline.is_default ? "brand" : "subtle"}>
+                    {pipeline.is_default ? (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Star20Filled style={{ width: '12px', height: '12px' }} />
                         Default
@@ -358,7 +364,7 @@ const ServiceDetail: React.FC = () => {
                 <div style={{ marginBottom: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                     <span style={{ fontSize: '14px', color: '#616161' }}>Latest:</span>
-                    <span style={{ fontFamily: 'monospace', fontSize: '14px' }}>{pipeline.latestBuild}</span>
+                    <span style={{ fontFamily: 'monospace', fontSize: '14px' }}>{pipeline.latest_build}</span>
                   </div>
                   <div style={{ 
                     backgroundColor: '#f5f5f5', 
@@ -370,12 +376,12 @@ const ServiceDetail: React.FC = () => {
                     wordBreak: 'break-all',
                     position: 'relative'
                   }}>
-                    {pipeline.dropUrl}
+                    {pipeline.drop_url}
                     <Button
                       appearance="subtle"
                       size="small"
                       icon={<Copy20Regular />}
-                      onClick={() => copyToClipboard(pipeline.dropUrl)}
+                      onClick={() => copyToClipboard(pipeline.drop_url)}
                       style={{ 
                         position: 'absolute', 
                         top: '4px', 
@@ -389,7 +395,7 @@ const ServiceDetail: React.FC = () => {
                 </div>
 
                 <div style={{ textAlign: 'center', paddingTop: '12px', borderTop: '1px solid #e0e0e0' }}>
-                  {!pipeline.isDefault ? (
+                  {!pipeline.is_default ? (
                     <Button 
                       size="small" 
                       appearance="secondary"
@@ -410,45 +416,6 @@ const ServiceDetail: React.FC = () => {
           </div>
         </div>
       </Card>
-
-      {/* Set Default Pipeline Modal */}
-      {showSetDefaultModal && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1000
-        }}>
-          <Card style={{ padding: '24px', maxWidth: '400px', width: '100%', margin: '16px' }}>
-            <Title2 style={{ marginBottom: '16px' }}>Set Default Pipeline</Title2>
-            <Body1 style={{ marginBottom: '16px' }}>
-              Are you sure you want to set <strong>{pendingDefaultPipeline?.name}</strong> as the default pipeline for <strong>{serviceDetail.name}</strong>?
-            </Body1>
-            <div style={{ backgroundColor: '#fff4ce', padding: '12px', borderRadius: '4px', marginBottom: '16px' }}>
-              <Title3 style={{ fontSize: '14px', marginBottom: '4px' }}>Impact</Title3>
-              <ul style={{ fontSize: '12px', margin: 0, paddingLeft: '16px' }}>
-                <li>VE batch deployment will use this pipeline by default</li>
-                <li>Quick Deploy allows selecting any pipeline for deployment</li>
-                <li>Configuration will be updated in service settings</li>
-              </ul>
-            </div>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <Button appearance="secondary" onClick={() => setShowSetDefaultModal(false)}>
-                Cancel
-              </Button>
-              <Button appearance="primary" icon={<Star20Filled />} onClick={confirmSetDefault}>
-                Set as Default
-              </Button>
-            </div>
-          </Card>
-        </div>
-      )}
 
       {/* Configuration Editor Modal */}
       {showConfigModal && (
@@ -488,6 +455,7 @@ const ServiceDetail: React.FC = () => {
                 </div>
               </div>
               
+
               <Field label="Configuration JSON">
                 <Textarea
                   value={configJson}
@@ -507,10 +475,41 @@ const ServiceDetail: React.FC = () => {
                 <Button appearance="secondary" onClick={() => setShowConfigModal(false)}>
                   Cancel
                 </Button>
-                <Button appearance="primary" icon={<Save20Regular />} style={{ backgroundColor: '#8b5cf6' }}>
+                <Button appearance="primary" icon={<Save20Regular />} style={{ backgroundColor: '#8b5cf6' }} onClick={handleServiceConfig}>
                   Save Configuration
                 </Button>
               </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Set Default Pipeline Modal */}
+      {showSetDefaultModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000
+        }}>
+          <Card style={{ padding: '24px', maxWidth: '400px', width: '100%', margin: '16px' }}>
+            <Title2 style={{ marginBottom: '16px' }}>Set Default Pipeline</Title2>
+            <Body1 style={{ marginBottom: '16px' }}>
+              Are you sure you want to set <strong>{pendingDefaultPipeline?.name}</strong> as the default pipeline for <strong>{serviceDetail.name}</strong>?
+            </Body1>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+              <Button appearance="secondary" onClick={() => setShowSetDefaultModal(false)}>
+                Cancel
+              </Button>
+              <Button appearance="primary" icon={<Star20Filled />} onClick={confirmSetDefault}>
+                Set as Default
+              </Button>
             </div>
           </Card>
         </div>

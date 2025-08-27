@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 import { 
   Title1, 
   Title2,
@@ -34,114 +35,50 @@ import {
   Flash20Regular,
   Heart20Regular
 } from '@fluentui/react-icons'
+import { veApi } from '../services/veApi'
 
 interface Service {
   id: string
   name: string
   description: string
   status: 'ready' | 'not-deployed' | 'missing-pfgold' | 'config-error'
-  inDragon: boolean
-  inPFGold: boolean
-  currentVersion: string | null
+  in_dragon: boolean
+  in_pfgold: boolean
+  current_version: string | null
   pipeline: string | null
-  pipelineVersion: string | null
+  pipeline_version: string | null
   icon: string
-  iconColor: string
-  readyToDeploy: boolean
+  icon_color: string
+  ready_to_deploy: boolean
 }
 
 const VEDetail: React.FC = () => {
   const { veName } = useParams<{ veName: string }>()
   const navigate = useNavigate()
+  
+  // State declarations
   const [isFavorite, setIsFavorite] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [configFilter, setConfigFilter] = useState('')
   const [selectedServices, setSelectedServices] = useState<Set<string>>(new Set())
   const [showBulkModal, setShowBulkModal] = useState(false)
-
-  const [services] = useState<Service[]>([
-    {
-      id: 'owamailb2',
-      name: 'OwaMailB2',
-      description: 'Outlook Web App Mail Backend',
-      status: 'ready',
-      inDragon: true,
-      inPFGold: true,
-      currentVersion: 'v2.1.234',
-      pipeline: 'ExchangeMailPipeline',
-      pipelineVersion: 'v3.2.1',
-      icon: 'mail',
-      iconColor: 'blue',
-      readyToDeploy: true
-    },
-    {
-      id: 'graphconnectors',
-      name: 'GraphConnectors',
-      description: 'Graph Connectors Service',
-      status: 'not-deployed',
-      inDragon: true,
-      inPFGold: true,
-      currentVersion: null,
-      pipeline: 'GraphConnectorsPipeline',
-      pipelineVersion: 'v2.8.5',
-      icon: 'flash',
-      iconColor: 'orange',
-      readyToDeploy: false
-    },
-    {
-      id: 'flowcontrol',
-      name: 'FlowControl',
-      description: 'Flow Control Service',
-      status: 'missing-pfgold',
-      inDragon: true,
-      inPFGold: false,
-      currentVersion: null,
-      pipeline: 'FlowControlPipeline',
-      pipelineVersion: 'v1.9.3',
-      icon: 'activity',
-      iconColor: 'yellow',
-      readyToDeploy: false
-    },
-    {
-      id: 'invalidservice',
-      name: 'InvalidService',
-      description: 'Service not in Dragon map',
-      status: 'config-error',
-      inDragon: false,
-      inPFGold: true,
-      currentVersion: 'v1.0.0',
-      pipeline: null,
-      pipelineVersion: null,
-      icon: 'alert',
-      iconColor: 'red',
-      readyToDeploy: false
-    }
-  ])
-
-  const filteredServices = services.filter(service => {
-    const matchesSearch = !searchQuery || 
-      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchQuery.toLowerCase())
-    
-    const matchesStatus = !statusFilter || service.status === statusFilter
-    
-    let matchesConfig = true
-    if (configFilter === 'both') {
-      matchesConfig = service.inDragon && service.inPFGold
-    } else if (configFilter === 'dragon-only') {
-      matchesConfig = service.inDragon && !service.inPFGold
-    } else if (configFilter === 'pfgold-only') {
-      matchesConfig = !service.inDragon && service.inPFGold
-    }
-    
-    return matchesSearch && matchesStatus && matchesConfig
+  
+  // 使用真实API数据而不是硬编码数据
+  const { data: veData, isLoading: isVELoading } = useQuery({
+    queryKey: ['ve-detail', veName],
+    queryFn: () => veApi.getVEDetail(veName!),
+    enabled: !!veName
   })
 
-  const handleServiceClick = (serviceName: string) => {
-    // Ensure the route matches your App.tsx routing structure
-    navigate(`/ve/${veName}/service/${serviceName}`)
-  }
+  const { data: servicesData, isLoading: isServicesLoading } = useQuery({
+    queryKey: ['ve-services', veName, statusFilter, configFilter], 
+    queryFn: () => veApi.getVEServices(veName!, {
+      status: statusFilter || undefined,
+      config_filter: configFilter || undefined
+    }),
+    enabled: !!veName
+  })
 
   const getStatusBadge = (status: string, readyToDeploy = false) => {
     switch (status) {
@@ -182,7 +119,7 @@ const VEDetail: React.FC = () => {
 
   const handleSelectAll = () => {
     const selectableServices = filteredServices.filter(s => 
-      s.status === 'ready' || (s.status === 'not-deployed' && s.readyToDeploy)
+      s.status === 'ready' || (s.status === 'not-deployed' && s.ready_to_deploy)
     )
     
     if (selectedServices.size === selectableServices.length) {
@@ -200,6 +137,37 @@ const VEDetail: React.FC = () => {
       newSelected.add(serviceId)
     }
     setSelectedServices(newSelected)
+  }
+
+  if (isVELoading || isServicesLoading) {
+    return <div style={{ padding: '24px' }}>Loading...</div>
+  }
+
+  // 使用API返回的数据
+  const services = servicesData?.services || []
+
+  const filteredServices = services.filter(service => {
+    const matchesSearch = !searchQuery || 
+      service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchQuery.toLowerCase())
+    
+    const matchesStatus = !statusFilter || service.status === statusFilter
+    
+    let matchesConfig = true
+    if (configFilter === 'both') {
+      matchesConfig = service.in_dragon && service.in_pfgold
+    } else if (configFilter === 'dragon-only') {
+      matchesConfig = service.in_dragon && !service.in_pfgold
+    } else if (configFilter === 'pfgold-only') {
+      matchesConfig = !service.in_dragon && service.in_pfgold
+    }
+    
+    return matchesSearch && matchesStatus && matchesConfig
+  })
+
+  const handleServiceClick = (serviceName: string) => {
+    // Ensure the route matches your App.tsx routing structure
+    navigate(`/ve/${veName}/service/${serviceName}`)
   }
 
   return (
@@ -344,7 +312,7 @@ const VEDetail: React.FC = () => {
               <TableHeaderCell style={{ width: '48px' }}>
                 <Checkbox
                   checked={selectedServices.size > 0 && selectedServices.size === filteredServices.filter(s => 
-                    s.status === 'ready' || (s.status === 'not-deployed' && s.readyToDeploy)
+                    s.status === 'ready' || (s.status === 'not-deployed' && s.ready_to_deploy)
                   ).length}
                   onChange={handleSelectAll}
                 />
@@ -360,7 +328,7 @@ const VEDetail: React.FC = () => {
           </TableHeader>
           <TableBody>
             {filteredServices.map((service) => {
-              const canSelect = service.status === 'ready' || (service.status === 'not-deployed' && service.readyToDeploy)
+              const canSelect = service.status === 'ready' || (service.status === 'not-deployed' && service.ready_to_deploy)
               return (
                 <TableRow key={service.id}>
                   <TableCell>
@@ -376,12 +344,12 @@ const VEDetail: React.FC = () => {
                         width: '32px', 
                         height: '32px', 
                         borderRadius: '8px',
-                        backgroundColor: `${service.iconColor}20`,
+                        backgroundColor: `${service.icon_color}20`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center'
                       }}>
-                        {getServiceIcon(service.icon, service.iconColor)}
+                        {getServiceIcon(service.icon, service.icon_color)}
                       </div>
                       <div>
                         <Button
@@ -397,16 +365,16 @@ const VEDetail: React.FC = () => {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{getStatusBadge(service.status, service.readyToDeploy)}</TableCell>
+                  <TableCell>{getStatusBadge(service.status, service.ready_to_deploy)}</TableCell>
                   <TableCell style={{ textAlign: 'center' }}>
-                    {service.inDragon ? (
+                    {service.in_dragon ? (
                       <CheckmarkCircle20Filled style={{ color: '#107c10' }} />
                     ) : (
                       <DismissCircle20Filled style={{ color: '#d13438' }} />
                     )}
                   </TableCell>
                   <TableCell style={{ textAlign: 'center' }}>
-                    {service.inPFGold ? (
+                    {service.in_pfgold ? (
                       <CheckmarkCircle20Filled style={{ color: '#107c10' }} />
                     ) : (
                       <DismissCircle20Filled style={{ color: '#d13438' }} />
@@ -414,14 +382,14 @@ const VEDetail: React.FC = () => {
                   </TableCell>
                   <TableCell>
                     <span style={{ fontFamily: 'monospace', fontSize: '12px' }}>
-                      {service.currentVersion || 'null'}
+                      {service.current_version || 'null'}
                     </span>
                   </TableCell>
                   <TableCell>
                     {service.pipeline ? (
                       <div>
                         <div style={{ fontFamily: 'monospace', fontSize: '12px' }}>{service.pipeline}</div>
-                        <div style={{ fontSize: '11px', color: '#616161' }}>Latest: {service.pipelineVersion}</div>
+                        <div style={{ fontSize: '11px', color: '#616161' }}>Latest: {service.pipeline_version}</div>
                       </div>
                     ) : (
                       <span style={{ fontFamily: 'monospace', fontSize: '12px', color: '#616161' }}>-</span>
@@ -441,10 +409,10 @@ const VEDetail: React.FC = () => {
                           <Button size="small" appearance="primary">Add to Dragon</Button>
                         </>
                       )}
-                      {service.status === 'not-deployed' && !service.readyToDeploy && (
+                      {service.status === 'not-deployed' && !service.ready_to_deploy && (
                         <Button size="small" appearance="primary">Prepare for Deployment</Button>
                       )}
-                      {service.status === 'not-deployed' && service.readyToDeploy && (
+                      {service.status === 'not-deployed' && service.ready_to_deploy && (
                         <Button size="small" appearance="secondary">Cancel Preparation</Button>
                       )}
                     </div>

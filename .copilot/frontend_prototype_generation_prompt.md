@@ -13,7 +13,7 @@ Ensure that the interaction model, layout, and visual design are consistent, int
 
 
 
-Task Requirements：
+## Task Requirements：
 
 1. Interaction summary:
    - For each page, provide a structured interaction summary including:
@@ -37,6 +37,22 @@ Organize all output into a timestamped folder, for example:
       ├── reports.html
       └── UI_UX_Design.md
       └── Frontend_Architecture.md
+
+
+---
+
+## Workflow
+1. **Step 1 – Layout Exploration**  
+   - Generate a single html file.  
+   - Include **3–4 different layout options** (e.g. vertical scroll, left sidebar + main content, top navigation + cards, grid-based layout).  
+   - Each layout is separated visually (use `<section>` or `<hr>`).  
+   - Provide placeholder components (navigation, table, chart, filters, etc.) so I can preview interaction zones.  
+   - Add a short note inside each layout section (as comments or inline text) describing the intended use case.  
+
+2. **Step 2 – Page Prototypes (after I choose a layout)**  
+   - Based on my chosen layout, generate independent HTML pages.
+   - Ensure pages follow the selected layout consistently.  
+
 ---
 
 ## Project Background Knowledge

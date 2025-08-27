@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
-    <link rel="stylesheet" href="./assets/css/dashboard.css">
+    <link rel="stylesheet" href="./shared/dashboard.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -127,7 +127,6 @@
         </div>
     </main>
 
-    <script src="./assets/js/dashboard.js"></script>
     <script>
     // Mock data JSON
     const mockData = {
@@ -244,12 +243,29 @@
         });
     }
 
+    // Added animation (migrated from deprecated dashboard.js)
+    function animateNumbers() {
+        document.querySelectorAll('#statsCards .stat-card .stat-number').forEach(el => {
+            const target = parseInt(el.textContent, 10) || 0;
+            el.textContent = '0';
+            const start = performance.now();
+            const duration = 800;
+            function step(now) {
+                const p = Math.min((now - start) / duration, 1);
+                el.textContent = Math.round(target * p);
+                if (p < 1) requestAnimationFrame(step);
+            }
+            requestAnimationFrame(step);
+        });
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         renderStats();
         renderFavoritesVE();
         renderFavoritesServices();
         renderSidebarFavorites();
         enableNavigation();
+        animateNumbers(); // new call
         if (window.feather) feather.replace();
     });
     </script>

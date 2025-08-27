@@ -57,13 +57,26 @@
             <h1 class="text-2xl font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF Deployment AI</h1>
             <p style="color: var(--colorNeutralForeground2); margin-top: 8px;">Sign in to continue</p>
         </div>
+
+        <!-- Error State -->
+        <div id="loginError" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+            <div class="flex items-center">
+                <i data-feather="alert-circle" class="w-4 h-4 text-red-500 mr-2"></i>
+                <span id="errorMessage" class="text-sm text-red-700">Login failed. Please try again.</span>
+            </div>
+        </div>
         
         <div class="space-y-4">
-            <button onclick="window.location.href='dashboard.html'" class="w-full fluent-button-primary">
+            <button 
+                onclick="handleLogin()" 
+                class="w-full fluent-button-primary"
+                aria-describedby="login-help"
+                id="loginBtn"
+            >
                 <i data-feather="log-in" class="w-4 h-4 inline mr-2"></i>
-                Sign in with Microsoft
+                <span id="loginText">Sign in with Microsoft</span>
             </button>
-            <p class="text-center text-sm" style="color: var(--colorNeutralForeground2);">
+            <p id="login-help" class="text-center text-sm" style="color: var(--colorNeutralForeground2);">
                 Access your virtual environment management dashboard
             </p>
         </div>
@@ -71,6 +84,50 @@
 
     <script>
         feather.replace();
+
+        function handleLogin() {
+            const btn = document.getElementById('loginBtn');
+            const text = document.getElementById('loginText');
+            const errorDiv = document.getElementById('loginError');
+            
+            // Hide any previous errors
+            errorDiv.classList.add('hidden');
+            
+            // Show loading state
+            btn.disabled = true;
+            text.innerHTML = '<div class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full inline mr-2"></div>Signing in...';
+            
+            // Simulate authentication
+            setTimeout(() => {
+                try {
+                    // In a real app, this would make an actual API call
+                    const success = Math.random() > 0.1; // 90% success rate for demo
+                    
+                    if (success) {
+                        window.location.href = 'dashboard.html';
+                    } else {
+                        throw new Error('Authentication failed');
+                    }
+                } catch (error) {
+                    // Show error state
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('errorMessage').textContent = 'Unable to sign in. Please check your credentials and try again.';
+                    
+                    // Reset button
+                    btn.disabled = false;
+                    text.innerHTML = 'Sign in with Microsoft';
+                    
+                    feather.replace();
+                }
+            }, 1500);
+        }
+
+        // Allow Enter key to trigger login
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                handleLogin();
+            }
+        });
     </script>
 </body>
 </html>

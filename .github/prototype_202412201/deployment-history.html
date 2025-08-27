@@ -105,11 +105,86 @@
                 <p class="fluent-text-body1">Track and review all deployment activities across virtual environments.</p>
             </div>
 
-            <!-- Content placeholder -->
-            <div class="fluent-card p-8 text-center">
-                <i data-feather="clock" class="w-16 h-16 mx-auto mb-4" style="color: var(--colorNeutralForeground3);"></i>
-                <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">Deployment History</h3>
-                <p class="fluent-text-body1">This page will display deployment logs and history.</p>
+            <!-- Filters and Search -->
+            <div class="fluent-card mb-8">
+                <div class="p-6">
+                    <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+                        <div class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+                            <div class="relative">
+                                <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 transform -translate-y-1/2" style="color: var(--colorNeutralForeground3);"></i>
+                                <input type="text" 
+                                       id="searchInput"
+                                       placeholder="Search deployments..." 
+                                       class="fluent-input with-icon w-80">
+                            </div>
+                            <select class="fluent-select">
+                                <option>All VEs</option>
+                                <option>SovBase</option>
+                                <option>ModelBSov</option>
+                                <option>OwaMailB2-SOV</option>
+                            </select>
+                            <select class="fluent-select">
+                                <option>All Status</option>
+                                <option>Successful</option>
+                                <option>Failed</option>
+                                <option>In Progress</option>
+                            </select>
+                            <select class="fluent-select">
+                                <option>Last 7 days</option>
+                                <option>Last 30 days</option>
+                                <option>Last 90 days</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button class="fluent-button fluent-button-subtle">
+                                <i data-feather="download" class="fluent-icon inline mr-2"></i>Export
+                            </button>
+                            <button onclick="refreshHistory()" class="fluent-button fluent-button-subtle">
+                                <i data-feather="refresh-cw" class="fluent-icon inline mr-2"></i>Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deployment History Table -->
+            <div class="fluent-card">
+                <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
+                    <h3 class="fluent-text-title2">Recent Deployments</h3>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date/Time</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">VE</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Version</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="historyTableBody">
+                            <!-- History entries will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Loading State -->
+                <div id="loadingState" class="p-8 text-center">
+                    <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="fluent-text-body1">Loading deployment history...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="hidden p-8 text-center">
+                    <i data-feather="clock" class="w-16 h-16 mx-auto mb-4" style="color: var(--colorNeutralForeground3);"></i>
+                    <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">No Deployment History</h3>
+                    <p class="fluent-text-body1">No deployments found matching your criteria.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -117,6 +192,151 @@
     <script>
         feather.replace();
         
+        // Sample deployment history data
+        const deploymentHistory = [
+            {
+                id: 1,
+                timestamp: new Date('2024-12-21T08:30:00'),
+                service: 'OwaMailB2',
+                ve: 'SovBase',
+                version: 'v2.1.234',
+                status: 'success',
+                duration: '2m 15s',
+                user: 'John Doe'
+            },
+            {
+                id: 2,
+                timestamp: new Date('2024-12-21T06:45:00'),
+                service: 'Exchange',
+                ve: 'ModelBSov',
+                version: 'v15.2.234',
+                status: 'success',
+                duration: '4m 32s',
+                user: 'Jane Smith'
+            },
+            {
+                id: 3,
+                timestamp: new Date('2024-12-20T22:15:00'),
+                service: 'GraphConnectors',
+                ve: 'GraphConnectorsB2-SOV',
+                version: 'v1.8.12',
+                status: 'failed',
+                duration: '1m 8s',
+                user: 'Mike Johnson'
+            }
+        ];
+
+        // Initialize page
+        function initializePage() {
+            setTimeout(() => {
+                document.getElementById('loadingState').style.display = 'none';
+                renderHistoryTable();
+            }, 1000);
+        }
+
+        function renderHistoryTable() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+
+            if (deploymentHistory.length === 0) {
+                document.getElementById('emptyState').classList.remove('hidden');
+                return;
+            }
+
+            deploymentHistory.forEach(entry => {
+                const row = createHistoryRow(entry);
+                tbody.appendChild(row);
+            });
+
+            feather.replace();
+        }
+
+        function createHistoryRow(entry) {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50 transition-colors';
+            
+            const statusConfig = getStatusConfig(entry.status);
+            const formattedTime = entry.timestamp.toLocaleString();
+            
+            row.innerHTML = `
+                <td class="px-6 py-4 text-sm text-gray-900">${formattedTime}</td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center space-x-2">
+                        <i data-feather="layers" class="w-4 h-4 text-gray-500"></i>
+                        <span class="font-medium text-gray-900">${entry.service}</span>
+                    </div>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900">${entry.ve}</td>
+                <td class="px-6 py-4 text-sm font-mono text-gray-900">${entry.version}</td>
+                <td class="px-6 py-4">${statusConfig.badge}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${entry.duration}</td>
+                <td class="px-6 py-4 text-sm text-gray-900">${entry.user}</td>
+                <td class="px-6 py-4">
+                    <div class="flex space-x-2">
+                        <button onclick="viewDeploymentDetails(${entry.id})" class="text-blue-600 hover:text-blue-800">
+                            <i data-feather="eye" class="w-4 h-4"></i>
+                        </button>
+                        ${entry.status === 'failed' ? `
+                        <button onclick="retryDeployment(${entry.id})" class="text-green-600 hover:text-green-800">
+                            <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                        </button>
+                        ` : ''}
+                    </div>
+                </td>
+            `;
+
+            return row;
+        }
+
+        function getStatusConfig(status) {
+            const configs = {
+                'success': {
+                    badge: '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full flex items-center"><div class="w-2 h-2 bg-green-400 rounded-full mr-2"></div>Success</span>'
+                },
+                'failed': {
+                    badge: '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full flex items-center"><div class="w-2 h-2 bg-red-400 rounded-full mr-2"></div>Failed</span>'
+                },
+                'in-progress': {
+                    badge: '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full flex items-center"><div class="w-2 h-2 bg-blue-400 rounded-full mr-2 animate-pulse"></div>In Progress</span>'
+                }
+            };
+            return configs[status] || configs['success'];
+        }
+
+        function refreshHistory() {
+            const btn = event.target.closest('button');
+            const icon = btn.querySelector('i');
+            
+            icon.style.transform = 'rotate(360deg)';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                icon.style.transform = '';
+                btn.disabled = false;
+                showNotification('History Refreshed', 'Deployment history has been updated');
+            }, 1500);
+        }
+
+        function viewDeploymentDetails(id) {
+            showNotification('Deployment Details', `Viewing details for deployment ${id}`);
+        }
+
+        function retryDeployment(id) {
+            showNotification('Retry Started', `Retrying deployment ${id}`);
+        }
+
+        function showNotification(title, message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 bg-blue-500 text-white max-w-sm';
+            notification.innerHTML = `<strong>${title}</strong><br>${message}`;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
         // Unified sidebar functionality
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
@@ -128,6 +348,8 @@
         
         // Initialize sidebar state
         document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            
             if (window.innerWidth >= 1024) {
                 const sidebar = document.getElementById('sidebar');
                 sidebar.classList.add('open');
@@ -145,217 +367,6 @@
             } else {
                 sidebar.classList.remove('open');
                 overlay.classList.remove('show');
-            }
-        });
-    </script>
-</body>
-</html>
-            border-bottom: 1px solid var(--colorNeutralStroke2);
-        }
-        
-        .sidebar-section-title {
-            padding: 0 16px 8px 16px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--colorNeutralForeground3);
-        }
-        
-        .fluent-button {
-            border-radius: var(--borderRadiusSmall);
-            padding: 5px 12px;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 20px;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-        
-        .fluent-button-subtle {
-            background: transparent;
-            color: var(--colorNeutralForeground2);
-            border: 1px solid var(--colorNeutralStroke1);
-        }
-        
-        .fluent-button-subtle:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        @media (min-width: 1024px) {
-            .sidebar {
-                position: fixed;
-                transform: translateX(0);
-                height: 100vh;
-                top: 0;
-            }
-            
-            .sidebar-overlay {
-                display: none;
-            }
-            
-            .main-content {
-                margin-left: 256px;
-            }
-            
-            .sidebar-toggle {
-                display: none;
-            }
-        }
-        
-        @media (max-width: 1023px) {
-            .main-content.sidebar-open {
-                margin-left: 0;
-            }
-        }
-    </style>
-</head>
-<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
-    <!-- Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-    
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
-                    <i data-feather="layers" class="fluent-icon text-white"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF AI</h1>
-                    <p style="font-size: 10px; color: var(--colorNeutralForeground3);">Deployment Platform</p>
-                </div>
-            </div>
-        </div>
-        
-        <nav class="sidebar-section">
-            <div class="sidebar-section-title">Main Navigation</div>
-            <a href="dashboard.html" class="sidebar-nav-item">
-                <i data-feather="home" class="fluent-icon mr-3"></i>
-                Dashboard
-            </a>
-            <a href="ve-management.html" class="sidebar-nav-item">
-                <i data-feather="server" class="fluent-icon mr-3"></i>
-                VE Management
-            </a>
-            <a href="deployment-history.html" class="sidebar-nav-item active">
-                <i data-feather="clock" class="fluent-icon mr-3"></i>
-                History
-            </a>
-        </nav>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Quick Access</div>
-            <a href="ve-detail.html?ve=SovBase" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                SovBase
-            </a>
-            <a href="ve-detail.html?ve=ModelBSov" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                ModelBSov
-            </a>
-            <a href="ve-detail.html?ve=OwaMailB2-SOV" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                OwaMailB2-SOV
-            </a>
-        </div>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Account</div>
-            <a href="login.html" class="sidebar-nav-item">
-                <i data-feather="log-out" class="fluent-icon mr-3"></i>
-                Logout
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-        <!-- Fluent Navigation -->
-        <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; position: sticky; top: 0; z-index: 40;">
-            <div class="px-6">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center space-x-4">
-                        <button class="sidebar-toggle lg:hidden fluent-button fluent-button-subtle p-2" onclick="toggleSidebar()">
-                            <i data-feather="menu" class="fluent-icon"></i>
-                        </button>
-                        <div class="flex items-center space-x-3">
-                            <div>
-                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Deployment History</h1>
-                                <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
-                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                        </div>
-                        <span class="text-sm" style="color: var(--colorNeutralForeground2);">John Doe</span>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
-        <div class="px-6 py-6">
-            <!-- Header -->
-            <div class="mb-8">
-                <h2 class="fluent-text-title1 mb-3">Deployment History</h2>
-                <p class="fluent-text-body1">Track and review all deployment activities across virtual environments.</p>
-            </div>
-
-            <!-- Content placeholder -->
-            <div class="fluent-card p-8 text-center">
-                <i data-feather="clock" class="w-16 h-16 mx-auto mb-4" style="color: var(--colorNeutralForeground3);"></i>
-                <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">Deployment History</h3>
-                <p class="fluent-text-body1">This page will display deployment logs and history.</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        feather.replace();
-        
-        // Sidebar functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const mainContent = document.getElementById('mainContent');
-            
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-            
-            // Only toggle main content margin on desktop
-            if (window.innerWidth >= 1024) {
-                mainContent.classList.toggle('sidebar-open');
-            }
-        }
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            const mainContent = document.getElementById('mainContent');
-            
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.add('open');
-                overlay.classList.remove('show');
-                mainContent.classList.add('sidebar-open');
-            } else {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-                mainContent.classList.remove('sidebar-open');
-            }
-        });
-        
-        // Initialize sidebar state
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.innerWidth >= 1024) {
-                const sidebar = document.getElementById('sidebar');
-                const mainContent = document.getElementById('mainContent');
-                sidebar.classList.add('open');
-                mainContent.classList.add('sidebar-open');
             }
         });
     </script>

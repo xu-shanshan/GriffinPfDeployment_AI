@@ -54,7 +54,7 @@ Deployment Rules:
 - Model B → must use B type VE
 - Model B2 → can use B type VE or B2 VE
 
-GriffinPfDeployment_AI: Tool for VE & Service deployment. Users can:
+GriffinPfDeployment_AI: Web project for VE & Service deployment. Users can:
 - View VE list and associated Services
 - Favorite VEs for quick access
 - Check each service’s Build info and Drop URLs; services have multiple pipelines and Drop URLs

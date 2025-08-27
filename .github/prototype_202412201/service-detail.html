@@ -281,6 +281,11 @@
             color: #107c10;
         }
         
+        /* Table styles similar to ve-detail */
+        .config-actions { opacity: 0; transition: opacity 0.2s; }
+        .table-row:hover .config-actions { opacity: 1; }
+        .search-highlight { background: rgba(59, 130, 246, 0.1); border: 2px solid #3B82F6; }
+        
         @media (min-width: 1024px) {
             .sidebar {
                 position: fixed;
@@ -474,107 +479,116 @@
                                        class="fluent-input with-icon w-80"
                                        oninput="performSearch()">
                             </div>
-                            <select class="fluent-select" onchange="applyFilters()">
-                                <option>All VE Types</option>
-                                <option>B Type VE</option>
-                                <option>B2 Type VE</option>
+                            <select id="veTypeFilter" class="fluent-select" onchange="applyFilters()">
+                                <option value="">All VE Types</option>
+                                <option value="B Type">B Type VE</option>
+                                <option value="B2 Type">B2 Type VE</option>
                             </select>
-                            <select class="fluent-select" onchange="applyFilters()">
-                                <option>All Deployment Status</option>
-                                <option>Deployed</option>
-                                <option>Not Deployed</option>
-                                <option>Pending</option>
+                            <select id="statusFilter" class="fluent-select" onchange="applyFilters()">
+                                <option value="">All Deployment Status</option>
+                                <option value="deployed">Deployed</option>
+                                <option value="not-deployed">Not Deployed</option>
+                                <option value="pending">Pending</option>
                             </select>
                             <button onclick="clearSearch()" class="fluent-button fluent-button-subtle">
                                 Clear All
+                            </button>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button id="bulkDeployBtn" onclick="showBulkDeployModal()" 
+                                    class="fluent-button fluent-button-primary disabled:opacity-50 disabled:cursor-not-allowed" 
+                                    disabled>
+                                <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy to Selected VEs
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- VE Cards Grid -->
+            <!-- VE Table -->
             <div class="fluent-card">
                 <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
                     <div class="flex items-center justify-between">
-                        <h2 class="fluent-text-title2">Virtual Environments using this Service</h2>
+                        <div class="flex items-center space-x-4">
+                            <h2 class="fluent-text-title2">Virtual Environments using this Service</h2>
+                            <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
+                        </div>
                         <span class="fluent-badge fluent-badge-info" id="veCount">2 VEs</span>
                     </div>
                 </div>
 
-                <div class="p-6">
-                    <div id="veCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- SovBase VE Card -->
-                        <div class="fluent-card ve-card p-6" onclick="navigateToVEService('SovBase', 'OwaMailB2')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%);">
-                                    <i data-feather="server" class="w-6 h-6 text-white"></i>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="ve-badge ve-badge-b-type">B Type</span>
-                                    <span class="fluent-badge fluent-badge-success">Active</span>
-                                </div>
-                            </div>
-                            
-                            <h3 class="fluent-text-title2 mb-2">SovBase</h3>
-                            <p class="fluent-text-body1 mb-4">Base sovereign virtual environment for core services</p>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground2);">Service Status:</span>
-                                    <span class="fluent-badge fluent-badge-success">Deployed</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground2);">Current Version:</span>
-                                    <span class="font-mono text-sm" style="color: var(--colorNeutralForeground1);">v2.1.234</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground2);">Last Deploy:</span>
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground3);">2 hours ago</span>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                                <span class="fluent-text-body1">Click to manage service</span>
-                                <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                            </div>
-                        </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full" id="veTable">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left w-12">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300">
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('name')">
+                                    <div class="flex items-center">
+                                        VE Name
+                                        <i data-feather="arrow-up-down" class="w-3 h-3 ml-1 opacity-50"></i>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Status</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Version</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Deploy</th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200" id="veTableBody">
+                            <!-- VE rows will be dynamically populated -->
+                        </tbody>
+                    </table>
+                </div>
 
-                        <!-- OwaMailB2-SOV VE Card -->
-                        <div class="fluent-card ve-card p-6" onclick="navigateToVEService('OwaMailB2-SOV', 'OwaMailB2')">
-                            <div class="flex items-center justify-between mb-4">
-                                <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #107c10 0%, #0b5c0a 100%);">
-                                    <i data-feather="mail" class="w-6 h-6 text-white"></i>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="ve-badge ve-badge-b2-type">B2 Type</span>
-                                    <span class="fluent-badge fluent-badge-success">Active</span>
-                                </div>
-                            </div>
-                            
-                            <h3 class="fluent-text-title2 mb-2">OwaMailB2-SOV</h3>
-                            <p class="fluent-text-body1 mb-4">Specialized B2 sovereign VE for OWA Mail services</p>
-                            
-                            <div class="space-y-3 mb-4">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground2);">Service Status:</span>
-                                    <span class="fluent-badge fluent-badge-success">Deployed</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground2);">Current Version:</span>
-                                    <span class="font-mono text-sm" style="color: var(--colorNeutralForeground1);">v2.1.234</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground2);">Last Deploy:</span>
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground3);">1 hour ago</span>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--colorNeutralStroke2);">
-                                <span class="fluent-text-body1">Click to manage service</span>
-                                <i data-feather="chevron-right" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
-                            </div>
+                <!-- Table Footer with Pagination -->
+                <div class="px-6 py-4 border-t border-gray-100">
+                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-sm text-gray-500" id="tableInfo">Showing 2 VEs</span>
+                            <div id="activeFilters" class="flex items-center space-x-2"></div>
                         </div>
+                        <div class="flex items-center space-x-2">
+                            <select id="pageSize" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                                <option value="10">10 per page</option>
+                                <option value="25">25 per page</option>
+                                <option value="50">50 per page</option>
+                            </select>
+                            <nav class="flex space-x-1" id="pagination">
+                                <button class="fluent-button fluent-button-subtle px-3 py-2" style="color: var(--colorNeutralForeground3);">
+                                    <i data-feather="chevron-left" class="fluent-icon"></i>
+                                </button>
+                                <button class="fluent-button fluent-button-primary px-3 py-2 text-sm">1</button>
+                                <button class="fluent-button fluent-button-subtle px-3 py-2">
+                                    <i data-feather="chevron-right" class="fluent-icon"></i>
+                                </button>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Deploy Modal -->
+            <div id="bulkDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+                <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i data-feather="upload" class="w-6 h-6 text-blue-600 mr-3"></i>
+                            <h3 class="text-lg font-semibold text-gray-900">Deploy to Selected VEs</h3>
+                        </div>
+                        <p class="text-gray-600 mb-4">Are you sure you want to deploy <span class="font-semibold" id="serviceTitleForModal">OwaMailB2</span> to <span id="deployVECount" class="font-semibold">0</span> selected VE(s)?</p>
+                        <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                            <h4 class="text-sm font-medium text-blue-900 mb-2">Selected VEs:</h4>
+                            <ul id="deployVEsList" class="text-sm text-blue-800 space-y-1"></ul>
+                        </div>
+                    </div>
+                    <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
+                        <button onclick="hideBulkDeployModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+                        <button onclick="confirmBulkDeploy()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i data-feather="upload" class="w-4 h-4 inline mr-2"></i>Deploy Now
+                        </button>
                     </div>
                 </div>
             </div>
@@ -584,7 +598,7 @@
     <script>
         feather.replace();
         
-        // Service data structure
+        // Service data structure with VEs
         const serviceData = {
             'OwaMailB2': {
                 name: 'OwaMailB2',
@@ -596,34 +610,39 @@
                 latestVersion: 'v2.1.234',
                 ves: [
                     {
+                        id: 'sovbase',
                         name: 'SovBase',
                         type: 'B Type',
                         status: 'deployed',
                         version: 'v2.1.234',
                         lastDeploy: '2 hours ago',
                         icon: 'server',
-                        iconBg: 'linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%)'
+                        iconBg: 'linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%)',
+                        canDeploy: true
                     },
                     {
+                        id: 'owamailb2-sov',
                         name: 'OwaMailB2-SOV',
                         type: 'B2 Type',
                         status: 'deployed',
                         version: 'v2.1.234',
                         lastDeploy: '1 hour ago',
                         icon: 'mail',
-                        iconBg: 'linear-gradient(135deg, #107c10 0%, #0b5c0a 100%)'
+                        iconBg: 'linear-gradient(135deg, #107c10 0%, #0b5c0a 100%)',
+                        canDeploy: true
                     }
                 ]
             }
         };
-        
-        // Get service from URL parameters
-        function getServiceFromURL() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('service') || 'OwaMailB2';
-        }
-        
-        // Initialize page with service data
+
+        // Global state
+        const appState = {
+            currentService: null,
+            filteredVEs: [],
+            selectedVEs: new Set()
+        };
+
+        // Initialize page
         function initializePage() {
             const serviceName = getServiceFromURL();
             const service = serviceData[serviceName];
@@ -633,18 +652,24 @@
                 return;
             }
             
-            // Update service header
+            appState.currentService = service;
+            appState.filteredVEs = [...service.ves];
+            
+            updateServiceHeader(service);
+            renderVETable();
+            updateUI();
+            
+            feather.replace();
+        }
+
+        function updateServiceHeader(service) {
+            // ...existing service header update code...
             document.getElementById('serviceName').textContent = service.name;
             document.getElementById('serviceTitle').textContent = service.name;
             document.getElementById('serviceDescription').textContent = service.description;
             document.getElementById('serviceType').textContent = service.type;
             document.getElementById('latestVersion').textContent = service.latestVersion;
-            
-            // Update service icon
-            const serviceIcon = document.getElementById('serviceIcon');
-            serviceIcon.style.background = service.iconBg;
-            serviceIcon.querySelector('i').setAttribute('data-feather', service.icon);
-            serviceIcon.querySelector('i').style.color = service.iconColor;
+            document.getElementById('serviceTitleForModal').textContent = service.name;
             
             // Update stats
             const totalVEs = service.ves.length;
@@ -655,83 +680,283 @@
             document.getElementById('deployedVEs').textContent = deployedVEs;
             document.getElementById('pendingVEs').textContent = pendingVEs;
             document.getElementById('veCount').textContent = `${totalVEs} VEs`;
-            
+        }
+
+        function renderVETable() {
+            const tbody = document.getElementById('veTableBody');
+            tbody.innerHTML = '';
+
+            appState.filteredVEs.forEach(ve => {
+                const row = createVERow(ve);
+                tbody.appendChild(row);
+            });
+
+            updateTableInfo();
             feather.replace();
         }
-        
-        // Navigate to VE Service detail page
-        function navigateToVEService(veName, serviceName) {
-            window.location.href = `ve-service-detail.html?ve=${veName}&service=${serviceName}`;
-        }
-        
-        // Search functionality
-        function performSearch() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-            const cards = document.querySelectorAll('.ve-card');
+
+        function createVERow(ve) {
+            const row = document.createElement('tr');
+            row.className = 'table-row hover:bg-gray-50 transition-colors';
+            row.dataset.veId = ve.id;
             
-            cards.forEach(card => {
-                const veName = card.querySelector('h3').textContent.toLowerCase();
-                if (searchTerm === '' || veName.includes(searchTerm)) {
-                    card.style.display = 'block';
+            const statusConfig = getVEStatusConfig(ve.status);
+            
+            row.innerHTML = `
+                <td class="px-6 py-4">
+                    <input type="checkbox" ${ve.canDeploy ? '' : 'disabled'} 
+                           onchange="toggleVESelection('${ve.id}')" 
+                           class="rounded border-gray-300 ve-checkbox" data-ve-id="${ve.id}">
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: ${ve.type === 'B Type' ? '#e3f2fd' : '#dff6dd'};">
+                            <i data-feather="${ve.icon}" class="w-4 h-4" style="color: ${ve.type === 'B Type' ? 'var(--colorBrandForeground1)' : '#107c10'};"></i>
+                        </div>
+                        <div>
+                            <a href="ve-service-detail.html?ve=${ve.name}&service=${appState.currentService.name}" 
+                               class="text-gray-900 font-medium hover:text-blue-600 transition-colors">${ve.name}</a>
+                            <p class="text-sm text-gray-500">${ve.type} Virtual Environment</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="ve-badge ${ve.type === 'B Type' ? 've-badge-b-type' : 've-badge-b2-type'}">${ve.type}</span>
+                </td>
+                <td class="px-6 py-4">${statusConfig.badge}</td>
+                <td class="px-6 py-4 font-mono text-sm ${ve.version ? 'text-gray-900' : 'text-gray-400'}">
+                    ${ve.version || 'null'}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-500">
+                    ${ve.lastDeploy}
+                </td>
+                <td class="px-6 py-4">
+                    <div class="config-actions">${createVEActionButtons(ve)}</div>
+                </td>
+            `;
+
+            return row;
+        }
+
+        function getVEStatusConfig(status) {
+            const configs = {
+                'deployed': {
+                    badge: '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Deployed</span>'
+                },
+                'not-deployed': {
+                    badge: '<span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">Not Deployed</span>'
+                },
+                'pending': {
+                    badge: '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Pending</span>'
+                }
+            };
+            return configs[status] || configs['not-deployed'];
+        }
+
+        function createVEActionButtons(ve) {
+            if (ve.status === 'deployed') {
+                return `
+                    <div class="flex space-x-2">
+                        <button onclick="redeployToVE('${ve.id}')" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                            <i data-feather="refresh-cw" class="w-3 h-3 inline mr-1"></i>Redeploy
+                        </button>
+                    </div>
+                `;
+            } else if (ve.status === 'not-deployed') {
+                return `
+                    <div class="flex space-x-2">
+                        <button onclick="deployToVE('${ve.id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
+                            <i data-feather="upload" class="w-3 h-3 inline mr-1"></i>Deploy
+                        </button>
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        // Selection management similar to ve-detail
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.ve-checkbox:not(:disabled)');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+                const veId = checkbox.dataset.veId;
+                if (selectAll.checked) {
+                    appState.selectedVEs.add(veId);
                 } else {
-                    card.style.display = 'none';
+                    appState.selectedVEs.delete(veId);
                 }
             });
+
+            updateSelectionUI();
         }
-        
-        // Clear search and filters
-        function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            document.querySelectorAll('select').forEach(select => select.selectedIndex = 0);
-            performSearch();
-        }
-        
-        // Apply filters
-        function applyFilters() {
-            // Filter logic would be implemented here
-            performSearch();
-        }
-        
-        // Toggle favorite
-        function toggleFavorite() {
-            const btn = document.getElementById('favoriteBtn');
-            const icon = btn.querySelector('i');
-            
-            if (icon.classList.contains('fill-current')) {
-                icon.classList.remove('fill-current');
-                btn.style.color = 'var(--colorNeutralForeground3)';
-                btn.title = 'Add to favorites';
-                showNotification('Favorites', 'Removed from favorites');
+
+        function toggleVESelection(veId) {
+            if (appState.selectedVEs.has(veId)) {
+                appState.selectedVEs.delete(veId);
             } else {
-                icon.classList.add('fill-current');
-                btn.style.color = '#faa06b';
-                btn.title = 'Remove from favorites';
-                showNotification('Favorites', 'Added to favorites');
+                appState.selectedVEs.add(veId);
+            }
+            updateSelectionUI();
+        }
+
+        function updateSelectionUI() {
+            const count = appState.selectedVEs.size;
+            const selectedCount = document.getElementById('selectedCount');
+            const bulkDeployBtn = document.getElementById('bulkDeployBtn');
+
+            if (count > 0) {
+                selectedCount.classList.remove('hidden');
+                selectedCount.textContent = `${count} selected`;
+                bulkDeployBtn.disabled = false;
+            } else {
+                selectedCount.classList.add('hidden');
+                bulkDeployBtn.disabled = true;
             }
         }
-        
-        // Refresh data
-        function refreshData() {
-            const btn = event.target.closest('button');
-            const icon = btn.querySelector('i');
-            
-            icon.style.transform = 'rotate(360deg)';
-            btn.disabled = true;
-            
-            setTimeout(() => {
-                icon.style.transform = '';
-                btn.disabled = false;
-                showNotification('Data Refreshed', 'Service data has been updated');
-            }, 1500);
+
+        // Modal management
+        function showBulkDeployModal() {
+            const selectedVEs = Array.from(appState.selectedVEs).map(id => 
+                appState.currentService.ves.find(ve => ve.id === id)
+            );
+
+            document.getElementById('deployVECount').textContent = selectedVEs.length;
+            const vesList = document.getElementById('deployVEsList');
+            vesList.innerHTML = selectedVEs.map(ve => 
+                `<li class="flex items-center space-x-2">
+                    <i data-feather="${ve.icon}" class="w-3 h-3"></i>
+                    <span>${ve.name}</span>
+                </li>`
+            ).join('');
+
+            document.getElementById('bulkDeployModal').classList.remove('hidden');
+            feather.replace();
         }
-        
-        // Bulk deploy to all VEs
-        function bulkDeploy() {
-            const serviceName = getServiceFromURL();
-            showNotification('Bulk Deploy Started', `Deploying ${serviceName} to all Virtual Environments...`);
+
+        function hideBulkDeployModal() {
+            document.getElementById('bulkDeployModal').classList.add('hidden');
         }
-        
-        // Show notification
+
+        function confirmBulkDeploy() {
+            const selectedVENames = Array.from(appState.selectedVEs).map(id => 
+                appState.currentService.ves.find(ve => ve.id === id).name
+            );
+            
+            showNotification('Bulk Deploy Started', `Deploying ${appState.currentService.name} to ${selectedVENames.length} VEs...`);
+            hideBulkDeployModal();
+            
+            // Clear selections
+            appState.selectedVEs.clear();
+            document.querySelectorAll('.ve-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateSelectionUI();
+        }
+
+        // Filter and search functions
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                applyFilters();
+                return;
+            }
+
+            appState.filteredVEs = appState.currentService.ves.filter(ve => 
+                ve.name.toLowerCase().includes(searchTerm) ||
+                ve.type.toLowerCase().includes(searchTerm)
+            );
+
+            renderVETable();
+            updateActiveFilters();
+        }
+
+        function applyFilters() {
+            const typeFilter = document.getElementById('veTypeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            appState.filteredVEs = appState.currentService.ves.filter(ve => {
+                let matchesType = !typeFilter || ve.type === typeFilter;
+                let matchesStatus = !statusFilter || ve.status === statusFilter;
+                
+                return matchesType && matchesStatus;
+            });
+
+            renderVETable();
+            updateActiveFilters();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('veTypeFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            appState.filteredVEs = [...appState.currentService.ves];
+            renderVETable();
+            updateActiveFilters();
+        }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
+
+            const searchQuery = document.getElementById('searchInput').value;
+            const typeFilter = document.getElementById('veTypeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            if (searchQuery) {
+                container.appendChild(createFilterTag('Search', searchQuery));
+            }
+            if (typeFilter) {
+                container.appendChild(createFilterTag('Type', typeFilter));
+            }
+            if (statusFilter) {
+                container.appendChild(createFilterTag('Status', statusFilter));
+            }
+        }
+
+        function createFilterTag(label, value) {
+            const tag = document.createElement('span');
+            tag.className = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800';
+            tag.innerHTML = `${label}: ${value} <button onclick="this.parentElement.remove()" class="ml-1 text-blue-600 hover:text-blue-800"><i data-feather="x" class="w-3 h-3"></i></button>`;
+            return tag;
+        }
+
+        function updateTableInfo() {
+            const total = appState.currentService.ves.length;
+            const filtered = appState.filteredVEs.length;
+            const info = document.getElementById('tableInfo');
+            
+            if (filtered === total) {
+                info.textContent = `Showing ${filtered} VE${filtered !== 1 ? 's' : ''}`;
+            } else {
+                info.textContent = `Showing ${filtered} of ${total} VEs`;
+            }
+        }
+
+        function updateUI() {
+            updateTableInfo();
+            updateSelectionUI();
+            updateActiveFilters();
+        }
+
+        // Action handlers
+        function deployToVE(veId) {
+            const ve = appState.currentService.ves.find(v => v.id === veId);
+            showNotification('Deploy Started', `Deploying ${appState.currentService.name} to ${ve.name}...`);
+        }
+
+        function redeployToVE(veId) {
+            const ve = appState.currentService.ves.find(v => v.id === veId);
+            showNotification('Redeploy Started', `Redeploying ${appState.currentService.name} to ${ve.name}...`);
+        }
+
+        // Utility functions
+        function getServiceFromURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('service') || 'OwaMailB2';
+        }
+
         function showNotification(title, message) {
             const notification = document.createElement('div');
             notification.className = 'fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 bg-blue-500 text-white max-w-sm';
@@ -743,7 +968,7 @@
                 notification.remove();
             }, 3000);
         }
-        
+
         // Unified sidebar functionality
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');

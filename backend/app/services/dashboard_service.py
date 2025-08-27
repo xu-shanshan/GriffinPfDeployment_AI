@@ -1,23 +1,23 @@
 from typing import Dict, Any
-from app.models.dashboard import DashboardStats
-from app.repositories.dashboard_repository import DashboardRepository
+from ..models.dashboard import DashboardStats
+from ..repositories.dashboard_repository import DashboardRepository
 import logging
 
 logger = logging.getLogger(__name__)
 
 class DashboardService:
-    """Dashboard业务逻辑服务"""
-    
+    """Dashboard 业务逻辑服务"""
+
     def __init__(self, repository: DashboardRepository = None):
         self.repository = repository or DashboardRepository()
-    
+
     async def get_dashboard_stats(self) -> DashboardStats:
-        """获取Dashboard统计数据"""
+        """获取 Dashboard 统计数据（委托给仓储层）"""
         logger.info("获取Dashboard统计数据")
         return await self.repository.get_dashboard_stats()
-    
-    def get_dashboard_info(self):
-        """获取Dashboard信息"""
+
+    def get_dashboard_info(self) -> Dict[str, Any]:
+        """获取 Dashboard 基本信息"""
         return self.repository.get_dashboard_info()
     
     async def get_dashboard_stats(self) -> DashboardStats:

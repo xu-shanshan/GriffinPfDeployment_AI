@@ -1,16 +1,31 @@
-from app.models.service import ServiceDetail, Pipeline, ConfigUpdateRequest
 from typing import Optional
-import logging
+from app.models.service import Service, ServiceDetail, ServiceListResponse
 from app.repositories.service_repository import ServiceRepository
+import logging
 
 logger = logging.getLogger(__name__)
 
 class ServiceService:
-    """Service业务逻辑服务"""
-
-    def __init__(self, repository: Optional[ServiceRepository] = None):
+    """服务业务逻辑服务"""
+    
+    def __init__(self, repository: ServiceRepository = None):
         # 允许通过依赖注入或手动传递 repository
         self.repository = repository or ServiceRepository()
+
+    async def get_services_by_ve(self, ve_name: str) -> ServiceListResponse:
+        """根据VE获取服务列表"""
+        logger.info(f"获取VE服务列表: {ve_name}")
+        services = await self.repository.get_services_by_ve(ve_name)
+        return ServiceListResponse(
+            items=services,
+            ve_name=ve_name,
+            total_count=len(services)
+        )
+    
+    async def get_service_by_id(self, service_id: str, ve_name: str) -> Optional[Service]:
+        """根据ID获取服务详情"""
+        logger.info(f"获取服务详情: {service_id} in {ve_name}")
+        return await self.repository.get_service_by_id(service_id, ve_name)
 
     async def get_service_detail(self, service_name: str, ve_name: Optional[str] = None) -> Optional[ServiceDetail]:
         """获取服务详情"""

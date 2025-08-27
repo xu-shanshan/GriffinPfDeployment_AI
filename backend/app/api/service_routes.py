@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Path, Query, Depends
 from app.services.service_service import ServiceService
 from app.repositories.service_repository import ServiceRepository
-from app.models.service import ServiceDetailResponse, ConfigUpdateRequest
+from app.models.service import ServiceDetailResponse, ConfigUpdateRequest, ServiceListResponse, Service
 from typing import Optional
 import logging
 
@@ -62,3 +62,16 @@ async def set_default_pipeline(
 async def list_services():
     """获取服务列表"""
     return {"message": "Service list placeholder"}
+
+@router.get("/{ve_name}", response_model=ServiceListResponse)
+async def get_services_by_ve(ve_name: str):
+    """根据VE获取服务列表"""
+    return await service_service.get_services_by_ve(ve_name)
+
+@router.get("/{ve_name}/{service_id}", response_model=Service)
+async def get_service_detail(ve_name: str, service_id: str):
+    """获取服务详情"""
+    service = await service_service.get_service_by_id(service_id, ve_name)
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    return service

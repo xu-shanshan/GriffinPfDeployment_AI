@@ -98,58 +98,7 @@
 
             <!-- Stats Cards -->
             <section class="stats-section mb-8" aria-label="System statistics">
-                <div class="grid grid-cols-3 gap-6">
-                    <article class="stat-card" data-navigate="ve-management.html">
-                        <div class="stat-card-header">
-                            <div class="stat-icon stat-icon-blue">
-                                <i data-feather="database" class="w-6 h-6" aria-hidden="true"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-number">18</div>
-                                <div class="fluent-text-body1">Total VEs</div>
-                            </div>
-                        </div>
-                        <hr class="stat-divider">
-                        <div class="stat-footer">
-                            <span class="fluent-badge fluent-badge-success">+2 this month</span>
-                            <i data-feather="trending-up" class="trend-icon trend-up" aria-hidden="true"></i>
-                        </div>
-                    </article>
-
-                    <article class="stat-card" data-navigate="services-management.html">
-                        <div class="stat-card-header">
-                            <div class="stat-icon stat-icon-green">
-                                <i data-feather="layers" class="w-6 h-6" aria-hidden="true"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-number">156</div>
-                                <div class="fluent-text-body1">Active Services</div>
-                            </div>
-                        </div>
-                        <hr class="stat-divider">
-                        <div class="stat-footer">
-                            <span class="fluent-badge fluent-badge-success">98.7% uptime</span>
-                            <div class="status-indicator status-active"></div>
-                        </div>
-                    </article>
-
-                    <article class="stat-card" data-navigate="deployment-history.html">
-                        <div class="stat-card-header">
-                            <div class="stat-icon stat-icon-orange">
-                                <i data-feather="upload-cloud" class="w-6 h-6" aria-hidden="true"></i>
-                            </div>
-                            <div class="stat-content">
-                                <div class="stat-number">23</div>
-                                <div class="fluent-text-body1">Recent Deployments</div>
-                            </div>
-                        </div>
-                        <hr class="stat-divider">
-                        <div class="stat-footer">
-                            <span class="fluent-badge fluent-badge-info">Last 24 hours</span>
-                            <i data-feather="clock" class="w-4 h-4 clock-icon" aria-hidden="true"></i>
-                        </div>
-                    </article>
-                </div>
+                <div id="statsCards" class="grid grid-cols-3 gap-6"></div>
             </section>
 
             <!-- Favorites Grid -->
@@ -166,55 +115,7 @@
                         </header>
                         
                         <div class="favorites-content">
-                            <div class="favorites-list">
-                                <div class="favorite-item" data-navigate="ve-detail.html?ve=SovBase">
-                                    <div class="favorite-item-content">
-                                        <div class="favorite-details">
-                                            <h4 class="favorite-name">SovBase</h4>
-                                            <div class="favorite-meta">
-                                                <span class="fluent-text-body1">67 services</span>
-                                                <span class="fluent-badge fluent-badge-neutral">B Type</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="favorite-timestamp">
-                                        <span>2 hours ago</span>
-                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                                <div class="favorite-item" data-navigate="ve-detail.html?ve=ModelBSov">
-                                    <div class="favorite-item-content">
-                                        <div class="favorite-details">
-                                            <h4 class="favorite-name">ModelBSov</h4>
-                                            <div class="favorite-meta">
-                                                <span class="fluent-text-body1">65 services</span>
-                                                <span class="fluent-badge fluent-badge-neutral">B Type</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="favorite-timestamp">
-                                        <span>4 hours ago</span>
-                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                                <div class="favorite-item" data-navigate="ve-detail.html?ve=OwaMailB2-SOV">
-                                    <div class="favorite-item-content">
-                                        <div class="favorite-details">
-                                            <h4 class="favorite-name">OwaMailB2-SOV</h4>
-                                            <div class="favorite-meta">
-                                                <span class="fluent-text-body1">1 service</span>
-                                                <span class="fluent-badge fluent-badge-success">B2 Type</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="favorite-timestamp">
-                                        <span>2 minutes ago</span>
-                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="favoriteVEs" class="favorites-list"></div>
                         </div>
                     </article>
 
@@ -229,55 +130,7 @@
                         </header>
                         
                         <div class="favorites-content">
-                            <div class="favorites-list">
-                                <div class="favorite-item" data-navigate="service-detail.html?service=OwaMailB2">
-                                    <div class="favorite-item-content">
-                                        <div class="favorite-details">
-                                            <h4 class="favorite-name">OwaMailB2</h4>
-                                            <div class="favorite-meta">
-                                                <span class="fluent-text-body1">2 VE instances</span>
-                                                <span class="fluent-badge fluent-badge-success">Active</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="favorite-timestamp">
-                                        <span>1 hour ago</span>
-                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                                <div class="favorite-item" data-navigate="service-detail.html?service=Exchange">
-                                    <div class="favorite-item-content">
-                                        <div class="favorite-details">
-                                            <h4 class="favorite-name">Exchange</h4>
-                                            <div class="favorite-meta">
-                                                <span class="fluent-text-body1">2 VE instances</span>
-                                                <span class="fluent-badge fluent-badge-success">Active</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="favorite-timestamp">
-                                        <span>3 hours ago</span>
-                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-
-                                <div class="favorite-item" data-navigate="service-detail.html?service=GraphConnectors">
-                                    <div class="favorite-item-content">
-                                        <div class="favorite-details">
-                                            <h4 class="favorite-name">GraphConnectors</h4>
-                                            <div class="favorite-meta">
-                                                <span class="fluent-text-body1">2 VE instances</span>
-                                                <span class="fluent-badge fluent-badge-neutral">Not Deployed</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="favorite-timestamp">
-                                        <span>6 hours ago</span>
-                                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                                    </div>
-                                </div>
-                            </div>
+                            <div id="favoriteServices" class="favorites-list"></div>
                         </div>
                     </article>
                 </div>
@@ -286,5 +139,117 @@
     </main>
 
     <script src="./assets/js/dashboard.js"></script>
+    <script>
+    // Mock data JSON
+    const mockData = {
+        stats: [
+            { icon:'database', color:'blue', number:18, label:'Total VEs', badge:{text:'+2 this month', type:'success'}, footerIcon:'trending-up', navigate:'ve-management.html' },
+            { icon:'layers', color:'green', number:156, label:'Active Services', badge:{text:'98.7% uptime', type:'success'}, status:'active', navigate:'services-management.html' },
+            { icon:'upload-cloud', color:'orange', number:23, label:'Recent Deployments', badge:{text:'Last 24 hours', type:'info'}, footerIcon:'clock', navigate:'deployment-history.html' }
+        ],
+        favoriteVEs: [
+            { name:'SovBase', services:67, type:'B Type', typeClass:'neutral', updated:'2 hours ago', query:'SovBase' },
+            { name:'ModelBSov', services:65, type:'B Type', typeClass:'neutral', updated:'4 hours ago', query:'ModelBSov' },
+            { name:'OwaMailB2-SOV', services:1, type:'B2 Type', typeClass:'success', updated:'2 minutes ago', query:'OwaMailB2-SOV' }
+        ],
+        favoriteServices: [
+            { name:'OwaMailB2', instances:2, status:'Active', statusClass:'success', updated:'1 hour ago' },
+            { name:'Exchange', instances:2, status:'Active', statusClass:'success', updated:'3 hours ago' },
+            { name:'GraphConnectors', instances:2, status:'Not Deployed', statusClass:'neutral', updated:'6 hours ago' }
+        ]
+    };
+
+    function el(tag, cls='', html='') {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        if (html) e.innerHTML = html;
+        return e;
+    }
+
+    function renderStats() {
+        const wrap = document.getElementById('statsCards');
+        mockData.stats.forEach(s => {
+            const a = el('article','stat-card');
+            a.dataset.navigate = s.navigate;
+            a.innerHTML = `
+                <div class="stat-card-header">
+                    <div class="stat-icon stat-icon-${s.color}">
+                        <i data-feather="${s.icon}" class="w-6 h-6" aria-hidden="true"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-number">${s.number}</div>
+                        <div class="fluent-text-body1">${s.label}</div>
+                    </div>
+                </div>
+                <hr class="stat-divider">
+                <div class="stat-footer">
+                    <span class="fluent-badge fluent-badge-${s.badge.type}">${s.badge.text}</span>
+                    ${s.status ? '<div class="status-indicator status-active"></div>' : (s.footerIcon ? `<i data-feather="${s.footerIcon}" class="trend-icon" aria-hidden="true"></i>`:'')}
+                </div>`;
+            wrap.appendChild(a);
+        });
+    }
+
+    function renderFavoritesVE() {
+        const wrap = document.getElementById('favoriteVEs');
+        mockData.favoriteVEs.forEach(v => {
+            const d = el('div','favorite-item');
+            d.dataset.navigate = `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
+            d.innerHTML = `
+                <div class="favorite-item-content">
+                    <div class="favorite-details">
+                        <h4 class="favorite-name">${v.name}</h4>
+                        <div class="favorite-meta">
+                            <span class="fluent-text-body1">${v.services} services</span>
+                            <span class="fluent-badge fluent-badge-${v.typeClass}">${v.type}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="favorite-timestamp">
+                    <span>${v.updated}</span>
+                    <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                </div>`;
+            wrap.appendChild(d);
+        });
+    }
+
+    function renderFavoritesServices() {
+        const wrap = document.getElementById('favoriteServices');
+        mockData.favoriteServices.forEach(s => {
+            const d = el('div','favorite-item');
+            d.dataset.navigate = `service-detail.html?service=${encodeURIComponent(s.name)}`;
+            d.innerHTML = `
+                <div class="favorite-item-content">
+                    <div class="favorite-details">
+                        <h4 class="favorite-name">${s.name}</h4>
+                        <div class="favorite-meta">
+                            <span class="fluent-text-body1">${s.instances} VE instances</span>
+                            <span class="fluent-badge fluent-badge-${s.statusClass}">${s.status}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="favorite-timestamp">
+                    <span>${s.updated}</span>
+                    <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                </div>`;
+            wrap.appendChild(d);
+        });
+    }
+
+    function enableNavigation() {
+        document.body.addEventListener('click', e => {
+            const t = e.target.closest('[data-navigate]');
+            if (t) location.href = t.dataset.navigate;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderStats();
+        renderFavoritesVE();
+        renderFavoritesServices();
+        enableNavigation();
+        if (window.feather) feather.replace();
+    });
+    </script>
 </body>
 </html>

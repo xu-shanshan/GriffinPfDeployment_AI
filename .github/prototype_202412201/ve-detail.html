@@ -7,386 +7,194 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
+    <link rel="stylesheet" href="./shared/dashboard.css"><!-- added unified layout -->
     <style>
-        /* Fluent UI v9 Design System */
-        :root {
-            --colorNeutralForeground1: #242424;
-            --colorNeutralForeground2: #424242;
-            --colorNeutralForeground3: #616161;
-            --colorNeutralBackground1: #ffffff;
-            --colorNeutralBackground2: #f5f5f5;
-            --colorNeutralBackground3: #f0f0f0;
-            --colorBrandBackground: #0f6cbd;
-            --colorBrandBackgroundHover: #115ea3;
-            --colorBrandForeground1: #0f6cbd;
-            --colorNeutralStroke1: #d1d1d1;
-            --colorNeutralStroke2: #e0e0e0;
-            --borderRadiusSmall: 4px;
-            --borderRadiusMedium: 6px;
-            --borderRadiusLarge: 8px;
-            --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
-            --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
-        }
-        
-        .fluent-card {
-            background: var(--colorNeutralBackground1);
-            border: 1px solid var(--colorNeutralStroke2);
-            border-radius: var(--borderRadiusLarge);
-            box-shadow: var(--shadow2);
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .fluent-nav-item {
-            padding: 6px 12px;
-            border-radius: var(--borderRadiusSmall);
-            color: var(--colorNeutralForeground2);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-        }
-        
-        .fluent-nav-item:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-nav-item.selected {
-            background: #e3f2fd;
-            color: var(--colorBrandForeground1);
-            font-weight: 600;
-        }
-        
-        .fluent-button {
-            border-radius: var(--borderRadiusSmall);
-            padding: 5px 12px;
-            font-weight: 600;
-            font-size: 14px;
-            line-height: 20px;
-            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
-            border: 1px solid transparent;
-            cursor: pointer;
-        }
-        
-        .fluent-button-primary {
-            background: var(--colorBrandBackground);
-            color: white;
-        }
-        
-        .fluent-button-primary:hover {
-            background: var(--colorBrandBackgroundHover);
-        }
-        
-        .fluent-button-subtle {
-            background: transparent;
-            color: var(--colorNeutralForeground2);
-            border: 1px solid var(--colorNeutralStroke1);
-        }
-        
-        .fluent-button-subtle:hover {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground1);
-        }
-        
-        /* Keep existing table styles */
-        .config-actions { opacity: 0; transition: opacity 0.2s; }
-        .table-row:hover .config-actions { opacity: 1; }
-        .search-highlight { background: rgba(59, 130, 246, 0.1); border: 2px solid #3B82F6; }
-        
-        .fluent-text-title1 {
-            font-size: 28px;
-            font-weight: 600;
-            line-height: 36px;
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-text-title2 {
-            font-size: 20px;
-            font-weight: 600;
-            line-height: 28px;
-            color: var(--colorNeutralForeground1);
-        }
-        
-        .fluent-text-body1 {
-            font-size: 14px;
-            font-weight: 400;
-            line-height: 20px;
-            color: var(--colorNeutralForeground2);
-        }
-        
-        .fluent-badge {
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            line-height: 16px;
-        }
-        
-        .fluent-badge-neutral {
-            background: var(--colorNeutralBackground3);
-            color: var(--colorNeutralForeground2);
-        }
-        
-        .fluent-icon {
-            width: 16px;
-            height: 16px;
-        }
-        
-        /* Sidebar Styles */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 256px;
-            background: var(--colorNeutralBackground1);
-            border-right: 1px solid var(--colorNeutralStroke2);
-            box-shadow: var(--shadow2);
-            z-index: 1000;
-            overflow-y: auto;
-        }
-        
-        .main-content {
-            margin-left: 256px;
-            min-height: 100vh;
-        }
+        /* Page-specific (trimmed; removed global design tokens & sidebar layout) */
+        .config-actions { opacity:0; transition:opacity .2s; }
+        .table-row:hover .config-actions { opacity:1; }
+        .search-highlight { background:rgba(59,130,246,.1); border:2px solid #3B82F6; }
     </style>
 </head>
-<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <!-- ...existing code... -->
-        <div class="sidebar-header">
-            <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
-                    <i data-feather="layers" class="fluent-icon text-white"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF AI</h1>
-                    <p style="font-size: 10px; color: var(--colorNeutralForeground3);">Deployment Platform</p>
-                </div>
-            </div>
-        </div>
-        
-        <nav class="sidebar-section">
-            <div class="sidebar-section-title">Main Navigation</div>
-            <a href="dashboard.html" class="sidebar-nav-item">
-                <i data-feather="home" class="fluent-icon mr-3"></i>
-                Dashboard
-            </a>
-            <a href="ve-management.html" class="sidebar-nav-item active">
-                <i data-feather="server" class="fluent-icon mr-3"></i>
-                VE Management
-            </a>
-            <a href="services-management.html" class="sidebar-nav-item">
-                <i data-feather="layers" class="fluent-icon mr-3"></i>
-                Services Management
-            </a>
-            <a href="deployment-history.html" class="sidebar-nav-item">
-                <i data-feather="clock" class="fluent-icon mr-3"></i>
-                History
-            </a>
-        </nav>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Quick Access</div>
-            <a href="ve-detail.html?ve=SovBase" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                SovBase
-            </a>
-            <a href="ve-detail.html?ve=ModelBSov" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                ModelBSov
-            </a>
-            <a href="ve-detail.html?ve=OwaMailB2-SOV" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3" style="color: #faa06b;"></i>
-                OwaMailB2-SOV
-            </a>
-        </div>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Account</div>
-            <a href="login.html" class="sidebar-nav-item">
-                <i data-feather="log-out" class="fluent-icon mr-3"></i>
-                Logout
-            </a>
-        </div>
-    </aside>
+<body>
+    <div id="app-sidebar"></div><!-- shared sidebar injection -->
 
-    <!-- Main Content -->
-    <div class="main-content">
-        <!-- Fluent Navigation -->
-        <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; position: sticky; top: 0; z-index: 40;">
-            <div class="px-6">
-                <div class="flex justify-between items-center py-4">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-3">
-                            <div>
-                                <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">SovBase - Virtual Environment</h1>
-                                <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
-                            </div>
-                        </div>
+    <main class="main-content" role="main">
+        <header class="top-bar" role="banner">
+            <div class="web-container">
+                <div class="flex justify-between items-center h-app-header">
+                    <div>
+                        <h1 class="text-lg font-semibold page-title">SovBase - Virtual Environment</h1>
+                        <p class="fluent-text-caption1">Virtual Environment Management</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
-                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i data-feather="user" class="fluent-icon user-icon" aria-hidden="true"></i>
                         </div>
-                        <span class="text-sm" style="color: var(--colorNeutralForeground2);">John Doe</span>
+                        <span class="text-sm user-name">John Doe</span>
                     </div>
                 </div>
             </div>
-        </nav>
+        </header>
 
-        <div class="px-6 py-6">
-            <!-- Fluent Breadcrumb -->
-            <nav class="flex items-center space-x-2 text-sm mb-6" style="color: var(--colorNeutralForeground3);">
-                <a href="ve-management.html" class="hover:text-blue-600 transition-colors" style="color: var(--colorBrandForeground1);">VE Management</a>
-                <i data-feather="chevron-right" class="w-4 h-4"></i>
-                <span style="color: var(--colorNeutralForeground1); font-weight: 500;">SovBase</span>
+        <div class="web-container content-area">
+            <!-- Breadcrumb -->
+            <nav class="flex items-center space-x-2 text-sm mb-6 text-muted">
+                <a href="ve-management.html" class="text-accent hover:underline">VE Management</a>
+                <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+                <span class="font-medium text-fg-strong">SovBase</span>
             </nav>
 
-            <!-- Fluent VE Header -->
-            <div class="fluent-card mb-8">
+            <!-- VE Header Card -->
+            <div class="fluent-card section-spacing">
                 <div class="p-8">
-                    <div class="flex items-center justify-between mb-6">
-                        <div class="flex items-center space-x-4">
-                            <div class="w-16 h-16 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%);">
-                                <i data-feather="server" class="w-8 h-8 text-white"></i>
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div class="flex items-center gap-6">
+                            <div class="w-16 h-16 rounded-xl flex items-center justify-center"
+                                 style="background:linear-gradient(135deg,#0f6cbd 0%,#115ea3 100%);">
+                                <i data-feather="server" class="text-white" style="width:32px;height:32px;" aria-hidden="true"></i>
                             </div>
                             <div>
-                                <div class="flex items-center space-x-3 mb-1">
-                                    <h1 class="fluent-text-title1">SovBase</h1>
-                                    <button id="favoriteBtn" onclick="toggleFavorite()" style="color: #faa06b; transition: opacity 0.1s;" class="hover:opacity-80" title="Add to favorites">
-                                        <i data-feather="star" class="w-6 h-6 fill-current"></i>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h1 class="fluent-text-title1 m-0">SovBase</h1>
+                                    <button id="favoriteBtn" type="button" aria-label="Toggle favorite"
+                                            class="star-toggle active" onclick="toggleFavorite()">
+                                        <i data-feather="star" aria-hidden="true"></i>
                                     </button>
                                 </div>
                                 <p class="fluent-text-body1 mt-1">Base sovereign virtual environment for core services</p>
-                                <div class="flex items-center space-x-4 mt-3">
-                                    <span class="fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">B Type VE</span>
-                                    <span class="text-sm" style="color: var(--colorNeutralForeground3);">Last updated: 2 hours ago</span>
+                                <div class="flex items-center flex-wrap gap-4 mt-3">
+                                    <span class="fluent-badge fluent-badge-neutral">B Type VE</span>
+                                    <span class="fluent-text-caption1 text-muted">Last updated: 2 hours ago</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-3">
-                            <button onclick="refreshData()" class="fluent-button fluent-button-subtle" title="Refresh data">
-                                <i data-feather="refresh-cw" class="fluent-icon inline mr-2"></i>Refresh
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="refreshData(event)" class="fluent-button fluent-button-subtle">
+                                <i data-feather="refresh-cw" class="fluent-icon mr-2" aria-hidden="true"></i>Refresh
                             </button>
-                            <button class="fluent-button fluent-button-primary">
-                                <i data-feather="edit" class="fluent-icon inline mr-2"></i>Edit Config
+                            <button type="button" class="fluent-button fluent-button-primary">
+                                <i data-feather="edit" class="fluent-icon mr-2" aria-hidden="true"></i>Edit Config
                             </button>
                         </div>
                     </div>
-                    
-                    <!-- Fluent Stats Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <button onclick="filterByConfigSource('dragon')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorBrandForeground1)'; this.style.background='#e3f2fd';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
-                            <p class="text-3xl font-bold mb-2" style="color: var(--colorBrandForeground1);">89</p>
-                            <p class="text-sm" style="color: var(--colorNeutralForeground2);">Dragon GriffinServiceMap.ini</p>
-                            <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--colorBrandForeground1);">Click to filter</p>
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                        <button type="button" onclick="filterByConfigSource('dragon')"
+                                class="fluent-card p-4 hover:shadow-sm transition">
+                            <p class="text-3xl font-semibold text-accent mb-1">89</p>
+                            <p class="fluent-text-body1">Dragon GriffinServiceMap.ini</p>
+                            <p class="fluent-text-caption1 text-accent mt-1 opacity-0 group-hover:opacity-100">Click to filter</p>
                         </button>
-                        <button onclick="filterByConfigSource('pfgold')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorNeutralStroke1)'; this.style.background='var(--colorNeutralBackground3)';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
-                            <p class="text-3xl font-bold mb-2" style="color: var(--colorNeutralForeground1);">67</p>
-                            <p class="text-sm" style="color: var(--colorNeutralForeground2);">PFGold deployment.ini</p>
-                            <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--colorNeutralForeground2);">Click to filter</p>
+                        <button type="button" onclick="filterByConfigSource('pfgold')"
+                                class="fluent-card p-4 hover:shadow-sm transition">
+                            <p class="text-3xl font-semibold text-fg-strong mb-1">67</p>
+                            <p class="fluent-text-body1">PFGold deployment.ini</p>
                         </button>
-                        <button onclick="filterByStatus('deployed')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='#107c10'; this.style.background='#dff6dd';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
-                            <p class="text-3xl font-bold mb-2" style="color: #107c10;">62</p>
-                            <p class="text-sm" style="color: var(--colorNeutralForeground2);">Deployed</p>
-                            <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: #107c10;">Click to filter</p>
+                        <button type="button" onclick="filterByStatus('deployed')"
+                                class="fluent-card p-4 hover:shadow-sm transition">
+                            <p class="text-3xl font-semibold text-success mb-1">62</p>
+                            <p class="fluent-text-body1">Deployed</p>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Enhanced Services Table -->
+            <!-- Services Table Card -->
             <div class="fluent-card">
-                <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <h2 class="fluent-text-title2">Services in SovBase VE</h2>
-                            <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <!-- Remove responsive classes -->
-                            <!-- ...existing code... -->
-                        </div>
+                <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <h2 class="fluent-text-title2 m-0">Services in SovBase VE</h2>
+                        <span id="selectedCount" class="hidden fluent-badge fluent-badge-neutral">0 selected</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select id="statusFilter" onchange="applyFilters()" class="fluent-select">
+                            <option value="">All Status</option>
+                            <option value="ready">Ready</option>
+                            <option value="prepared">Prepared</option>
+                            <option value="not-deployed">Not Deployed</option>
+                            <option value="missing-pfgold">Missing PFGold</option>
+                            <option value="config-error">Config Error</option>
+                        </select>
+                        <select id="configFilter" onchange="applyFilters()" class="fluent-select">
+                            <option value="">All Config</option>
+                            <option value="both">Dragon & PFGold</option>
+                            <option value="dragon-only">Dragon only</option>
+                            <option value="pfgold-only">PFGold only</option>
+                        </select>
+                        <input id="searchInput" aria-label="Search services" placeholder="Search services..."
+                               class="fluent-input w-56" oninput="performSearch()">
+                        <button type="button" class="fluent-button fluent-button-subtle" onclick="clearAllFilters()">Reset</button>
+                        <button type="button" id="bulkDeployBtn" class="fluent-button fluent-button-primary" disabled onclick="showBulkDeployModal()">
+                            Bulk Deploy
+                        </button>
                     </div>
                 </div>
-
-                <!-- Enhanced Table with Better UX (keep all existing table functionality) -->
                 <div class="overflow-x-auto">
                     <table class="min-w-full" id="servicesTable">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-4 text-left w-12">
+                                <th class="px-6 py-4 w-12">
                                     <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300">
                                 </th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('name')">
-                                    <div class="flex items-center">
-                                        Service Name
-                                        <i data-feather="arrow-up-down" class="w-3 h-3 ml-1 opacity-50"></i>
-                                    </div>
-                                </th>
+                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Name</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Dragon</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">PFGold</th>
+                                <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Dragon</th>
+                                <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">PFGold</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Version</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Default Pipeline</th>
                                 <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200" id="servicesTableBody">
-                            <!-- Service rows will be dynamically populated -->
-                        </tbody>
+                        <tbody id="servicesTableBody" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
-
-                <!-- Enhanced Table Footer with Pagination -->
-                <div class="px-6 py-4 border-t border-gray-100">
-                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-500" id="tableInfo">Showing 1-4 of 4 services</span>
-                            <div id="activeFilters" class="flex items-center space-x-2"></div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <select id="pageSize" onchange="updatePageSize()" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                <option value="10">10 per page</option>
-                                <option value="25">25 per page</option>
-                                <option value="50">50 per page</option>
-                            </select>
-                            <nav class="flex space-x-1" id="pagination">
-                                <!-- Pagination buttons will be generated -->
-                            </nav>
-                        </div>
+                <div class="px-6 py-4 border-t border-gray-100 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+                    <div class="flex items-center gap-4">
+                        <span id="tableInfo" class="fluent-text-caption1">Showing 0 services</span>
+                        <div id="activeFilters" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select id="pageSize" onchange="updatePageSize()" class="fluent-select">
+                            <option value="10">10 / page</option>
+                            <option value="25">25 / page</option>
+                            <option value="50">50 / page</option>
+                        </select>
+                        <nav id="pagination" class="flex gap-1"></nav>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Bulk Deploy Modal -->
-        <div id="bulkDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <i data-feather="upload" class="w-6 h-6 text-blue-600 mr-3"></i>
-                        <h3 class="text-lg font-semibold text-gray-900">Deploy Selected Services</h3>
+            <!-- Bulk Deploy Modal -->
+            <div id="bulkDeployModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+                <div class="fluent-card w-full max-w-md">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <i data-feather="upload" class="fluent-icon mr-3" aria-hidden="true"></i>
+                            <h3 class="fluent-text-title2 m-0">Deploy Selected Services</h3>
+                        </div>
+                        <p class="fluent-text-body1 mb-4">Deploy <span id="deployCount" class="font-semibold">0</span> selected service(s)?</p>
+                        <div class="p-4 rounded-lg" style="background:#e3f2fd;">
+                            <h4 class="fluent-text-caption1 mb-2 text-accent">Selected Services:</h4>
+                            <ul id="deployServicesList" class="text-sm space-y-1"></ul>
+                        </div>
                     </div>
-                    <p class="text-gray-600 mb-4">Are you sure you want to deploy <span id="deployCount" class="font-semibold">0</span> selected service(s)?</p>
-                    <div class="bg-blue-50 rounded-lg p-4 mb-4">
-                        <h4 class="text-sm font-medium text-blue-900 mb-2">Selected Services:</h4>
-                        <ul id="deployServicesList" class="text-sm text-blue-800 space-y-1"></ul>
+                    <div class="px-6 py-4 flex justify-end gap-3 border-t border-gray-100">
+                        <button type="button" class="fluent-button fluent-button-subtle" onclick="hideBulkDeployModal()">Cancel</button>
+                        <button type="button" class="fluent-button fluent-button-primary" onclick="confirmBulkDeploy()">
+                            <i data-feather="upload" class="fluent-icon mr-2" aria-hidden="true"></i>Deploy Now
+                        </button>
                     </div>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
-                    <button onclick="hideBulkDeployModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-                    <button onclick="confirmBulkDeploy()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                        <i data-feather="upload" class="w-4 h-4 inline mr-2"></i>Deploy Now
-                    </button>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Enhanced JavaScript -->
+            <!-- Notification -->
+            <div id="notification" class="fixed top-4 right-4 hidden fluent-card p-4 z-50">
+                <strong id="notification-title" class="block mb-1"></strong>
+                <span id="notification-message" class="fluent-text-body1"></span>
+            </div>
+        </div>
+    </main>
+
     <script>
         // Global state management
         const appState = {
@@ -458,9 +266,9 @@
 
         // Initialize application
         document.addEventListener('DOMContentLoaded', function() {
-            feather.replace();
             initializeServices();
             updateUI();
+            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
         });
 
         // Service management functions
@@ -472,14 +280,11 @@
         function renderServicesTable() {
             const tbody = document.getElementById('servicesTableBody');
             tbody.innerHTML = '';
-
             appState.filteredServices.forEach(service => {
-                const row = createServiceRow(service);
-                tbody.appendChild(row);
+                tbody.appendChild(createServiceRow(service));
             });
-
             updateTableInfo();
-            feather.replace();
+            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
         }
 
         function createServiceRow(service) {
@@ -732,21 +537,17 @@
 
         // Modal management
         function showBulkDeployModal() {
-            const selectedServices = Array.from(appState.selectedServices).map(id => 
+            const selectedServices = Array.from(appState.selectedServices).map(id =>
                 appState.services.find(s => s.id === id)
             );
-
             document.getElementById('deployCount').textContent = selectedServices.length;
-            const servicesList = document.getElementById('deployServicesList');
-            servicesList.innerHTML = selectedServices.map(service => 
-                `<li class="flex items-center space-x-2">
-                    <i data-feather="${service.icon}" class="w-3 h-3"></i>
-                    <span>${service.name}</span>
-                </li>`
-            ).join('');
-
+            document.getElementById('deployServicesList').innerHTML = selectedServices.map(s =>
+                `<li class="flex items-center gap-2">
+                    <i data-feather="${s.icon}" class="fluent-icon" aria-hidden="true"></i>
+                    <span>${s.name}</span>
+                 </li>`).join('');
             document.getElementById('bulkDeployModal').classList.remove('hidden');
-            feather.replace();
+            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
         }
 
         function hideBulkDeployModal() {
@@ -818,13 +619,11 @@
 
         // Utility functions
         function showNotification(title, message) {
+            const n = document.getElementById('notification');
             document.getElementById('notification-title').textContent = title;
             document.getElementById('notification-message').textContent = message;
-            document.getElementById('notification').classList.add('show');
-            
-            setTimeout(() => {
-                hideNotification();
-            }, 5000);
+            n.classList.remove('hidden');
+            setTimeout(()=>n.classList.add('hidden'),3000);
         }
 
         function hideNotification() {
@@ -846,7 +645,7 @@
             }
         }
 
-        function refreshData() {
+        function refreshData(event) {
             const btn = event.target.closest('button');
             const icon = btn.querySelector('i');
             
@@ -913,6 +712,18 @@
                 sidebar.classList.add('open');
             }
         });
+    </script>
+    <script>
+        window.SIDEBAR_ACTIVE = 've';
+        window.SIDEBAR_FAVORITES = [
+            { name:'SovBase', query:'SovBase' },
+            { name:'ModelBSov', query:'ModelBSov' },
+            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
+        ];
+    </script>
+    <script src="./shared/sidebar.js"></script>
+    <script>
+        if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     </script>
 </body>
 </html>

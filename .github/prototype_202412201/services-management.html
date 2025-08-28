@@ -165,13 +165,6 @@
                             </button>
                         </div>
                     </div>
-                    <p class="fluent-text-body1 mb-4">${s.description}</p>
-                    <div class="mb-4">
-                        <h4 class="text-sm font-medium mb-2 text-muted">Present in VEs:</h4>
-                        <div class="flex flex-wrap gap-1">
-                            ${s.veBadges.map(v => `<span class="ve-badge ve-badge-${v.type==='b2'?'b2':'b'}-type">${v.name}</span>`).join('')}
-                        </div>
-                    </div>
                     <div class="flex items-center justify-between mb-6">
                         <div class="text-center">
                             <div class="text-xl font-semibold text-fg-strong">${s.instances}</div>

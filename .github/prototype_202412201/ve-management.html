@@ -154,7 +154,6 @@
                             </button>
                         </div>
                     </div>
-                    <p class="fluent-text-body1 ${specialLayout ? 'mb-4':'mb-6'}">${descriptionFor(v.name)}</p>
                     ${specialLayout ? specialMetrics(v) : normalMetrics(v)}
                     <div class="flex items-center justify-between pt-4 divider-top">
                         ${statusFooter(v)}
@@ -191,18 +190,6 @@
                             </div>
                         </div>
                     </div>`;
-        }
-
-        function descriptionFor(name) {
-            switch(name) {
-                case 'SovBase': return 'Base sovereign virtual environment for core services';
-                case 'ModelBSov': return 'Model B sovereign virtual environment';
-                case 'OwaMailB2-SOV': return 'Outlook Web App Mail B2 services';
-                case 'GraphConnectorsB2-SOV': return 'Graph Connectors B2 services';
-                case 'FlowControlB2-SOV': return 'Flow Control B2 services';
-                case 'TodoB2-SOV': return 'Todo B2 services';
-                default: return '';
-            }
         }
 
         function performSearch() {

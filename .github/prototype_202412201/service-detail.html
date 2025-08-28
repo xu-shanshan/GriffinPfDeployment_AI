@@ -118,139 +118,6 @@
                 </div>
             </div>
 
-            <!-- Search and Filters -->
-            <div class="fluent-card mb-8">
-                <div class="p-6">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <div class="relative">
-                                <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 transform -translate-y-1/2" style="color: var(--colorNeutralForeground3);"></i>
-                                <input type="text" 
-                                       id="searchInput"
-                                       placeholder="Search by VE name..." 
-                                       class="fluent-input with-icon w-80"
-                                       oninput="performSearch()">
-                            </div>
-                            <select id="veTypeFilter" class="fluent-select" onchange="applyFilters()">
-                                <option value="">All VE Types</option>
-                                <option value="B Type">B Type VE</option>
-                                <option value="B2 Type">B2 Type VE</option>
-                            </select>
-                            <select id="statusFilter" class="fluent-select" onchange="applyFilters()">
-                                <option value="">All Deployment Status</option>
-                                <option value="deployed">Deployed</option>
-                                <option value="not-deployed">Not Deployed</option>
-                                <option value="pending">Pending</option>
-                            </select>
-                            <button onclick="clearSearch()" class="fluent-button fluent-button-subtle">
-                                Clear All
-                            </button>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <button id="bulkDeployBtn" onclick="showBulkDeployModal()" 
-                                    class="fluent-button fluent-button-primary disabled:opacity-50 disabled:cursor-not-allowed" 
-                                    disabled>
-                                <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy to Selected VEs
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- VE Table -->
-            <div class="fluent-card">
-                <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-4">
-                            <h2 class="fluent-text-title2">Virtual Environments using this Service</h2>
-                            <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
-                        </div>
-                        <span class="fluent-badge fluent-badge-info" id="veCount">2 VEs</span>
-                    </div>
-                </div>
-
-                <!-- Loading State for Table -->
-                <div id="tableLoadingState" class="p-8 text-center hidden">
-                    <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-                    <p class="fluent-text-body1">Loading virtual environments...</p>
-                </div>
-
-                <div class="overflow-x-auto" id="tableContainer">
-                    <table class="min-w-full" id="veTable">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-4 text-left w-12">
-                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300">
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('name')">
-                                    <div class="flex items-center">
-                                        VE Name
-                                        <i data-feather="arrow-up-down" class="w-3 h-3 ml-1 opacity-50"></i>
-                                    </div>
-                                </th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Status</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Version</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Deploy</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200" id="veTableBody">
-                            <!-- VE rows will be dynamically populated -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Table Footer with Pagination -->
-                <div class="px-6 py-4 border-t border-gray-100">
-                    <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-                        <div class="flex items-center space-x-4">
-                            <span class="text-sm text-gray-500" id="tableInfo">Showing 2 VEs</span>
-                            <div id="activeFilters" class="flex items-center space-x-2"></div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <select id="pageSize" class="px-3 py-1 border border-gray-300 rounded text-sm">
-                                <option value="10">10 per page</option>
-                                <option value="25">25 per page</option>
-                                <option value="50">50 per page</option>
-                            </select>
-                            <nav class="flex space-x-1" id="pagination">
-                                <button class="fluent-button fluent-button-subtle px-3 py-2" style="color: var(--colorNeutralForeground3);">
-                                    <i data-feather="chevron-left" class="fluent-icon"></i>
-                                </button>
-                                <button class="fluent-button fluent-button-primary px-3 py-2 text-sm">1</button>
-                                <button class="fluent-button fluent-button-subtle px-3 py-2">
-                                    <i data-feather="chevron-right" class="fluent-icon"></i>
-                                </button>
-                            </nav>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Bulk Deploy Modal -->
-            <div id="bulkDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
-                <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
-                    <div class="p-6">
-                        <div class="flex items-center mb-4">
-                            <i data-feather="upload" class="w-6 h-6 text-blue-600 mr-3"></i>
-                            <h3 class="text-lg font-semibold text-gray-900">Deploy to Selected VEs</h3>
-                        </div>
-                        <p class="text-gray-600 mb-4">Are you sure you want to deploy <span class="font-semibold" id="serviceTitleForModal">OwaMailB2</span> to <span id="deployVECount" class="font-semibold">0</span> selected VE(s)?</p>
-                        <div class="bg-blue-50 rounded-lg p-4 mb-4">
-                            <h4 class="text-sm font-medium text-blue-900 mb-2">Selected VEs:</h4>
-                            <ul id="deployVEsList" class="text-sm text-blue-800 space-y-1"></ul>
-                        </div>
-                    </div>
-                    <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
-                        <button onclick="hideBulkDeployModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
-                        <button onclick="confirmBulkDeploy()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                            <i data-feather="upload" class="w-4 h-4 inline mr-2"></i>Deploy Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-
             <!-- Pipeline Management Modal -->
             <div id="pipelineManagementModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center" style="z-index: 1050;">
                 <div class="bg-white rounded-xl shadow-xl max-w-6xl w-full mx-4 max-h-[90vh] flex flex-col">
@@ -368,386 +235,116 @@
 
         // Global state
         const appState = {
-            currentService: null,
-            filteredVEs: [],
-            selectedVEs: new Set()
+            currentService: null
         };
 
         // Initialize page
         function initializePage() {
             try {
-                showTableLoading();
+                const serviceName = getServiceFromURL();
+                const svc = serviceData[serviceName];
                 
-                setTimeout(() => {
-                    const serviceName = getServiceFromURL();
-                    const service = serviceData[serviceName];
-                    
-                    if (!service) {
-                        showError(`Service "${serviceName}" not found. Please check the URL and try again.`);
-                        hideTableLoading();
-                        return;
-                    }
-                    
-                    appState.currentService = service;
-                    appState.filteredVEs = [...service.ves];
-                    
-                    updateServiceHeader(service);
-                    renderVETable();
-                    updateUI();
-                    hideTableLoading();
-                    
-                    // feather.replace();
-                }, 1000); // Simulate loading time
+                if (!svc) {
+                    showError(`Service "${serviceName}" not found. Please check the URL and try again.`);
+                    return;
+                }
                 
-            } catch (error) {
-                console.error('Initialization error:', error);
-                showError('Failed to initialize page. Please refresh and try again.');
-                hideTableLoading();
+                appState.currentService = svc;
+                
+                updateServiceHeaderMetrics(svc);
+                initializePipelines();
+                updateDefaultPipelineDisplay();
+                
+                if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+            } catch (e) {
+                console.error(e);
+                showError('Initialization failed.');
             }
         }
 
-        function updateServiceHeader(service) {
-            // ...existing service header update code...
-            document.getElementById('serviceName').textContent = service.name;
-            document.getElementById('serviceTitle').textContent = service.name;
-            document.getElementById('serviceDescription').textContent = service.description;
-            document.getElementById('serviceType').textContent = service.type;
-            document.getElementById('serviceTitleForModal').textContent = service.name;
-            
-            // Update stats
-            const totalVEs = service.ves.length;
-            const deployedVEs = service.ves.filter(ve => ve.status === 'deployed').length;
-            
-            document.getElementById('totalVEs').textContent = totalVEs;
-            document.getElementById('deployedVEs').textContent = deployedVEs;
-            document.getElementById('activePipelines').textContent = service.activePipelines;
-            document.getElementById('veCount').textContent = `${totalVEs} VEs`;
+        function updateServiceHeaderMetrics(service) {
+            document.getElementById('serviceName').textContent = serviceNameFromURL();
+            document.getElementById('serviceTitle').textContent = serviceNameFromURL();
+            document.getElementById('serviceDescription').textContent = 'Outlook Web App Mail Backend Service';
+            document.getElementById('serviceType').textContent = 'Exchange Service';
+            document.getElementById('totalVEs').textContent = service.PipelineId ? 2 : 0;
+            document.getElementById('deployedVEs').textContent = service.PipelineId ? 2 : 0;
+            document.getElementById('activePipelines').textContent = 3;
         }
 
-        function renderVETable() {
-            const tbody = document.getElementById('veTableBody');
-            tbody.innerHTML = '';
+        // Helpers
+        function serviceNameFromURL() {
+            const p = new URLSearchParams(location.search);
+            return p.get('service') || 'OwaMailB2';
+        }
+        function getServiceFromURL() { return serviceNameFromURL(); }
 
-            appState.filteredVEs.forEach(ve => {
-                const row = createVERow(ve);
-                tbody.appendChild(row);
+        // Pipeline management initialization
+        function initializePipelines() {
+            const serviceName = appState.currentService.name;
+            const pipelineIds = [1418, 33874, 31234]; // Example pipeline IDs
+            
+            const container = document.getElementById('modalPipelineCardsContainer');
+            container.innerHTML = ''; // Clear existing cards
+            
+            pipelineIds.forEach(id => {
+                const config = pipelineConfigs[id];
+                if (config) {
+                    const card = createPipelineCard(config);
+                    container.appendChild(card);
+                }
             });
-
-            updateTableInfo();
-            if (window.refreshFeatherIcons) window.refreshFeatherIcons(); // replaced
         }
 
-        function createVERow(ve) {
-            const row = document.createElement('tr');
-            row.className = 'table-row hover:bg-gray-50 transition-colors';
-            row.dataset.veId = ve.id;
-            
-            const statusConfig = getVEStatusConfig(ve.status);
-            
-            row.innerHTML = `
-                <td class="px-6 py-4">
-                    <input type="checkbox" ${ve.canDeploy ? '' : 'disabled'} 
-                           onchange="toggleVESelection('${ve.id}')" 
-                           class="rounded border-gray-300 ve-checkbox" data-ve-id="${ve.id}">
-                </td>
-                <td class="px-6 py-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg flex items-center justify-center" style="background: ${ve.type === 'B Type' ? '#e3f2fd' : '#dff6dd'};">
-                            <i data-feather="${ve.icon}" class="w-4 h-4" style="color: ${ve.type === 'B Type' ? 'var(--colorBrandForeground1)' : '#107c10'};"></i>
+        function createPipelineCard(config) {
+            const card = document.createElement('div');
+            card.className = 'fluent-card p-4 cursor-pointer';
+
+            card.innerHTML = `
+                <div class="flex items-start justify-between mb-3">
+                    <div class="flex items-center space-x-2">
+                        <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                            <i data-feather="${config.icon}" class="w-3 h-3 text-gray-600"></i>
                         </div>
                         <div>
-                            <a href="ve-service-detail.html?ve=${ve.name}&service=${appState.currentService.name}" 
-                               class="text-gray-900 font-medium hover:text-blue-600 transition-colors">${ve.name}</a>
-                            <p class="text-sm text-gray-500">${ve.type} Virtual Environment</p>
+                            <h4 class="font-medium text-gray-900">${config.name}</h4>
+                            <p class="text-xs text-gray-500">ID: ${config.id}</p>
                         </div>
                     </div>
-                </td>
-                <td class="px-6 py-4">
-                    <span class="ve-badge ${ve.type === 'B Type' ? 've-badge-b-type' : 've-badge-b2-type'}">${ve.type}</span>
-                </td>
-                <td class="px-6 py-4">${statusConfig.badge}</td>
-                <td class="px-6 py-4 font-mono text-sm ${ve.version ? 'text-gray-900' : 'text-gray-400'}">
-                    ${ve.version || 'null'}
-                </td>
-                <td class="px-6 py-4 text-sm text-gray-500">
-                    ${ve.lastDeploy}
-                </td>
-                <td class="px-6 py-4">
-                    <div class="config-actions">${createVEActionButtons(ve)}</div>
-                </td>
+                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${config.type}</span>
+                </div>
+                <p class="text-xs text-gray-600 mb-3">${config.description}</p>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Latest Build:</span>
+                        <span class="font-mono text-gray-900">${config.latestBuild}</span>
+                    </div>
+                    <div class="bg-gray-50 rounded p-2">
+                        <div class="flex items-center justify-between">
+                            <p class="font-mono text-xs text-gray-700 break-all flex-1 mr-2">${config.dropUrl}</p>
+                            <button onclick="copyDropUrl('${config.dropUrl}')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
+                                <i data-feather="copy" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 pt-3 border-t border-gray-100 text-center">
+                    <span class="text-xs text-gray-500">Pipeline Status: Active</span>
+                </div>
             `;
 
-            return row;
+            return card;
         }
 
-        function getVEStatusConfig(status) {
-            const configs = {
-                'deployed': {
-                    badge: '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Deployed</span>'
-                },
-                'not-deployed': {
-                    badge: '<span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">Not Deployed</span>'
-                },
-                'pending': {
-                    badge: '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Pending</span>'
-                }
-            };
-            return configs[status] || configs['not-deployed'];
-        }
-
-        function createVEActionButtons(ve) {
-            if (ve.status === 'deployed') {
-                return `
-                    <div class="flex space-x-2">
-                        <button onclick="redeployToVE('${ve.id}')" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
-                            <i data-feather="refresh-cw" class="w-3 h-3 inline mr-1"></i>Redeploy
-                        </button>
-                    </div>
-                `;
-            } else if (ve.status === 'not-deployed') {
-                return `
-                    <div class="flex space-x-2">
-                        <button onclick="deployToVE('${ve.id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
-                            <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy
-                        </button>
-                    </div>
-                `;
-            }
-            return '';
-        }
-
-        // Selection management similar to ve-detail
-        function toggleSelectAll() {
-            const selectAll = document.getElementById('selectAll');
-            const checkboxes = document.querySelectorAll('.ve-checkbox:not(:disabled)');
-            
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = selectAll.checked;
-                const veId = checkbox.dataset.veId;
-                if (selectAll.checked) {
-                    appState.selectedVEs.add(veId);
-                } else {
-                    appState.selectedVEs.delete(veId);
-                }
+        // Copy drop URL functionality
+        function copyDropUrl(url) {
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('URL Copied', 'Drop URL has been copied to clipboard');
+            }, (err) => {
+                console.error('Copy failed', err);
+                showNotification('Copy Failed', 'Unable to copy URL to clipboard');
             });
-
-            updateSelectionUI();
         }
-
-        function toggleVESelection(veId) {
-            if (appState.selectedVEs.has(veId)) {
-                appState.selectedVEs.delete(veId);
-            } else {
-                appState.selectedVEs.add(veId);
-            }
-            updateSelectionUI();
-        }
-
-        function updateSelectionUI() {
-            const count = appState.selectedVEs.size;
-            const selectedCount = document.getElementById('selectedCount');
-            const bulkDeployBtn = document.getElementById('bulkDeployBtn');
-
-            if (count > 0) {
-                selectedCount.classList.remove('hidden');
-                selectedCount.textContent = `${count} selected`;
-                bulkDeployBtn.disabled = false;
-            } else {
-                selectedCount.classList.add('hidden');
-                bulkDeployBtn.disabled = true;
-            }
-        }
-
-        // Modal management
-        function showBulkDeployModal() {
-            const selectedVEs = Array.from(appState.selectedVEs).map(id => 
-                appState.currentService.ves.find(ve => ve.id === id)
-            );
-
-            document.getElementById('deployVECount').textContent = selectedVEs.length;
-            document.getElementById('deployVEsList').innerHTML = selectedVEs.map(ve => 
-                `<li class="flex items-center space-x-2">
-                    <i data-feather="${ve.icon}" class="fluent-icon" aria-hidden="true"></i>
-                    <span>${ve.name}</span>
-                </li>`
-            ).join('');
-
-            document.getElementById('bulkDeployModal').classList.remove('hidden');
-            if (window.refreshFeatherIcons) window.refreshFeatherIcons(); // replaced
-        }
-
-        function hideBulkDeployModal() {
-            document.getElementById('bulkDeployModal').classList.add('hidden');
-        }
-
-        // Enhanced bulk deploy with loading state
-        function confirmBulkDeploy() {
-            const selectedVENames = Array.from(appState.selectedVEs).map(id => 
-                appState.currentService.ves.find(ve => ve.id === id).name
-            );
-            
-            showLoading(`Deploying ${appState.currentService.name} to ${selectedVENames.length} VE${selectedVENames.length > 1 ? 's' : ''}...`);
-            hideBulkDeployModal();
-            
-            // Simulate deployment process
-            setTimeout(() => {
-                hideLoading();
-                showNotification('Deployment Started', `Deploying ${appState.currentService.name} to ${selectedVENames.length} VEs...`);
-                
-                // Clear selections
-                appState.selectedVEs.clear();
-                document.querySelectorAll('.ve-checkbox').forEach(cb => cb.checked = false);
-                document.getElementById('selectAll').checked = false;
-                updateSelectionUI();
-            }, 2000);
-        }
-
-        // Enhanced initialization with error handling
-        function initializePage() {
-            try {
-                showTableLoading();
-                
-                setTimeout(() => {
-                    const serviceName = getServiceFromURL();
-                    const service = serviceData[serviceName];
-                    
-                    if (!service) {
-                        showError(`Service "${serviceName}" not found. Please check the URL and try again.`);
-                        hideTableLoading();
-                        return;
-                    }
-                    
-                    appState.currentService = service;
-                    appState.filteredVEs = [...service.ves];
-                    
-                    updateServiceHeader(service);
-                    renderVETable();
-                    updateUI();
-                    hideTableLoading();
-                    
-                    // feather.replace();
-                }, 1000); // Simulate loading time
-                
-            } catch (error) {
-                console.error('Initialization error:', error);
-                showError('Failed to initialize page. Please refresh and try again.');
-                hideTableLoading();
-            }
-        }
-
-        // Enhanced action handlers with error handling
-        function deployToVE(veId) {
-            try {
-                const ve = appState.currentService.ves.find(v => v.id === veId);
-                if (!ve) {
-                    showError('Virtual environment not found.');
-                    return;
-                }
-                
-                showLoading(`Deploying ${appState.currentService.name} to ${ve.name}...`);
-                
-                setTimeout(() => {
-                    hideLoading();
-                    showNotification('Deploy Started', `Deploying ${appState.currentService.name} to ${ve.name}...`);
-                }, 1500);
-                
-            } catch (error) {
-                hideLoading();
-                showError('Failed to start deployment. Please try again.');
-                console.error('Deploy error:', error);
-            }
-        }
-
-        function redeployToVE(veId) {
-            try {
-                const ve = appState.currentService.ves.find(v => v.id === veId);
-                if (!ve) {
-                    showError('Virtual environment not found.');
-                    return;
-                }
-                
-                showLoading(`Redeploying ${appState.currentService.name} to ${ve.name}...`);
-                
-                setTimeout(() => {
-                    hideLoading();
-                    showNotification('Redeploy Started', `Redeploying ${appState.currentService.name} to ${ve.name}...`);
-                }, 1500);
-                
-            } catch (error) {
-                hideLoading();
-                showError('Failed to start redeployment. Please try again.');
-                console.error('Redeploy error:', error);
-            }
-        }
-
-        // Unified sidebar functionality
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        }
-        
-        // Initialize page
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                initializePage();
-                
-                if (window.innerWidth >= 1024) {
-                    const sidebar = document.getElementById('sidebar');
-                    sidebar.classList.add('open');
-                }
-            } catch (error) {
-                showError('Failed to load page. Please refresh and try again.');
-                console.error('Page initialization error:', error);
-            }
-        });
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            if (window.innerWidth >= 1024) {
-                sidebar.classList.add('open');
-                overlay.classList.remove('show');
-            } else {
-                sidebar.classList.remove('open');
-                overlay.classList.remove('show');
-            }
-        });
-
-        // Pipeline data for the service
-        const pipelineConfigs = {
-            1418: {
-                name: "Main Pipeline",
-                description: "Primary build pipeline for OwaMailB2",
-                type: "main",
-                color: "blue",
-                icon: "zap",
-                latestBuild: "20241220.5",
-                dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.5?root=autopilot"
-            },
-            33874: {
-                name: "Incremental Build",
-                description: "Fast incremental build pipeline",
-                type: "incremental",
-                color: "purple",
-                icon: "refresh-cw",
-                latestBuild: "20241220.3",
-                dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.3?root=autopilot"
-            },
-            31234: {
-                name: "Incremental Build Alt",
-                description: "Alternative incremental build",
-                type: "incremental",
-                color: "green", 
-                icon: "refresh-cw",
-                latestBuild: "20241220.2",
-                dropUrl: "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/20241220.2?root=autopilot"
-            }
-        };
 
         // Show Pipeline Management Modal
         function showPipelineManagementModal() {
@@ -823,16 +420,6 @@
             return card;
         }
 
-        // Copy drop URL functionality
-        function copyDropUrl(url) {
-            navigator.clipboard.writeText(url).then(() => {
-                showNotification('URL Copied', 'Drop URL has been copied to clipboard');
-            }, (err) => {
-                console.error('Copy failed', err);
-                showNotification('Copy Failed', 'Unable to copy URL to clipboard');
-            });
-        }
-
         // Close modal when clicking outside
         document.addEventListener('click', function(event) {
             const modal = document.getElementById('pipelineManagementModal');
@@ -850,8 +437,7 @@
                 }
             }
         });
-    </script>
-    <script>
+
         // Shared sidebar context
         window.SIDEBAR_ACTIVE = 'services';
         window.SIDEBAR_FAVORITES = [

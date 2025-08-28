@@ -10,53 +10,7 @@
     <link rel="stylesheet" href="./shared/dashboard.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" role="navigation" aria-label="Main navigation">
-        <div class="sidebar-header">
-            <div class="flex items-center space-x-3">
-                <div class="brand-icon">
-                    <i data-feather="layers" class="fluent-icon text-white" aria-hidden="true"></i>
-                </div>
-                <div class="brand-text">
-                    <h1 class="text-sm font-semibold brand-title">Griffin PF AI</h1>
-                    <p class="brand-subtitle">Deployment Platform</p>
-                </div>
-            </div>
-        </div>
-        
-        <nav class="sidebar-section">
-            <div class="sidebar-section-title">Main Navigation</div>
-            <a href="dashboard.html" class="sidebar-nav-item active" aria-current="page">
-                <i data-feather="home" class="fluent-icon mr-3" aria-hidden="true"></i>
-                Dashboard
-            </a>
-            <a href="ve-management.html" class="sidebar-nav-item">
-                <i data-feather="server" class="fluent-icon mr-3" aria-hidden="true"></i>
-                VE Management
-            </a>
-            <a href="services-management.html" class="sidebar-nav-item">
-                <i data-feather="layers" class="fluent-icon mr-3" aria-hidden="true"></i>
-                Services Management
-            </a>
-            <a href="deployment-history.html" class="sidebar-nav-item">
-                <i data-feather="clock" class="fluent-icon mr-3" aria-hidden="true"></i>
-                History
-            </a>
-        </nav>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Quick Access</div>
-            <div id="sidebarFavorites"></div>
-        </div>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Account</div>
-            <a href="login.html" class="sidebar-nav-item">
-                <i data-feather="log-out" class="fluent-icon mr-3" aria-hidden="true"></i>
-                Logout
-            </a>
-        </div>
-    </aside>
+    <div id="app-sidebar"></div><!-- injected sidebar -->
 
     <!-- Main Content -->
     <main class="main-content" role="main">
@@ -97,7 +51,7 @@
                     <article class="favorites-card">
                         <header class="favorites-header">
                             <div class="favorites-title">
-                                <i data-feather="star" class="w-5 h-5 star-icon" aria-hidden="true"></i>
+                                <i data-feather="star" class="star-icon" aria-hidden="true"></i>
                                 <h3 class="fluent-text-title2">Favorite Virtual Environments</h3>
                             </div>
                             <button class="fluent-button fluent-button-subtle" data-navigate="ve-management.html">View All</button>
@@ -112,7 +66,7 @@
                     <article class="favorites-card">
                         <header class="favorites-header">
                             <div class="favorites-title">
-                                <i data-feather="heart" class="w-5 h-5 heart-icon" aria-hidden="true"></i>
+                                <i data-feather="heart" class="heart-icon" aria-hidden="true"></i>
                                 <h3 class="fluent-text-title2">Favorite Services</h3>
                             </div>
                             <button class="fluent-button fluent-button-subtle" data-navigate="services-management.html">View All</button>
@@ -162,7 +116,7 @@
             a.innerHTML = `
                 <div class="stat-card-header">
                     <div class="stat-icon stat-icon-${s.color}">
-                        <i data-feather="${s.icon}" class="w-6 h-6" aria-hidden="true"></i>
+                        <i data-feather="${s.icon}" aria-hidden="true"></i>
                     </div>
                     <div class="stat-content">
                         <div class="stat-number">${s.number}</div>
@@ -224,18 +178,6 @@
         });
     }
 
-    function renderSidebarFavorites() {
-        const wrap = document.getElementById('sidebarFavorites');
-        if (!wrap) return;
-        mockData.favoriteVEs.forEach(v => {
-            const a = document.createElement('a');
-            a.href = `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
-            a.className = 'sidebar-nav-item';
-            a.innerHTML = `<i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}`;
-            wrap.appendChild(a);
-        });
-    }
-
     function enableNavigation() {
         document.body.addEventListener('click', e => {
             const t = e.target.closest('[data-navigate]');
@@ -263,11 +205,17 @@
         renderStats();
         renderFavoritesVE();
         renderFavoritesServices();
-        renderSidebarFavorites();
         enableNavigation();
-        animateNumbers(); // new call
-        if (window.feather) feather.replace();
+        animateNumbers();
+        // use centralized icon refresh
+        if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     });
     </script>
+    <script>
+        // Provide sidebar context & favorites before loading sidebar.js
+        window.SIDEBAR_ACTIVE = 'dashboard';
+        window.SIDEBAR_FAVORITES = (mockData.favoriteVEs || []).map(v => ({ name: v.name, query: v.query }));
+    </script>
+    <script src="./shared/sidebar.js"></script>
 </body>
 </html>

@@ -10,53 +10,7 @@
     <link rel="stylesheet" href="./shared/dashboard.css"><!-- added shared styles -->
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="flex items-center space-x-3">
-                <div class="brand-icon"><!-- replaced generic div with brand-icon class -->
-                    <i data-feather="layers" class="fluent-icon text-white"></i>
-                </div>
-                <div>
-                    <h1 class="text-sm font-semibold brand-title">Griffin PF AI</h1><!-- added brand-title class -->
-                    <p class="brand-subtitle">Deployment Platform</p><!-- added brand-subtitle class -->
-                </div>
-            </div>
-        </div>
-        
-        <nav class="sidebar-section">
-            <div class="sidebar-section-title">Main Navigation</div>
-            <a href="dashboard.html" class="sidebar-nav-item">
-                <i data-feather="home" class="fluent-icon mr-3"></i>
-                Dashboard
-            </a>
-            <a href="ve-management.html" class="sidebar-nav-item">
-                <i data-feather="server" class="fluent-icon mr-3"></i>
-                VE Management
-            </a>
-            <a href="services-management.html" class="sidebar-nav-item active">
-                <i data-feather="layers" class="fluent-icon mr-3"></i>
-                Services Management
-            </a>
-            <a href="deployment-history.html" class="sidebar-nav-item">
-                <i data-feather="clock" class="fluent-icon mr-3"></i>
-                History
-            </a>
-        </nav>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Quick Access</div>
-            <div id="sidebarFavorites"></div><!-- replaced static links -->
-        </div>
-        
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Account</div>
-            <a href="login.html" class="sidebar-nav-item">
-                <i data-feather="log-out" class="fluent-icon mr-3"></i>
-                Logout
-            </a>
-        </div>
-    </aside>
+    <div id="app-sidebar"></div><!-- injected sidebar -->
 
     <!-- Main Content -->
     <div class="main-content">
@@ -204,12 +158,12 @@
                 card.innerHTML = `
                     <div class="flex items-center justify-between mb-4">
                         <div class="service-icon ${s.icon.class}">
-                            <i data-feather="${s.icon.name}" class="w-6 h-6"></i>
+                            <i data-feather="${s.icon.name}"></i><!-- removed w-6 h-6 -->
                         </div>
                         <div class="flex items-center space-x-2">
                             ${serviceStatusBadge(s)}
                             <button type="button" aria-label="Toggle favorite for ${s.name}" class="star-toggle ${s.favorite ? 'active':''}" onclick="event.stopPropagation(); toggleStar(this)">
-                                <i data-feather="star" class="w-4 h-4"></i>
+                                <i data-feather="star"></i>
                             </button>
                         </div>
                     </div>
@@ -244,20 +198,7 @@
                 `;
                 wrap.appendChild(card);
             });
-            if (window.feather) feather.replace();
-        }
-
-        function renderSidebarFavorites() {
-            const wrap = document.getElementById('sidebarFavorites');
-            if (!wrap) return;
-            wrap.innerHTML = '';
-            favoriteVEs.forEach(v => {
-                const a = document.createElement('a');
-                a.href = `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
-                a.className = 'sidebar-nav-item';
-                a.innerHTML = `<i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}`;
-                wrap.appendChild(a);
-            });
+            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
         }
 
         function performSearch() {
@@ -282,9 +223,16 @@
             btn.classList.toggle('active');
         }
 
+        // Initial render
         renderServices();
-        renderSidebarFavorites(); // added
-        feather.replace(); // after sidebar + services render
+    </script>
+    <script>
+        window.SIDEBAR_ACTIVE = 'services';
+        window.SIDEBAR_FAVORITES = favoriteVEs;
+    </script>
+    <script src="./shared/sidebar.js"></script>
+    <script>
+        if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     </script>
 </body>
 </html>

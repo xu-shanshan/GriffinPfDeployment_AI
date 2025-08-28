@@ -84,6 +84,30 @@
 }
 .favorite-item:hover { background:#f9f9f9; }
 .favorite-item-content { display:flex; align-items:center; gap:1rem; }
+.favorite-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.favorite-icon-blue {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+}
+.favorite-icon-purple {
+    background: #f3e5f5;
+    color: #5c2d91;
+}
+.favorite-icon-green {
+    background: #dff6dd;
+    color: #107c10;
+}
+.favorite-icon-orange {
+    background: #fff3e0;
+    color: #e65100;
+}
 .favorite-name { font-weight:500; color: var(--colorNeutralForeground1); }
 .favorite-meta { display:flex; align-items:center; gap:1rem; margin-top:.25rem; }
 .favorite-timestamp {
@@ -101,6 +125,8 @@
     --gap-sm: 12px;
     --gap-md: 20px;
     --gap-lg: 32px;
+    --icon-size-inline:16px;
+    --icon-size-primary:32px;
 }
 
 /* Shared header + sidebar alignment */
@@ -395,4 +421,69 @@
 
 .error-notification {
     animation: slideIn 0.3s ease;
+}
+
+/* Sidebar Quick Access injected favorites normalization */
+#sidebarFavoritesSection .sidebar-nav-item {
+    /* enforce same visual scale */
+    padding: 0.5rem 1rem;
+    font-size: var(--fontSizeBase200, 0.875rem);
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+#sidebarFavoritesSection .sidebar-nav-item i.fluent-icon.favorite-icon {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2;
+}
+#sidebarFavoritesSection .sidebar-nav-item + .sidebar-nav-item {
+    margin-top: 2px; /* subtle separation like original */
+}
+#sidebarFavoritesSection .sidebar-nav-item:hover {
+    background: var(--colorNeutralBackground3, rgba(0,0,0,0.04));
+}
+
+/* Unified icon normalization (dashboard + services) */
+.sidebar .sidebar-nav-item svg,
+.top-bar svg,
+.service-card svg,
+.stat-card .stat-icon svg,
+.favorites-card svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    vector-effect: non-scaling-stroke;
+}
+
+/* Larger context icons (stats / service primary icons) */
+.stat-card .stat-icon svg,
+.service-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.6;
+}
+
+/* Ensure removal of leftover Tailwind size classes after replacement */
+.stat-card .stat-icon svg[class*="w-"],
+.service-icon svg[class*="w-"],
+.favorites-header .favorites-title svg[class*="w-"] {
+    width: inherit;
+    height: inherit;
+}
+
+/* Star fill consistency */
+.sidebar .sidebar-nav-item svg.feather-star.favorite-fill,
+.star-toggle.active svg.feather-star,
+.favorites-card .favorites-title svg.feather-star.favorite-fill {
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 1.4;
+}
+
+/* Muted utility (applies everywhere) */
+.icon-muted svg {
+    stroke: var(--colorNeutralForeground3);
 }

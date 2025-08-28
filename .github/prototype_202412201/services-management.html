@@ -97,12 +97,12 @@
     </div>
 
     <script>
-        // Mock services data updated to use class-based icon backgrounds (no inline styles)
+        // Mock services data (icon retained but not displayed now)
         const serviceMockData = [
             {
                 name: 'OwaMailB2',
                 description: 'Outlook Web App Mail Backend Service',
-                icon: { name: 'mail', class: 'icon-bg-green' },
+                icon: { name: 'mail', bg: '#dff6dd', color: '#107c10' }, // no longer rendered
                 status: 'Active', statusClass: 'success',
                 instances: 2, deployed: 2, version: 'v2.1.234',
                 veBadges: [{ name: 'SovBase', type: 'b' }, { name: 'OwaMailB2-SOV', type: 'b2' }],
@@ -156,10 +156,8 @@
                 card.className = 'service-card fluent-card';
                 card.onclick = () => window.location.href = `service-detail.html?service=${encodeURIComponent(s.name)}`;
                 card.innerHTML = `
-                    <div class="flex items-center justify-between mb-4">
-                        <div class="service-icon ${s.icon.class}">
-                            <i data-feather="${s.icon.name}"></i><!-- removed w-6 h-6 -->
-                        </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h3 class="fluent-text-title2 m-0">${s.name}</h3>
                         <div class="flex items-center space-x-2">
                             ${serviceStatusBadge(s)}
                             <button type="button" aria-label="Toggle favorite for ${s.name}" class="star-toggle ${s.favorite ? 'active':''}" onclick="event.stopPropagation(); toggleStar(this)">
@@ -167,7 +165,6 @@
                             </button>
                         </div>
                     </div>
-                    <h3 class="fluent-text-title2 mb-2">${s.name}</h3>
                     <p class="fluent-text-body1 mb-4">${s.description}</p>
                     <div class="mb-4">
                         <h4 class="text-sm font-medium mb-2 text-muted">Present in VEs:</h4>

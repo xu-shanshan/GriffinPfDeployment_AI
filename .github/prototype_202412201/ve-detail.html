@@ -291,26 +291,20 @@
             const row = document.createElement('tr');
             row.className = 'table-row hover:bg-gray-50 transition-colors';
             row.dataset.serviceId = service.id;
-            
+
             const canSelect = service.status === 'ready' || (service.status === 'not-deployed' && service.readyToDeploy);
             const statusConfig = getStatusConfig(service.status, service.readyToDeploy);
-            
+
             row.innerHTML = `
                 <td class="px-6 py-4">
-                    <input type="checkbox" ${canSelect ? '' : 'disabled'} 
-                           onchange="toggleServiceSelection('${service.id}')" 
+                    <input type="checkbox" ${canSelect ? '' : 'disabled'}
+                           onchange="toggleServiceSelection('${service.id}')"
                            class="rounded border-gray-300 service-checkbox" data-service-id="${service.id}">
                 </td>
                 <td class="px-6 py-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-${service.iconColor}-100 rounded-lg flex items-center justify-center">
-                            <i data-feather="${service.icon}" class="w-4 h-4 text-${service.iconColor}-600"></i>
-                        </div>
-                        <div>
-                            <a href="ve-service-detail.html?ve=SovBase&service=${service.id}" 
-                               class="text-gray-900 font-medium hover:text-blue-600 transition-colors">${service.name}</a>
-                            <p class="text-sm text-gray-500">${service.description}</p>
-                        </div>
+                        <a href="ve-service-detail.html?ve=SovBase&service=${service.id}"
+                           class="text-gray-900 font-medium hover:text-blue-600 transition-colors">${service.name}</a>
                     </div>
                 </td>
                 <td class="px-6 py-4">${statusConfig.badge}</td>

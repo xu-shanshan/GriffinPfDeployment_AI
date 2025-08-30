@@ -54,6 +54,16 @@
      .favorites-grid-wrap.compact-2 .favorite-meta span,
      .favorites-grid-wrap.compact-2 .favorite-timestamp span { font-size:.62rem; }
      .favorites-grid-wrap.compact-2 .favorite-timestamp { gap:.4rem; }
+
+      /* Two-column favorites override */
+      .favorites-grid-wrap.two-col {
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        align-items:start;
+      }
+      @media (max-width: 900px){
+        .favorites-grid-wrap.two-col { grid-template-columns:1fr; }
+      }
     </style>
 </head>
 <body>
@@ -64,12 +74,6 @@
     <main class="main-content" id="mainContent" role="main" aria-label="Dashboard main content">
         <div id="app-header"></div>
         <div class="web-container content-area">
-            <!-- Welcome Section -->
-            <section class="welcome-section section-spacing">
-                <h2 class="fluent-text-title1 mb-3">Good morning, John</h2>
-                <p class="fluent-text-body1">Here's what's happening with your virtual environments today.</p>
-            </section>
-
             <!-- Stats Cards -->
             <section class="stats-section section-spacing" aria-label="System statistics">
                 <div id="statsCards" class="stats-grid"></div>
@@ -77,7 +81,7 @@
 
             <!-- Favorites Grid -->
             <section class="favorites-grid">
-                <div class="favorites-grid-wrap">
+                <div class="favorites-grid-wrap two-col">
                     <!-- Favorite VEs Section -->
                     <article class="favorites-card">
                         <header class="favorites-header">

@@ -50,27 +50,27 @@
 
     function favoriteLinks(list) {
         if (!list.length) return '<div class="px-4 fluent-text-caption1" style="opacity:.6;">No favorites</div>';
-        const grouped = {
+        const groups = {
             ve: list.filter(f => f.type === 've'),
             service: list.filter(f => f.type === 'service')
         };
-        function section(title, items, kind) {
-            if (!items.length) return '';
+        function groupBlock(title, items, typeKey){
+            if(!items.length) return '';
             const links = items.map(v => {
                 const href = v.type === 'service'
                     ? `service-detail.html?service=${encodeURIComponent(v.query)}`
                     : `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
                 const icon = v.type === 'service' ? 'package' : 'server';
-                return `<a href="${href}" class="sidebar-nav-item" data-fav-type="${v.type}">
+                return `<a href="${href}" class="sidebar-nav-item" data-fav-type="${v.type}" aria-label="${v.name} ${v.type} quick link">
                     <i data-feather="${icon}" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}
                 </a>`;
             }).join('');
-            return `<div class="sidebar-favs-group" aria-label="${title}">
-                <div class="sidebar-section-title" style="padding-top:4px;">${title}</div>
+            return `<div class="quick-access-group" aria-label="${title}">
+                <div class="quick-access-group-title">${title}</div>
                 ${links}
             </div>`;
         }
-        return section('Virtual Environments', grouped.ve, 've') + section('Services', grouped.service, 'service');
+        return groupBlock('Virtual Environments', groups.ve, 've') + groupBlock('Services', groups.service, 'service');
     }
 
     function buildSidebar() {
@@ -87,20 +87,20 @@
                 </div>
             </div>
             <nav class="sidebar-section">
-                <div class="sidebar-section-title">Main Navigation</div>
+                <div class="sidebar-section-title">MAIN NAVIGATION</div>
                 ${navItem('dashboard.html','home','Dashboard','dashboard')}
                 ${navItem('ve-management.html','server','VE Management','ve')}
                 ${navItem('services-management.html','layers','Services Management','services')}
                 ${navItem('deployment-history.html','clock','History','history')}
             </nav>
             <div class="sidebar-section" id="sidebarFavoritesSection">
-                <div class="sidebar-section-title">Quick Access</div>
+                <div class="sidebar-section-title">QUICK ACCESS</div>
                 <div id="sidebarFavoritesList">
                     ${favoriteLinks(FAVORITES)}
                 </div>
             </div>
             <div class="sidebar-section">
-                <div class="sidebar-section-title">Account</div>
+                <div class="sidebar-section-title">ACCOUNT</div>
                 <a href="login.html" class="sidebar-nav-item">
                     <i data-feather="log-out" class="fluent-icon mr-3" aria-hidden="true"></i>Logout
                 </a>

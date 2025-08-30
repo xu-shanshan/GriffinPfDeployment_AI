@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Deployments - Griffin Deployment Prototype</title>
+<link rel="stylesheet" href="../shared/common.css" />
+<script src="../shared/common.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/Layout/header.js"></script>
+<script src="../shared/Layout/footer.js"></script>
+<script src="../shared/Layout/sidebar.js"></script>
+<script src="../shared/commonComponent/card.js"></script>
+<script src="../shared/commonComponent/modal.js"></script>
+<script src="../shared/commonComponent/tooltip.js"></script>
+</head>
+<body>
+<div class="layout" id="app"></div>
+<script>
+(function(G){
+  const root = G.qs('#app');
+  root.appendChild(G.Layout.renderSidebar('deployments'));
+  root.appendChild(G.Layout.renderHeader());
+  const main = document.createElement('main');
+  main.className='layout-main';
+  root.appendChild(main);
+  root.appendChild(G.Layout.renderFooter());
+
+  main.innerHTML = `
+    <h1>Deployment History</h1>
+    <div class="filter-bar">
+      <select class="input" data-f-status>
+        <option value="">All Status</option>
+        <option>Succeeded</option>
+        <option>Failed</option>
+        <option>Running</option>
+      </select>
+      <select class="input" data-f-ve>
+        <option value="">All VEs</option>
+        ${G.data.VEs.map(v=>`<option>${v.name}</option>`).join('')}
+      </select>
+      <input type="text" class="input" placeholder="Search id/service..." data-f-text />
+      <button class="secondary" data-refresh>Refresh</button>
+    </div>
+    <table>
+      <thead><tr><th>ID</th><th>VE</th><th>Services</th><th>Status</th><th>Started</th><th>Completed</th><th>User</th></tr></thead>
+      <tbody data-body></tbody>
+    </table>
+  `;
+
+  const tbody = main.querySelector('[data-body]');
+  function render(){
+    const st = main.querySelector('[data-f-status]').value;
+    const ve = main.querySelector('[data-f-ve]').value;
+    const txt = main.querySelector('[data-f-text]').value.toLowerCase();
+    tbody.innerHTML = G.data.DeploymentHistory
+      .filter(d=>!st||d.status===st)
+      .filter(d=>!ve||d.ve===ve)
+      .filter(d=>!txt || d.id.toLowerCase().includes(txt) || d.services.some(s=>s.toLowerCase().includes(txt)))
+      .map(d=>`
+        <tr id="${d.id}">
+          <td>${d.id}</td>
+          <td><a href="ve-detail.html?ve=${encodeURIComponent(d.ve)}">${d.ve}</a></td>
+          <td><a href="#" data-services="${d.services.join(',')}">${d.services.length}</a></td>
+          <td><span class="badge ${d.status==='Failed'?'danger':d.status==='Succeeded'?'ok':d.status==='Running'?'warn':''}">${d.status}</span></td>
+          <td>${G.formatDate(d.started)}</td>
+          <td>${d.completed?G.formatDate(d.completed):'<span class="text-dim">—</span>'}</td>
+          <td>${d.initiatedBy}</td>
+        </tr>
+      `).join('');
+  }
+  render();
+
+  ['change','input'].forEach(evt=>{
+    main.querySelectorAll('[data-f-status],[data-f-ve],[data-f-text]').forEach(el=>el.addEventListener(evt, render));
+  });
+  main.querySelector('[data-refresh]').addEventListener('click', ()=>{
+    // no-op simulation
+    render();
+  });
+
+  G.delegate(main,'[data-services]','click',(e,el)=>{
+    e.preventDefault();
+    const list = el.getAttribute('data-services').split(',');
+    G.Modal.open('svcList',{
+      title:'Services in Deployment',
+      body:`<ul>${list.map(s=>`<li>${s}</li>`).join('')}</ul>`,
+      actions:[{ key:'close', label:'Close', variant:'secondary', onClick:({close})=>close() }]
+    });
+  });
+
+  // highlight hash if present
+  if(location.hash){
+    const row = G.qs(location.hash);
+    if(row) row.style.outline='2px solid var(--accent)';
+  }
+  G.sub('data:replace', ()=> location.reload());
+})(window.GMS);
+</script>
+</body>
+</html>

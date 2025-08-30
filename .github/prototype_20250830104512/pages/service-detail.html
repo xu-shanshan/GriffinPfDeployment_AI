@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Service Detail - Griffin Deployment Prototype</title>
+<link rel="stylesheet" href="../shared/common.css" />
+<script src="../shared/common.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/Layout/header.js"></script>
+<script src="../shared/Layout/footer.js"></script>
+<script src="../shared/Layout/sidebar.js"></script>
+<script src="../shared/commonComponent/card.js"></script>
+<script src="../shared/commonComponent/modal.js"></script>
+<script src="../shared/commonComponent/tooltip.js"></script>
+</head>
+<body>
+<div class="layout" id="app"></div>
+<script>
+(function(G){
+  const params = new URLSearchParams(location.search);
+  const veName = params.get('ve');
+  const svcName = params.get('service');
+  const root = G.qs('#app');
+  root.appendChild(G.Layout.renderSidebar('ves'));
+  root.appendChild(G.Layout.renderHeader());
+  const main = document.createElement('main');
+  main.className='layout-main';
+  root.appendChild(main);
+  root.appendChild(G.Layout.renderFooter());
+
+  const svc = (G.data.Services[veName]||[]).find(s=>s.name===svcName);
+  if(!svc){
+    main.innerHTML = `<h1>Service not found</h1><p><a href="ve-detail.html?ve=${encodeURIComponent(veName||'SovBase')}">Back</a></p>`;
+    return;
+  }
+  const buildInfo = G.data.BuildDetails[svcName];
+  let selectedVersion = svc.latestVersion;
+
+  function computeDrop(){
+    if(!buildInfo) return 'N/A';
+    return buildInfo.buildPathPattern.replace('<BuildVersion>', selectedVersion);
+  }
+
+  main.innerHTML = `
+    <h1>${svc.name}</h1>
+    <p><a href="ve-detail.html?ve=${encodeURIComponent(veName)}">&larr; Back to VE</a></p>
+    <div class="grid cols-3" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));">
+      <div class="card">
+        <div class="card-header"><span>Metadata</span></div>
+        <div class="card-body">
+          <div>VE: <strong>${veName}</strong></div>
+          <div>Build Type: <strong>${svc.buildType}</strong></div>
+          <div>Latest: <strong>${svc.latestVersion}</strong></div>
+          <div>Status: <span class="badge ${svc.status!=='ok'?(svc.status==='warn'?'warn':'danger'):'ok'}">${svc.status}</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span>Versions</span></div>
+        <div class="card-body">
+          <label>Select Version<br>
+            <select class="input" data-version>
+              ${buildInfo.availableVersions.map(v=>`<option value="${v}" ${v===selectedVersion?'selected':''}>${v}</option>`).join('')}
+            </select>
+          </label>
+          <div class="mt-sm text-dim" style="font-size:12px;">Pattern: ${buildInfo.buildPathPattern}</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span>Actions</span></div>
+        <div class="card-body">
+          <div>Resolved Drop URL:</div>
+          <div class="inline-code" data-drop>${computeDrop()}</div>
+          <div style="margin-top:12px; display:flex; gap:8px;">
+            <button data-deploy-latest ${!G.canDeploy()?'disabled data-tooltip="No deploy permission"':''}>Deploy Latest</button>
+            <button class="secondary" data-deploy-selected ${!G.canDeploy()?'disabled data-tooltip="No deploy permission"':''}>Deploy Selected</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  main.querySelector('[data-version]').addEventListener('change', e=>{
+    selectedVersion = e.target.value;
+    main.querySelector('[data-drop]').textContent = computeDrop();
+  });
+
+  function openDeploy(version){
+    G.Modal.open('deploySvc',{
+      title:'Deploy Service',
+      body:`Deploy <strong>${svc.name}</strong> (version <code>${version}</code>) to VE <strong>${veName}</strong>?<br><br><small>${computeDrop()}</small>`,
+      actions:[
+        { key:'cancel', label:'Cancel', variant:'secondary', onClick:({close})=>close() },
+        { key:'deploy', label:'Deploy', onClick:({close})=>{
+            G.pub('deploy:start',{ ve:veName, services:[svc.name], version });
+            close();
+          }}
+      ]
+    });
+  }
+  main.querySelector('[data-deploy-latest]').addEventListener('click', ()=>openDeploy(svc.latestVersion));
+  main.querySelector('[data-deploy-selected]').addEventListener('click', ()=>openDeploy(selectedVersion));
+  G.sub('data:replace', ()=> location.reload());
+})(window.GMS);
+</script>
+</body>
+</html>

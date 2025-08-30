@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Dashboard - Griffin Deployment Prototype</title>
+<link rel="stylesheet" href="../shared/common.css">
+<script src="../shared/common.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/Layout/header.js"></script>
+<script src="../shared/Layout/footer.js"></script>
+<script src="../shared/Layout/sidebar.js"></script>
+<script src="../shared/commonComponent/card.js"></script>
+<script src="../shared/commonComponent/modal.js"></script>
+<script src="../shared/commonComponent/tooltip.js"></script>
+</head>
+<body>
+<div class="layout" id="app"></div>
+<script>
+(function(G){
+  const root = G.qs('#app');
+  root.appendChild(G.Layout.renderSidebar('dashboard'));
+  root.appendChild(G.Layout.renderHeader());
+  const main = document.createElement('main');
+  main.className='layout-main';
+  root.appendChild(main);
+  root.appendChild(G.Layout.renderFooter());
+
+  function kpi(title, metric, sub){
+    return G.Components.Card({
+      title,
+      body:`<div class="card-metrics">${metric}</div><div class="text-dim">${sub||''}</div>`
+    });
+  }
+
+  const totalServices = Object.values(G.data.Services).reduce((a,b)=>a+b.length,0);
+  const running = G.data.DeploymentHistory.filter(d=>d.status==='Running').length;
+  const today = G.data.DeploymentHistory.filter(d=>{
+    const dt = new Date(d.started);
+    const now = new Date();
+    return dt.toDateString() === now.toDateString();
+  }).length;
+
+  const kpiWrap = document.createElement('div');
+  kpiWrap.className='grid cols-3';
+  kpiWrap.append(
+    kpi('Total VEs', G.data.VEs.length, 'Managed'),
+    kpi('Services', totalServices, 'Onboarded'),
+    kpi('Deployments Today', today, 'Past 24h'),
+    kpi('Running Deployments', running, 'In-progress'),
+    kpi('At-Risk VEs', G.data.VEs.filter(v=>v.health!=='ok').length, 'Require attention'),
+    kpi('Permission', G.canDeploy()? 'Deploy Enabled':'Read-Only', 'Current user')
+  );
+
+  const recentCard = G.Components.Card({
+    title:'Recent Deployments',
+    right:`<button class="secondary" data-refresh>Refresh</button>`,
+    body:`<table>
+      <thead><tr><th>ID</th><th>VE</th><th>Services</th><th>Status</th><th>Started</th></tr></thead>
+      <tbody data-recent-body></tbody>
+    </table>`
+  });
+
+  function renderRecent(){
+    const tbody = recentCard.querySelector('[data-recent-body]');
+    tbody.innerHTML = G.data.DeploymentHistory.slice(0,6).map(d=>{
+      return `<tr data-id="${d.id}">
+        <td><a href="deployments.html#${d.id}">${d.id}</a></td>
+        <td><a href="ve-detail.html?ve=${encodeURIComponent(d.ve)}">${d.ve}</a></td>
+        <td>${d.services.length}</td>
+        <td><span class="badge ${d.status==='Failed'?'danger':d.status==='Succeeded'?'ok':d.status==='Running'?'warn':''}">${d.status}</span></td>
+        <td>${G.formatDate(d.started)}</td>
+      </tr>`;
+    }).join('');
+  }
+  renderRecent();
+
+  recentCard.querySelector('[data-refresh]').addEventListener('click', ()=>{
+    G.pub('deploy:mockRandom',{});
+    renderRecent();
+  });
+
+  const riskCard = G.Components.Card({
+    title:'At-Risk VEs',
+    body:`<div data-risk></div>`
+  });
+  function renderRisk(){
+    const risk = riskCard.querySelector('[data-risk]');
+    const list = G.data.VEs.filter(v=>v.health!=='ok');
+    risk.innerHTML = list.length? list.map(v=>`
+      <div><span class="status-dot ${v.health==='warn'?'warn':'danger'}"></span>
+        <a href="ve-detail.html?ve=${encodeURIComponent(v.name)}">${v.name}</a>
+        <span class="badge warn">${v.health}</span>
+      </div>`).join('') : '<div class="text-dim">No risk detected</div>';
+  }
+  renderRisk();
+
+  main.append(kpiWrap, recentCard, riskCard);
+
+  G.sub('deploy:start', payload=>{
+    // simulate creation
+    G.data.DeploymentHistory.unshift({
+      id:'dpl-'+Math.floor(Math.random()*9000+2000),
+      ve: payload.ve || 'Unknown',
+      services: payload.services || [],
+      status:'Running',
+      initiatedBy:G.state.currentUser.name,
+      started:Date.now(),
+      completed:null,
+      artifactRef:'N/A'
+    });
+    renderRecent();
+  });
+  G.sub('data:replace', ()=> location.reload()); // NEW: reload with authoritative data
+})(window.GMS);
+</script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>VE Detail - Griffin Deployment Prototype</title>
+<link rel="stylesheet" href="../shared/common.css" />
+<script src="../shared/common.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/Layout/header.js"></script>
+<script src="../shared/Layout/footer.js"></script>
+<script src="../shared/Layout/sidebar.js"></script>
+<script src="../shared/commonComponent/card.js"></script>
+<script src="../shared/commonComponent/modal.js"></script>
+<script src="../shared/commonComponent/tooltip.js"></script>
+</head>
+<body>
+<div class="layout" id="app"></div>
+<script>
+(function(G){
+  const params = new URLSearchParams(location.search);
+  const veName = params.get('ve') || 'SovBase';
+  const ve = G.data.VEs.find(v=>v.name===veName);
+  const services = (G.data.Services[veName]||[]);
+  const root = G.qs('#app');
+  root.appendChild(G.Layout.renderSidebar('ves'));
+  root.appendChild(G.Layout.renderHeader());
+  const main = document.createElement('main');
+  main.className='layout-main';
+  root.appendChild(main);
+  root.appendChild(G.Layout.renderFooter());
+
+  if(!ve){
+    main.innerHTML = `<h1>VE not found</h1><p><a href="ve-list.html">Back to list</a></p>`;
+    return;
+  }
+
+  main.innerHTML = `
+    <div style="display:flex; align-items:center; gap:16px;">
+      <h1 class="mb-0">${ve.name}</h1>
+      <span class="badge">${ve.type}</span>
+      <span class="chip">${ve.environment}</span>
+      <span class="badge ${ve.health!=='ok'?(ve.health==='warn'?'warn':'danger'):'ok'}">${ve.health}</span>
+      <div style="margin-left:auto; display:flex; gap:8px;">
+        <button data-deploy-ve ${!G.canDeploy()?'disabled data-tooltip="No deploy permission"':''}>Deploy VE</button>
+        <button class="secondary" onclick="window.location.href='ve-list.html'">Back</button>
+      </div>
+    </div>
+    <div class="separator"></div>
+    <div class="search-bar">
+      <input type="text" class="input" placeholder="Filter services..." data-filter />
+      <button class="secondary" data-deploy-selected disabled>Deploy Selected</button>
+    </div>
+    <table>
+      <thead><tr><th><input type="checkbox" data-check-all /></th><th>Service</th><th>Build Type</th><th>Latest Version</th><th>Status</th><th>Pipelines</th><th>Actions</th></tr></thead>
+      <tbody data-service-body></tbody>
+    </table>
+  `;
+
+  const tbody = main.querySelector('[data-service-body]');
+  function render(){
+    const ft = main.querySelector('[data-filter]').value.toLowerCase();
+    tbody.innerHTML = services
+      .filter(s=>!ft || s.name.toLowerCase().includes(ft))
+      .map(s=>`
+        <tr>
+          <td><input type="checkbox" data-row-check value="${s.name}"></td>
+          <td><a href="service-detail.html?ve=${encodeURIComponent(ve.name)}&service=${encodeURIComponent(s.name)}">${s.name}</a></td>
+            <td>${s.buildType}</td>
+            <td>${s.latestVersion}</td>
+            <td><span class="status-dot ${s.status!=='ok'?(s.status==='warn'?'warn':'danger'):''}"></span></td>
+            <td>${s.pipelines.join(', ')}</td>
+            <td class="table-actions">
+              <button class="secondary" data-action="deploy-one" data-svc="${s.name}" ${!G.canDeploy()?'disabled data-tooltip="No deploy permission"':''}>Deploy</button>
+            </td>
+        </tr>
+      `).join('');
+  }
+  render();
+
+  main.querySelector('[data-filter]').addEventListener('input', render);
+
+  G.delegate(main,'[data-action="deploy-one"]','click',(e,btn)=>{
+    const svc = btn.getAttribute('data-svc');
+    G.Modal.open('deployService',{
+      title:'Deploy Service',
+      body:`Deploy <strong>${svc}</strong> in <strong>${ve.name}</strong>?`,
+      actions:[
+        { key:'cancel', label:'Cancel', variant:'secondary', onClick:({close})=>close() },
+        { key:'deploy', label:'Deploy', onClick:({close})=>{
+            G.pub('deploy:start',{ ve:ve.name, services:[svc] });
+            close();
+          }}
+      ]
+    });
+  });
+
+  const deploySelectedBtn = main.querySelector('[data-deploy-selected]');
+  function updateDeploySelected(){
+    const checked = main.querySelectorAll('[data-row-check]:checked');
+    deploySelectedBtn.disabled = !checked.length || !G.canDeploy();
+    if(!G.canDeploy()) deploySelectedBtn.setAttribute('data-tooltip','No deploy permission');
+  }
+
+  G.delegate(main,'[data-row-check]','change',updateDeploySelected);
+  main.querySelector('[data-check-all]').addEventListener('change', e=>{
+    main.querySelectorAll('[data-row-check]').forEach(c=>c.checked = e.target.checked);
+    updateDeploySelected();
+  });
+  deploySelectedBtn.addEventListener('click', ()=>{
+    const list = Array.from(main.querySelectorAll('[data-row-check]:checked')).map(c=>c.value);
+    G.Modal.open('deploySelected',{
+      title:'Deploy Selected Services',
+      body:`VE: <strong>${ve.name}</strong><br>Services:<br><ul>${list.map(l=>`<li>${l}</li>`).join('')}</ul>`,
+      actions:[
+        { key:'cancel', label:'Cancel', variant:'secondary', onClick:({close})=>close() },
+        { key:'deploy', label:'Deploy', onClick:({close})=>{
+            G.pub('deploy:start',{ ve:ve.name, services:list });
+            close();
+          }}
+      ]
+    });
+  });
+
+  main.querySelector('[data-deploy-ve]').addEventListener('click', ()=>{
+    G.Modal.open('deployVEAll',{
+      title:'Deploy VE',
+      body:`Confirm deploying all ${services.length} services in <strong>${ve.name}</strong>?`,
+      actions:[
+        { key:'cancel', label:'Cancel', variant:'secondary', onClick:({close})=>close() },
+        { key:'deploy', label:'Deploy', onClick:({close})=>{
+            G.pub('deploy:start',{ ve:ve.name, services: services.map(s=>s.name) });
+            close();
+          }}
+      ]
+    });
+  });
+
+  G.sub('data:replace', ()=> location.reload()); // NEW
+})(window.GMS);
+</script>
+</body>
+</html>

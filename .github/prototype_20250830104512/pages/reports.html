@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Reports - Griffin Deployment Prototype</title>
+<link rel="stylesheet" href="../shared/common.css" />
+<script src="../shared/common.js"></script>
+<script src="../shared/mock-data.js"></script>
+<script src="../shared/Layout/header.js"></script>
+<script src="../shared/Layout/footer.js"></script>
+<script src="../shared/Layout/sidebar.js"></script>
+<script src="../shared/commonComponent/card.js"></script>
+<script src="../shared/commonComponent/modal.js"></script>
+</head>
+<body>
+<div class="layout" id="app"></div>
+<script>
+(function(G){
+  const root = G.qs('#app');
+  root.appendChild(G.Layout.renderSidebar('reports'));
+  root.appendChild(G.Layout.renderHeader());
+  const main = document.createElement('main');
+  main.className='layout-main';
+  root.appendChild(main);
+  root.appendChild(G.Layout.renderFooter());
+
+  const succeed = G.data.DeploymentHistory.filter(d=>d.status==='Succeeded').length;
+  const failed = G.data.DeploymentHistory.filter(d=>d.status==='Failed').length;
+
+  main.innerHTML = `
+    <h1>Reports</h1>
+    <div class="grid cols-3">
+      <div class="card">
+        <div class="card-header"><span>Success Count</span></div>
+        <div class="card-body"><div class="card-metrics">${succeed}</div><div class="text-dim">Total succeeded deployments</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span>Failure Count</span></div>
+        <div class="card-body"><div class="card-metrics">${failed}</div><div class="text-dim">Total failed deployments</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span>Success Rate</span></div>
+        <div class="card-body"><div class="card-metrics">${(succeed/(succeed+failed)||0*100).toFixed(2)}%</div><div class="text-dim">Overall rate</div></div>
+      </div>
+    </div>
+    <div class="separator"></div>
+    <h2>Trend (Placeholder)</h2>
+    <div style="height:180px; border:1px dashed var(--border); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:var(--text-dim);">Chart Placeholder</div>
+    <div class="separator"></div>
+    <h2>Top Failing Services (Sample)</h2>
+    <table>
+      <thead><tr><th>Service</th><th>Failures</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td>GraphAnalytics</td><td>3</td><td><button class="secondary" data-view="GraphAnalytics">View</button></td></tr>
+        <tr><td>OwaMailB2</td><td>1</td><td><button class="secondary" data-view="OwaMailB2">View</button></td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px;">
+      <button data-export class="secondary">Export CSV</button>
+    </div>
+  `;
+
+  G.delegate(main,'[data-view]','click',(e,btn)=>{
+    const svc = btn.getAttribute('data-view');
+    // naive mapping to a VE that has the service
+    let veFound = Object.keys(G.data.Services).find(ve=> (G.data.Services[ve]||[]).some(s=>s.name===svc));
+    if(veFound){
+      window.location.href = `service-detail.html?ve=${encodeURIComponent(veFound)}&service=${encodeURIComponent(svc)}`;
+    }
+  });
+  main.querySelector('[data-export]').addEventListener('click', ()=>{
+    G.Modal.open('export',{
+      title:'Export',
+      body:'Export is not implemented in prototype.',
+      actions:[{ key:'close', label:'Close', variant:'secondary', onClick:({close})=>close() }]
+    });
+  });
+  G.sub('data:replace', ()=> location.reload());
+})(window.GMS);
+</script>
+</body>
+</html>

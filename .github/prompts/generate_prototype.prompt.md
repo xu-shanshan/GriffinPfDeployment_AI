@@ -2,54 +2,50 @@
 mode: edit
 ---
 
-You are a senior frontend expert with React, TypeScript, Fluent UI v9, and axios/fetch experience. 
-Your task is to create static HTML prototypes to **validate UX/UI, interaction logic, and page layout**
+# Context
 
+You are a senior frontend expert with expertise in React, TypeScript, Fluent UI v9, and axios/fetch.
+Your task is to create static HTML prototypes to validate:
 
-You will take on the roles of:
+- UX/UI design
+- Interaction logic
+- Page layout
 
-1. Interaction Designer – Ensure user flows are smooth, interactions feel natural, and the UI supports tasks without friction.
-2. Visual Designer – Define overall look & feel, visual hierarchy, and user experience principles to guide the project.
+Before moving to a full React implementation, these prototypes must serve as design validation tools.
 
-Goal:
+# Roles
 
-Ensure that the interaction model, layout, and visual design are consistent, intuitive, and user-friendly before moving to full React implementation.
+- Interaction Designer – Ensure smooth user flows, natural interactions, and frictionless task completion.
+- Visual Designer – Define look & feel, visual hierarchy, and user experience principles.
 
+## Goals
 
-## Task Requirements：
+- Interaction model is consistent
+- Layout is intuitive
+- Visual design is user-friendly
+- The UI can be as close as possible to the future effect based on Fluent UI v9 (Fluent UI React).
 
-IMPORTANT:
-1. First generate the shared folder structure and all shared assets (CSS, JS, layout + common components, mock data).
-2. Only after shared assets exist, generate page HTML files that import/reuse them (no duplicated inline CSS/JS except minimal page-specific script).
-3. Pages must not redefine components already placed in shared/.
+# Task Requirements：
 
-Generation Order (must follow strictly):
-1. Shared Foundation (folder structure + shared assets)
-2. Interaction Summaries (for all pages, can reference planned shared components)
-3. Page Implementations (each HTML file importing shared assets)
+## Implementation Rules  
 
-1. Shared Foundation (produce first):
-   - Create timestamped root folder: .github/prototype_YYYYMMDDHHMMSS/
-   - Inside /shared:
-     - common.css (core layout, typography, utility classes)
-     - common.js (namespace + helpers: pub/sub, DOM qs helpers)
-     - mock-data.js (sample VE, services, build info, deployment history arrays/objects)
-     - Layout/ (header.js, footer.js, sidebar.js exporting render functions)
-     - commonComponent/ (card.js, modal.js, tooltip.js — pure JS factories)
-   - Ensure components expose init()/render() patterns and basic BEM or utility classes aligning with common.css
+1. **Phased Generation Order (strict)**  
+   1. Shared Foundation (folder structure + shared assets)  
+   2. Interaction Summaries (per page, describing flows & components)  
+   3. Page Implementations (HTML prototypes importing shared assets)  
 
-2. Interaction summary (after shared skeleton defined):
-   - For each page list:
-     - Functional modules
-     - User action flows
-     - Data presentation patterns
-     - Navigation / cross-link behavior
-   - Reference shared component names (e.g., Modal.open('deployModal'))
+2. **Shared Assets First**  
+   - All common CSS/JS/components must be placed in `/shared/`.  
+   - Pages must **import** shared assets — no duplication.  
+   - Only minimal page-specific script allowed.  
 
-3. HTML prototype pages (after above):
+3. **Reusable Components**  
+   - Components expose `init()` or `render()` patterns.  
+   - Follow **BEM** or utility-class conventions in `common.css`.  
+
+4. HTML prototype pages (after above):
    - Each page imports:
-     - ./../shared/common.css
-     - ./../shared/common.js
+     - ./../shared/
      - Required component scripts (layout + components + mock-data.js)
    - No duplicated component code
    - Use data-* attributes for interactive hooks
@@ -57,10 +53,16 @@ Generation Order (must follow strictly):
    - Each page openable in browser
    - File names should match page functionality
 
-Output structure, for example:
+## Shared Foundation
+
+### Root Folder  
+.github/prototype_YYYYMMDDHHMMSS/
+
+### Output structure
+for example:
    .github/prototype_YYYYMMDDHHMMSS/
       ├── shared/
-      │   ├── common.css
+      │   ├── fluent-ui.css
       │   └── common.js
       │   └── mock-data.js
       │   └── Layout/

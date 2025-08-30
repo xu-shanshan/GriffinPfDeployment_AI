@@ -60,12 +60,87 @@ Workflow (ALL prototypes in /prototypes):
    - Do not copy raw <script> blocks; translate logic into React hooks.
    - Do not embed global window mutations.
 
-Checklist (apply per prototype before completion):
-[ ] Layout composed with AppLayout (if full page)
-[ ] Reusable stat/info cards extracted
-[ ] Navigation integration hooks in place (placeholder callbacks)
-[ ] All dynamic content exposed via props
-[ ] No tailwind or inline colors; only Fluent tokens
-[ ] Accessibility attributes applied
-[ ] Strict TS types exported
+Generation Phases (execute strictly in order):
+
+Phase 0: Bootstrap Running Project (must succeed before any component/page generation)
+- Create minimal runnable React 19 + Vite + TypeScript scaffold
+  * Files: package.json, tsconfig.json, vite.config.ts, index.html, src/frontend/main.tsx (or main entry), src/frontend/App.tsx, theme/fluentTheme.ts, AppRouter.tsx
+  * Include FluentProvider + QueryClientProvider + BrowserRouter + ErrorBoundary
+  * Add placeholder routes (e.g., /health) returning a simple div so dev server proves working
+  * Add a README bootstrap snippet (optional) or inline comment in prompt describing start commands
+  * Ensure npm install --legacy-peer-deps && npm run dev launches without runtime errors or missing deps
+- Success Criteria: Visiting / shows redirect or baseline page without console errors
+- Directory Exclusions (apply to all phases): node_modules, dist, build, coverage, .turbo, .vite, .cache (never traverse or generate inside)
+
+Phase 1: Core Layout Components
+- Implement AppSidebar, AppHeader, AppLayout with strict typed props (already defined patterns)
+- Provide responsive collapse + aria attributes
+- No business logic; only structural + styling via makeStyles
+
+Phase 2: Page Transformations (per Prototype → Page Mapping)
+- For each prototype HTML, generate its Page component using existing layout primitives
+- Extract reusable subcomponents (cards, tables, filters) into domain folders (dashboard/, ve/, service/, history/)
+- Replace prototype scripts with React state + hooks (mock data only)
+
+Phase 3: Data Abstraction & Mocks
+- Centralize mock domain data (e.g., mock-data.json or typed module) and lightweight hooks (useDashboardData, useVeList, etc.)
+- Prepare hook signatures for later React Query integration (return shape: { data, isLoading, error })
+
+Phase 4: Interaction & Accessibility Hardening
+- Keyboard support for cards (Enter/Space)
+- aria-live for notifications (if added later)
+- Reduced-motion guard for animations (prefers-reduced-motion)
+
+Phase 5: Progressive Enhancement
+- Introduce Zustand slices (auth, layout state) placeholders
+- Introduce query keys & skeleton placeholders (no real fetch yet)
+- Add error boundaries per route (optional)
+
+Failure Handling:
+- If Phase 0 not complete, do NOT proceed to later phases.
+- Regenerate only failing phase artifacts; earlier successful phases remain untouched.
+
+Scaffold Checklist (Phase 0):
+[ ] package.json with react, react-dom, @fluentui/react-components, @tanstack/react-query, react-router-dom, vite, @vitejs/plugin-react
+[ ] tsconfig.json strict settings
+[ ] vite.config.ts with @vitejs/plugin-react
+[ ] index.html with #root and module script to main.tsx
+[ ] main.tsx mounts <App />
+[ ] App.tsx wraps providers & ErrorBoundary (no nested BrowserRouter duplication later)
+[ ] AppRouter.tsx includes at least /dashboard placeholder route early
+[ ] Dev server runs: npm install --legacy-peer-deps && npm run dev (documented)
+[ ] Console free of missing module errors
+
+Upgrade Path Notes:
+- Replace mock arrays with React Query queries (Phase 3→ later) without altering component props.
+- Convert direct navigation placeholders to use useNavigate from react-router.
+- Introduce role-based guard HOC or component wrapper when auth available.
+
+Modification Ordering Rule:
+- Always update / add scaffolding before referencing new components.
+- When adding a component referenced by multiple pages, generate the component file first, then adjust pages.
+
+Regeneration Triggers:
+- Prototype structural HTML change → regenerate only affected page + related extracted components
+- Design token / theme change → update theme/fluentTheme.ts only
+- Navigation schema change → update AppSidebar props mapping + AppRouter
+
+Post-Generation Run Steps:
+1. Ensure pages registered in AppRouter.tsx
+2. Install deps: npm install --legacy-peer-deps   (DO NOT append other words on same line)
+   - To start dev server: npm run dev
+   - Correct chaining example: npm install --legacy-peer-deps && npm run dev
+   - If you accidentally ran "npm install --legacy-peer-deps npm run dev", delete node_modules and package-lock.json then reinstall.
+3. Verify each route renders without console errors
+4. Replace mock hooks with React Query integrations incrementally
+
+Prototype → Page Mapping:
+- dashboard.html -> /dashboard -> DashboardPage
+- ve-management.html -> /ves -> VeManagementPage
+- ve-detail.html -> /ve/:name -> VeDetailPage
+- ve-service-detail.html -> /ve/:ve/service/:service -> VeServiceDetailPage
+- services-management.html -> /services -> ServicesManagementPage
+- service-detail.html -> /service/:id -> ServiceDetailPage
+- deployment-history.html -> /deployments -> DeploymentHistoryPage
+- login.html -> /login -> LoginPage
 

@@ -1,3 +1,42 @@
+node_modules/
+dist/
+build/
+coverage/
+.vite/
+.next/
+*.tsbuildinfo
+
+# Logs & diagnostics
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+
+# Cache / tooling
+.turbo/
+.cache/
+.eslintcache
+.stylelintcache
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Generated assets
+*.gzip
+*.br
+
+# Mac / OS
+.DS_Store
+Thumbs.db
+
 griffin-pf-frontend/node_modules/*
 griffin-pf-frontend/.env
 backend/venv/*

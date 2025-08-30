@@ -57,17 +57,37 @@
             clip: rect(0, 0, 0, 0);
             border: 0;
         }
+
+        .body-centered-auth {
+            background: var(--colorNeutralBackground2);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-bg-brand {
+            background: var(--colorBrandBackground);
+        }
+
+        .text-neutral-1 {
+            color: var(--colorNeutralForeground1);
+        }
+
+        .text-neutral-2 {
+            color: var(--colorNeutralForeground2);
+        }
     </style>
 </head>
-<body style="background: var(--colorNeutralBackground2); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+<body class="body-centered-auth">
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
     <div class="fluent-card p-8 w-full max-w-md" id="mainContent" role="main" aria-label="Login form">
         <div class="text-center mb-8">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center" style="background: var(--colorBrandBackground);">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center icon-bg-brand">
                 <i data-feather="layers" class="w-8 h-8 text-white"></i>
             </div>
-            <h1 class="text-2xl font-semibold" style="color: var(--colorNeutralForeground1);">Griffin PF Deployment AI</h1>
-            <p style="color: var(--colorNeutralForeground2); margin-top: 8px;">Sign in to continue</p>
+            <h1 class="text-2xl font-semibold text-neutral-1">Griffin PF Deployment AI</h1>
+            <p class="text-neutral-2 mt-2">Sign in to continue</p>
         </div>
 
         <!-- Error State -->

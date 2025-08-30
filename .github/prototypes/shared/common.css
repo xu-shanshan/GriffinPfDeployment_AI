@@ -418,6 +418,51 @@
   border:0;
 }
 
+/* --- Inline style migration utilities --- */
+.search-summary-box {
+  background:#e3f2fd;
+  border:1px solid var(--colorBrandForeground1);
+  border-radius:var(--borderRadiusSmall,4px);
+  padding:12px;
+}
+.bg-success-soft { background:#dff6dd !important; }
+.bg-info-soft { background:#e3f2fd !important; }
+.bg-neutral-2 { background: var(--colorNeutralBackground2) !important; }
+.bg-neutral-3 { background: var(--colorNeutralBackground3) !important; }
+.text-success-strong, .text-success { color:#107c10 !important; }
+.text-brand { color: var(--colorBrandForeground1) !important; }
+.text-neutral-1 { color: var(--colorNeutralForeground1) !important; }
+.text-neutral-2 { color: var(--colorNeutralForeground2) !important; }
+.text-neutral-3 { color: var(--colorNeutralForeground3) !important; }
+.badge-default-pipeline { background:#e3f2fd; color:var(--colorBrandForeground1); }
+.border-b-neutral2 { border-bottom:1px solid var(--colorNeutralStroke2) !important; }
+.border-t-neutral2 { border-top:1px solid var(--colorNeutralStroke2) !important; }
+.body-centered-auth {
+  background: var(--colorNeutralBackground2);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.icon-bg-brand { background: var(--colorBrandBackground); }
+.text-warning-soft { color:#ca5010; }
+.text-danger { color:#d13438 !important; }
+.text-purple { color:#5c2d91 !important; }
+.text-accent-brand { color: var(--colorBrandForeground1); }
+.bg-warning-soft { background:#fff4ce; }
+.bg-purple-soft { background:#f3e5f5; }
+.bg-blue-soft { background:#e3f2fd; }
+.bg-green-soft { background:#dff6dd; }
+.blur-overlay { backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+.rounded-xl { border-radius:1rem; }
+.inline-flex-center { display:inline-flex; align-items:center; justify-content:center; }
+.shadow-focus { box-shadow:0 0 0 1px var(--colorBrandForeground1); }
+.text-red-strong { color:#d13438 !important; }
+.bg-danger-soft { background:#fde7e9 !important; color:#d13438 !important; }
+.bg-green-indicator { background:#107c10 !important; }
+.bg-yellow-indicator { background:#faa06b !important; }
+.bg-overlay-dark { background:rgba(0,0,0,0.4); }
+.blur-modal { backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
 /* NOTE: Duplicated stat / favorites / icon blocks removed in earlier cleanup. */
 
 /* Unified icon normalization (dashboard + services) */
@@ -431,39 +476,6 @@
     stroke: currentColor;
     stroke-width: 1.8;
     vector-effect: non-scaling-stroke;
-}
-
-/* Larger context icons (stats / service primary icons) */
-.stat-card .stat-icon svg,
-.service-icon svg {
-    width: 32px;
-    height: 32px;
-    stroke-width: 1.6;
-}
-
-/* Ensure removal of leftover Tailwind size classes after replacement */
-.stat-card .stat-icon svg[class*="w-"],
-.service-icon svg[class*="w-"],
-.favorites-header .favorites-title svg[class*="w-"] {
-    width: inherit;
-    height: inherit;
-}
-
-/* Star fill consistency */
-.sidebar .sidebar-nav-item svg.feather-star.favorite-fill,
-.star-toggle.active svg.feather-star,
-.favorites-card .favorites-title svg.feather-star.favorite-fill {
-    fill: currentColor;
-    stroke: currentColor;
-    stroke-width: 1.4;
-}
-
-/* Muted utility (applies everywhere) */
-.icon-muted svg {
-    stroke: var(--colorNeutralForeground3);
-}
-    stroke: var(--colorNeutralForeground3);
-}
 }
 
 /* Larger context icons (stats / service primary icons) */

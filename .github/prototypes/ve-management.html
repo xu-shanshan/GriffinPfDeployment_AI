@@ -46,6 +46,7 @@
          padding: 0;
          border: none;
          background: rgba(255,255,255,0.6);
+         -webkit-backdrop-filter: blur(2px); /* Safari support */
          backdrop-filter: blur(2px);
          border-radius: 6px;
          cursor: pointer;
@@ -107,9 +108,9 @@
                     </div>
                 </div>
                 <div id="searchSummary" class="px-6 pb-4 hidden">
-                    <div style="background:#e3f2fd;border:1px solid var(--colorBrandForeground1);border-radius:var(--borderRadiusSmall);padding:12px;">
-                        <p id="searchSummaryText" class="text-sm" style="color:var(--colorBrandForeground1);"></p>
-                    </div>
+                    <div class="search-summary-box">
+                         <p id="searchSummaryText" class="text-sm" style="color:var(--colorBrandForeground1);"></p>
+                     </div>
                 </div>
             </div>
 

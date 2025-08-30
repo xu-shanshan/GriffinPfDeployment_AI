@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="./shared/common.css"><!-- added shared styles -->
     <style>
       body, .main-content, .services-grid, .fluent-card { max-width:100%; overflow-x:hidden; }
+     .service-card { display:flex; flex-direction:column; height:100%; }
+     .service-card .card-footer { margin-top:auto; }
     </style>
 </head>
 <body>
@@ -164,7 +166,7 @@
                         <h3 class="fluent-text-title2 m-0">${s.name}</h3>
                         <div class="flex items-center space-x-2">
                             ${serviceStatusBadge(s)}
-                            <button type="button" aria-label="Toggle favorite for ${s.name}" class="star-toggle ${s.favorite ? 'active':''}" onclick="event.stopPropagation(); toggleStar(this)">
+                            <button type="button" aria-label="Toggle favorite for ${s.name}" class="star-toggle ${s.favorite ? 'active':''}" onclick="event.stopPropagation(); toggleStar(this,'${s.name}')">
                                 <i data-feather="star"></i>
                             </button>
                         </div>
@@ -185,7 +187,7 @@
                             <div class="fluent-text-caption1">Latest Version</div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between pt-4 divider-top">
+                    <div class="flex items-center justify-between pt-4 divider-top card-footer">
                         <span class="fluent-text-body1">Click to explore</span>
                         <i data-feather="chevron-right" class="fluent-icon icon-muted"></i>
                     </div>
@@ -213,8 +215,13 @@
             renderServices();
         }
 
-        function toggleStar(btn) {
-            btn.classList.toggle('active');
+        function toggleStar(btn, name) {
+            const active = btn.classList.toggle('active');
+            if (active) {
+                if (window.addToSidebarFavorites) window.addToSidebarFavorites({ name, query: name, type:'service' });
+            } else {
+                if (window.removeFromSidebarFavorites) window.removeFromSidebarFavorites(name,'service');
+            }
         }
 
         // Initial render
@@ -222,7 +229,7 @@
     </script>
     <script>
         window.SIDEBAR_ACTIVE = 'services';
-        window.SIDEBAR_FAVORITES = favoriteVEs;
+        window.SIDEBAR_FAVORITES = favoriteVEs.map(v => ({ ...v, type:'ve' }));
     </script>
     <script src="./shared/sidebar.js"></script>
     <script>

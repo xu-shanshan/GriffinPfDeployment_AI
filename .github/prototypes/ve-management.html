@@ -10,6 +10,50 @@
     <link rel="stylesheet" href="./shared/common.css"><!-- added shared layout + icon unification -->
     <style>
       body, .main-content, #veCardsGrid { max-width:100%; overflow-x:hidden; }
+      /* VE Management scroll fix: local safeguard (primary logic in common.css) */
+      /* Pagination mode: fix page height, disable vertical scrolling (content changes via page nav) */
+      html, body, .main-content { height:100vh; overflow-y:hidden; }
+      .content-area { display:flex; flex-direction:column; height:calc(100vh - var(--app-header-height)); }
+      #veCardsGrid { flex:1 1 auto; overflow:hidden; }
+      .pagination-bar { flex-shrink:0; }
+      .pagination-bar button[disabled] { opacity:.5; cursor:not-allowed; }
+      .pagination-pages button.active { background:#0f6cbd; color:#fff; }
+      .ve-card { display:flex; flex-direction:column; height:100%; position:relative; }
+      .ve-card .card-footer { margin-top:auto; }
+       /* Center normal metrics block vertically & horizontally */
+       .ve-card .metrics-wrap {
+         flex:1 1 auto;
+         display:flex;
+         align-items:center;
+         justify-content:center;
+       }
+       .ve-card .metrics-wrap .metrics-inner {
+         text-align:center;
+         width:100%;
+       }
+      .ve-name-line { display:flex; align-items:center; gap:8px; }
+      /* Favorite star: enforce true top-right placement */
+      .ve-fav-btn {
+         position: absolute !important;
+         top: 8px;
+         right: 8px;
+         z-index: 2;
+         display: inline-flex;
+         align-items: center;
+         justify-content: center;
+         width: 28px;
+         height: 28px;
+         padding: 0;
+         border: none;
+         background: rgba(255,255,255,0.6);
+         backdrop-filter: blur(2px);
+         border-radius: 6px;
+         cursor: pointer;
+         transition: background .15s ease, transform .15s ease;
+      }
+      .ve-fav-btn:hover { background: rgba(255,255,255,0.9); transform: scale(1.05); }
+      .ve-fav-btn.active { background: #fff7e0; }
+      .ve-fav-btn i svg { width:16px; height:16px; }
     </style>
 </head>
 <body>
@@ -71,21 +115,10 @@
 
             <!-- VE Cards Grid (dynamic now) -->
             <div id="veCardsGrid" class="services-grid section-spacing"></div>
-
-            <!-- Pagination -->
-            <div class="flex items-center justify-between">
-                <div class="fluent-text-body1">Showing 1-6 of 18 virtual environments</div>
-                <nav class="flex space-x-1">
-                    <button type="button" aria-label="Previous page" class="fluent-button fluent-button-subtle px-3 py-2 icon-muted">
-                        <i data-feather="chevron-left" class="fluent-icon" aria-hidden="true"></i>
-                    </button>
-                    <button type="button" class="fluent-button fluent-button-primary px-3 py-2 text-sm">1</button>
-                    <button type="button" class="fluent-button fluent-button-subtle px-3 py-2 text-sm">2</button>
-                    <button type="button" class="fluent-button fluent-button-subtle px-3 py-2 text-sm">3</button>
-                    <button type="button" aria-label="Next page" class="fluent-button fluent-button-subtle px-3 py-2 icon-muted">
-                        <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                    </button>
-                </nav>
+            <!-- Pagination (no vertical scrolling) -->
+            <div class="flex items-center justify-between pagination-bar">
+                <div class="fluent-text-body1" id="vePaginationSummary"></div>
+                <nav id="pagination" class="flex space-x-1 pagination-pages" aria-label="VE pages"></nav>
             </div>
         </div>
     </main>
@@ -109,6 +142,41 @@
             'FlowControlB2-SOV':['Flow.ControlService'],
             'TodoB2-SOV':['Todo.TaskService']
         };
+
+        /* ===== Pagination State (no scrolling) ===== */
+        let pageSize = 6; // initial
+        let currentPage = 1;
+        let currentFiltered = [...veDataset];
+        /* Card sizing constraints */
+        const MIN_CARD_WIDTH = 260;
+        const MAX_CARD_WIDTH = 360;
+        const TARGET_CARD_WIDTH = 300; // preferred midpoint
+
+       /**
+        * Compute optimal card width so that an integer column count fits within container
+        * without going below MIN or above MAX; picks widest width <= MAX while staying >= MIN.
+        */
+       function updateCardWidth() {
+           const grid = document.getElementById('veCardsGrid');
+           if (!grid) return;
+           const containerWidth = grid.clientWidth;
+           if (containerWidth === 0) return;
+           // Try possible column counts from 6 down to 1 and pick first satisfying width constraints
+           let chosenWidth = MIN_CARD_WIDTH;
+           for (let cols = 6; cols >= 1; cols--) {
+               const gap = parseFloat(getComputedStyle(grid).gap) || 0;
+               const availableForCards = containerWidth - (cols - 1) * gap;
+               const w = Math.floor(availableForCards / cols);
+               if (w >= MIN_CARD_WIDTH && w <= MAX_CARD_WIDTH) {
+                   chosenWidth = w;
+                   break;
+               }
+               // If none within bounds, allow closest above MIN but cap at MAX
+               if (cols === 1 && w > MIN_CARD_WIDTH) chosenWidth = Math.min(w, MAX_CARD_WIDTH);
+           }
+           document.documentElement.style.setProperty('--ve-card-min', chosenWidth + 'px');
+           return chosenWidth;
+       }
 
         function badgeClass(baseType) {
             return baseType === 'B2 Type' ? 'fluent-badge-success' : 'fluent-badge-neutral';
@@ -139,48 +207,155 @@
                     <i data-feather="chevron-right" class="fluent-icon icon-muted" aria-hidden="true"></i>`;
         }
 
-        function renderVEs(list = veDataset) {
+        function renderVEs(list = currentFiltered) {
             const wrap = document.getElementById('veCardsGrid');
             if (!wrap) return;
             wrap.innerHTML = '';
-            list.forEach(v => {
+            const total = list.length;
+            const totalPages = Math.max(1, Math.ceil(total / pageSize));
+            if (currentPage > totalPages) currentPage = totalPages;
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const pageItems = list.slice(start, end);
+            pageItems.forEach(v => {
                 const specialLayout = ['GraphConnectorsB2-SOV','FlowControlB2-SOV'].includes(v.name);
                 const card = document.createElement('div');
-                card.className = 'fluent-card p-6 cursor-pointer';
+                card.className = 'fluent-card p-6 cursor-pointer ve-card';
                 card.onclick = () => window.location.href = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
                 card.innerHTML = `
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="fluent-text-title2 m-0">${v.name}</h3>
-                        <div class="flex items-center space-x-2">
-                            <span class="fluent-badge ${badgeClass(v.baseType)}">${v.baseType}</span>
-                            <button type="button" aria-label="Favorite ${v.name}" onclick="event.stopPropagation();toggleStar(this)" class="star-toggle ${v.favorite ? 'active':''}">
-                                <i data-feather="star"></i>
-                            </button>
+                    <button type="button"
+                            aria-label="Favorite ${v.name}"
+                            onclick="event.stopPropagation();toggleStar(this,'${v.name}')"
+                            class="star-toggle ve-fav-btn ${v.favorite ? 'active':''}">
+                        <i data-feather="star"></i>
+                    </button>
+                    <div class="mb-2">
+                        <div class="ve-name-block">
+                            <div class="ve-name-line">
+                                <h3 class="fluent-text-title2 m-0">${v.name}</h3>
+                            </div>
+                            <div class="mt-1">
+                                <span class="fluent-badge ${badgeClass(v.baseType)}">${v.baseType}</span>
+                            </div>
                         </div>
                     </div>
                     ${specialLayout ? specialMetrics(v) : normalMetrics(v)}
-                    <div class="flex items-center justify-between pt-4 divider-top">
+                    <div class="flex items-center justify-between pt-4 divider-top card-footer">
                         ${statusFooter(v)}
                     </div>`;
                 wrap.appendChild(card);
             });
             if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+            renderPagination(total, totalPages, start, Math.min(end, total));
+            // After first real render ensure dynamic sizing is correct
+            if (!renderVEs._sized) {
+                renderVEs._sized = true;
+                requestAnimationFrame(recalculatePageSize);
+            } else {
+               // Adjust for potential overflow caused by mixed card heights
+               requestAnimationFrame(adjustForOverflow);
+            }
         }
+        /* Dynamically set pageSize so cards exactly (or nearly) fill available vertical space without scrolling */
+        function recalculatePageSize() {
+            const grid = document.getElementById('veCardsGrid');
+            if (!grid) return;
+            // Ensure card width updated before sizing rows/columns
+            updateCardWidth();
+            const firstCard = grid.querySelector('.fluent-card');
+            if (!firstCard) return;
+            const container = document.querySelector('.content-area');
+            if (!container) return;
+            const gridStyles = getComputedStyle(grid);
+            const gap = parseFloat(gridStyles.gap) || 0;
+            const cardRect = firstCard.getBoundingClientRect();
+            const cardWidth = cardRect.width;
+            const cardHeight = cardRect.height;
+            if (cardWidth === 0 || cardHeight === 0) return;
+            const gridWidth = grid.clientWidth;
+            const columns = Math.max(1, Math.floor((gridWidth + gap) / (Math.max(cardWidth, MIN_CARD_WIDTH) + gap)));
+            const availableH = grid.getBoundingClientRect().height || (container.clientHeight - 120);
+            const MIN_ROWS = 2;
+            let rows = Math.max(MIN_ROWS, Math.floor((availableH + gap) / (cardHeight + gap)));
+            let computedPageSize = Math.max(1, Math.min(currentFiltered.length, columns * rows));
+            if (computedPageSize !== pageSize) {
+                pageSize = computedPageSize;
+                currentPage = 1;
+                renderVEs();
+                return;
+            }
+            requestAnimationFrame(adjustForOverflow);
+        }
+       // Re-check after rendering all cards; handle mixed heights
+       function adjustForOverflow() {
+           const grid = document.getElementById('veCardsGrid');
+           if (!grid) return;
+           updateCardWidth(); // keep width synced if container changed
+           const cards = Array.from(grid.querySelectorAll('.fluent-card'));
+           if (!cards.length) return;
+           const gridStyles = getComputedStyle(grid);
+           const gap = parseFloat(gridStyles.gap) || 0;
+           const maxCardHeight = Math.max(...cards.map(c => c.getBoundingClientRect().height));
+           if (maxCardHeight === 0) return;
+           const gridWidth = grid.clientWidth;
+           const sampleWidth = cards[0].getBoundingClientRect().width;
+           const columns = Math.max(1, Math.floor((gridWidth + gap) / (Math.max(sampleWidth, MIN_CARD_WIDTH) + gap)));
+           const availableH = grid.clientHeight;
+           const MIN_ROWS = 2;
+           let rows = Math.max(MIN_ROWS, Math.floor((availableH + gap) / (maxCardHeight + gap)));
+           if (rows < MIN_ROWS) rows = MIN_ROWS;
+           let needed = columns * rows;
+           if (needed < 1) needed = 1;
+           // If overflow occurs, shrink by whole rows until fits or single row remains
+           let safety = 10;
+           while (safety-- > 0 && grid.scrollHeight > grid.clientHeight && needed > columns) {
+               needed -= columns;
+               if (needed < columns) needed = columns;
+               pageSize = needed;
+               currentPage = 1;
+               renderVEs();
+               return; // re-render will re-run adjustment
+           }
+           // If we can fit more (extra vertical slack) and still have remaining data, try to grow rows by one
+           if (grid.scrollHeight + maxCardHeight + gap <= grid.clientHeight && (currentFiltered.length > pageSize)) {
+               const expanded = Math.min(currentFiltered.length, pageSize + columns);
+               if (expanded !== pageSize) {
+                   pageSize = expanded;
+                   currentPage = 1;
+                   renderVEs();
+               }
+           }
+       }
+        const debounce = (fn, d=120) => {
+            let t; return (...a) => { clearTimeout(t); t=setTimeout(()=>fn(...a), d); };
+        };
+        window.addEventListener('resize', debounce(() => {
+            renderVEs._sized = false;
+            updateCardWidth();
+            recalculatePageSize();
+        },150));
 
         function normalMetrics(v) {
-            return `<div class="flex items-center justify-between mb-6">
-                        <div class="text-center">
-                            <div class="text-xl font-semibold text-fg-strong">${v.deployments}</div>
-                            <div class="fluent-text-caption1">Deployment</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-xl font-semibold text-accent">${v.griffinServices}</div>
-                            <div class="fluent-text-caption1">Griffin Services</div>
+            const svcCount = (typeof v.griffinServices === 'number' ? v.griffinServices : (veServicesMap[v.name]||[]).length) || 0;
+            return `<div class="metrics-wrap">
+                        <div class="metrics-inner mb-6">
+                            <h4 class="text-sm font-medium text-muted mb-2">Service Number</h4>
+                            <div class="flex justify-center gap-6">
+                                <div class="text-center">
+                                    <div class="text-xl font-semibold text-fg-strong">${v.deployments}</div>
+                                    <div class="fluent-text-caption1">In PFGold</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-xl font-semibold text-accent">${svcCount}</div>
+                                    <div class="fluent-text-caption1">In Dragon</div>
+                                </div>
+                            </div>
                         </div>
                     </div>`;
         }
 
         function specialMetrics(v) {
+            const svcCount = (typeof v.griffinServices === 'number' ? v.griffinServices : (veServicesMap[v.name]||[]).length) || 0;
             return `<div class="mb-6 text-center">
                         <h4 class="text-sm font-medium text-muted mb-2">Service Number</h4>
                         <div class="flex justify-center gap-6">
@@ -189,12 +364,54 @@
                                 <div class="fluent-text-caption1">Deployment</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-xl font-semibold text-accent">${v.griffinServices}</div>
-                                <div class="fluent-text-caption1">Griffin Services</div>
+                                <div class="text-xl font-semibold text-accent">${svcCount}</div>
+                                <div class="fluent-text-caption1">Service Number</div>
                             </div>
                         </div>
                     </div>`;
         }
+
+        function renderPagination(total, totalPages, startIdx, endIdx) {
+           const summary = document.getElementById('vePaginationSummary');
+           if (summary) {
+               summary.textContent = total === 0
+                 ? 'No virtual environments'
+                 : `Showing ${startIdx + 1}-${endIdx} of ${total} (Page ${currentPage}/${totalPages})`;
+           }
+           const nav = document.getElementById('pagination');
+           if (!nav) return;
+           nav.innerHTML = '';
+           // Prev
+           nav.appendChild(paginationButton('Prev', currentPage === 1, () => setPage(currentPage - 1), 'Previous page'));
+           // Page numbers (compact: show up to 5)
+           const maxShow = 5;
+           let startPage = Math.max(1, currentPage - Math.floor(maxShow / 2));
+           let endPage = startPage + maxShow - 1;
+           if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - maxShow + 1); }
+           for (let p = startPage; p <= endPage; p++) {
+               const btn = paginationButton(p.toString(), false, () => setPage(p), `Page ${p}`);
+               if (p === currentPage) btn.classList.add('active');
+               nav.appendChild(btn);
+           }
+           // Next
+           nav.appendChild(paginationButton('Next', currentPage === totalPages, () => setPage(currentPage + 1), 'Next page'));
+       }
+
+       function paginationButton(label, disabled, onClick, ariaLabel) {
+           const b = document.createElement('button');
+           b.type = 'button';
+           b.className = 'fluent-button fluent-button-subtle px-3 py-2 text-sm';
+           b.textContent = label;
+           b.disabled = disabled;
+           if (ariaLabel) b.setAttribute('aria-label', ariaLabel);
+           b.onclick = () => { if (!disabled) onClick(); };
+           return b;
+       }
+
+       function setPage(p) {
+           currentPage = p;
+           renderVEs();
+       }
 
         function performSearch() {
             const term = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -212,7 +429,9 @@
                     return nameMatch || svcMatch;
                 });
             }
-            renderVEs(filtered);
+            currentFiltered = filtered;
+            currentPage = 1; // reset to first page on new filter
+            renderVEs(currentFiltered);
             updateSearchSummary(term, filtered, veServicesMap);
         }
 
@@ -237,24 +456,39 @@
             document.getElementById('searchInput').value = '';
             document.querySelectorAll('.fluent-select')[0].selectedIndex = 0;
             document.querySelectorAll('.fluent-select')[1].selectedIndex = 0;
-            performSearch();
+            currentFiltered = [...veDataset];
+            currentPage = 1;
+            renderVEs(currentFiltered);
+            updateSearchSummary('', currentFiltered, veServicesMap);
         }
 
         function applyFilters() { performSearch(); }
 
-        function toggleStar(btn) { btn.classList.toggle('active'); }
+        function toggleStar(btn, name) {
+            const active = btn.classList.toggle('active');
+            if (active) {
+                if (window.addToSidebarFavorites) window.addToSidebarFavorites({ name, query: name, type:'ve' });
+            } else {
+                if (window.removeFromSidebarFavorites) window.removeFromSidebarFavorites(name,'ve');
+            }
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderVEs();
+            currentFiltered = [...veDataset];
+            updateCardWidth();
+            renderVEs(currentFiltered);
             if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+            // One more delayed recalculation for fonts async / icon replacement shifts
+            setTimeout(() => { updateCardWidth(); recalculatePageSize(); }, 300);
+            setTimeout(adjustForOverflow, 450);
         });
     </script>
     <script>
         window.SIDEBAR_ACTIVE = 've';
         window.SIDEBAR_FAVORITES = [
-            { name:'SovBase', query:'SovBase' },
-            { name:'ModelBSov', query:'ModelBSov' },
-            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
+            { name:'SovBase', query:'SovBase', type:'ve' },
+            { name:'ModelBSov', query:'ModelBSov', type:'ve' },
+            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV', type:'ve' }
         ];
     </script>
     <script src="./shared/sidebar.js"></script>

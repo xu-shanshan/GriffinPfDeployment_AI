@@ -215,7 +215,7 @@
     <script>
         // Provide sidebar context & favorites before loading sidebar.js
         window.SIDEBAR_ACTIVE = 'dashboard';
-        window.SIDEBAR_FAVORITES = (mockData.favoriteVEs || []).map(v => ({ name: v.name, query: v.query }));
+        window.SIDEBAR_FAVORITES = (mockData.favoriteVEs || []).map(v => ({ name: v.name, query: v.query, type:'ve' }));
     </script>
     <script src="./shared/sidebar.js"></script>
 </body>

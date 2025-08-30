@@ -1,10 +1,45 @@
 (function () {
     const ACTIVE_KEY = (window.SIDEBAR_ACTIVE || '').toLowerCase();
-    const FAVORITES = Array.isArray(window.SIDEBAR_FAVORITES) ? window.SIDEBAR_FAVORITES : [
-        { name: 'SovBase', query: 'SovBase' },
-        { name: 'ModelBSov', query: 'ModelBSov' },
-        { name: 'OwaMailB2-SOV', query: 'OwaMailB2-SOV' }
-    ];
+    const LS_KEY = 'griffin.sidebar.favorites.v2'; // new key (v2) for type support; old migrated
+
+    function loadStoredFavorites() {
+        try {
+            // prefer v2
+            let raw = localStorage.getItem(LS_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (Array.isArray(parsed)) return normalizeFavorites(parsed);
+            }
+            // migrate legacy (no type)
+            raw = localStorage.getItem('griffin.sidebar.favorites');
+            if (raw) {
+                const legacy = JSON.parse(raw);
+                if (Array.isArray(legacy)) return normalizeFavorites(legacy);
+            }
+        } catch (e) { /* ignore */ }
+        return null;
+    }
+    function normalizeFavorites(list) {
+        return list
+            .filter(x => x && x.name)
+            .map(x => ({
+                name: x.name,
+                query: x.query || x.name,
+                type: x.type === 'service' ? 'service' : 've'
+            }));
+    }
+
+    const initialStored = loadStoredFavorites();
+    const rawInit = initialStored ||
+        (Array.isArray(window.SIDEBAR_FAVORITES) ? window.SIDEBAR_FAVORITES : [
+            { name: 'SovBase', query: 'SovBase', type: 've' },
+            { name: 'ModelBSov', query: 'ModelBSov', type: 've' },
+            { name: 'OwaMailB2-SOV', query: 'OwaMailB2-SOV', type: 've' }
+        ]);
+    const FAVORITES = normalizeFavorites(rawInit);
+    function persistFavorites(list) {
+        try { localStorage.setItem(LS_KEY, JSON.stringify(normalizeFavorites(list))); } catch(e) { /* ignore */ }
+    }
 
     function navItem(href, icon, label, key) {
         const isActive = ACTIVE_KEY === key;
@@ -14,10 +49,28 @@
     }
 
     function favoriteLinks(list) {
-        return list.map(v => `
-            <a href="ve-detail.html?ve=${encodeURIComponent(v.query)}" class="sidebar-nav-item">
-                <i data-feather="star" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}
-            </a>`).join('');
+        if (!list.length) return '<div class="px-4 fluent-text-caption1" style="opacity:.6;">No favorites</div>';
+        const grouped = {
+            ve: list.filter(f => f.type === 've'),
+            service: list.filter(f => f.type === 'service')
+        };
+        function section(title, items, kind) {
+            if (!items.length) return '';
+            const links = items.map(v => {
+                const href = v.type === 'service'
+                    ? `service-detail.html?service=${encodeURIComponent(v.query)}`
+                    : `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
+                const icon = v.type === 'service' ? 'package' : 'server';
+                return `<a href="${href}" class="sidebar-nav-item" data-fav-type="${v.type}">
+                    <i data-feather="${icon}" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}
+                </a>`;
+            }).join('');
+            return `<div class="sidebar-favs-group" aria-label="${title}">
+                <div class="sidebar-section-title" style="padding-top:4px;">${title}</div>
+                ${links}
+            </div>`;
+        }
+        return section('Virtual Environments', grouped.ve, 've') + section('Services', grouped.service, 'service');
     }
 
     function buildSidebar() {
@@ -81,8 +134,41 @@
     window.refreshSidebarFavorites = function (newList) {
         const listEl = document.getElementById('sidebarFavoritesList');
         if (!listEl || !Array.isArray(newList)) return;
-        listEl.innerHTML = favoriteLinks(newList);
+        const norm = normalizeFavorites(newList);
+        listEl.innerHTML = favoriteLinks(norm);
         refreshFeatherIcons();
+        persistFavorites(norm);
+    };
+
+    // Public helper APIs for pages
+    window.getSidebarFavorites = () => {
+        const listEl = document.getElementById('sidebarFavoritesList');
+        if (!listEl) return FAVORITES.slice();
+        return Array.from(listEl.querySelectorAll('a.sidebar-nav-item')).map(a => {
+            const name = a.textContent.trim();
+            const type = a.getAttribute('data-fav-type') === 'service' ? 'service' : 've';
+            return { name, query: name, type };
+        });
+    };
+
+    window.setSidebarFavorites = (list) => {
+        if (!Array.isArray(list)) return;
+        window.refreshSidebarFavorites(list);
+    };
+    window.addToSidebarFavorites = (item) => {
+        if (!item || !item.name) return;
+        const type = item.type === 'service' ? 'service' : 've';
+        const list = window.getSidebarFavorites();
+        if (!list.some(f => f.name === item.name && f.type === type)) {
+            list.push({ name: item.name, query: item.query || item.name, type });
+            window.refreshSidebarFavorites(list);
+        }
+    };
+    window.removeFromSidebarFavorites = (name, typeHint) => {
+        if (!name) return;
+        const list = window.getSidebarFavorites()
+            .filter(f => !(f.name === name && (!typeHint || f.type === (typeHint === 'service' ? 'service' : 've'))));
+        window.refreshSidebarFavorites(list);
     };
 
     if (document.readyState === 'loading') {

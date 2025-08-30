@@ -628,15 +628,18 @@
         function toggleFavorite() {
             const btn = document.getElementById('favoriteBtn');
             const icon = btn.querySelector('i');
-            
-            if (icon.classList.contains('fill-current')) {
-                icon.classList.remove('fill-current');
-                btn.title = 'Add to favorites';
-                showNotification('Favorites', 'Removed from favorites');
-            } else {
+            const veName = 'SovBase';
+            const becomingFavorite = !icon.classList.contains('fill-current');
+            if (becomingFavorite) {
                 icon.classList.add('fill-current');
                 btn.title = 'Remove from favorites';
                 showNotification('Favorites', 'Added to favorites');
+                if (window.addToSidebarFavorites) window.addToSidebarFavorites({ name: veName, query: veName, type:'ve' });
+            } else {
+                icon.classList.remove('fill-current');
+                btn.title = 'Add to favorites';
+                showNotification('Favorites', 'Removed from favorites');
+                if (window.removeFromSidebarFavorites) window.removeFromSidebarFavorites(veName,'ve');
             }
         }
 
@@ -711,9 +714,9 @@
     <script>
         window.SIDEBAR_ACTIVE = 've';
         window.SIDEBAR_FAVORITES = [
-            { name:'SovBase', query:'SovBase' },
-            { name:'ModelBSov', query:'ModelBSov' },
-            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
+            { name:'SovBase', query:'SovBase', type:'ve' },
+            { name:'ModelBSov', query:'ModelBSov', type:'ve' },
+            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV', type:'ve' }
         ];
     </script>
     <script src="./shared/sidebar.js"></script>

@@ -169,51 +169,57 @@
 
 /* Grids */
 .stats-grid {
-    display: grid;
+    /* was: repeat(auto-fit, minmax(240px, 1fr)); */
+    display:grid;
     gap: var(--gap-md);
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(clamp(180px, 22vw, 260px), 1fr));
 }
 .favorites-grid-wrap {
-    display: grid;
+    /* was: repeat(auto-fit, minmax(420px, 1fr)); */
+    display:grid;
     gap: var(--gap-lg);
-    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-    align-items: start;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(300px, 45vw, 520px), 1fr));
+    align-items:start;
 }
-
-/* Services Management specific (migrated from inline in services-management.html) */
 .services-grid {
-    display: grid;
+    /* was: repeat(auto-fill, minmax(260px, 1fr)); responsive queries below updated */
+    display:grid;
     gap: var(--gap-md);
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(var(--ve-card-min, 260px), 1fr));
+    box-sizing:border-box;
+    max-width:100%;
 }
-
-.service-card {
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: transform .18s ease, box-shadow .18s ease;
+@media (max-width: 900px) {
+  .favorites-grid-wrap {
+     grid-template-columns: repeat(auto-fill, minmax(clamp(260px, 48vw, 440px), 1fr));
+  }
+  .services-grid {
+     grid-template-columns: repeat(auto-fill, minmax(clamp(180px, 42vw, 280px), 1fr));
+  }
 }
-.service-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(0,0,0,.08);
+@media (max-width: 600px) {
+  .stats-grid {
+     grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 48vw, 240px), 1fr));
+  }
+  .favorites-grid-wrap {
+     grid-template-columns: 1fr;
+  }
+  .services-grid {
+     grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 80vw, 260px), 1fr));
+  }
 }
-
-/* VE badges inside service cards */
-.ve-badge {
-    padding: 2px 6px;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: 500;
-    line-height: 14px;
-    margin: 1px;
-    display: inline-block;
+/* Generic auto grid utility if needed elsewhere */
+.auto-grid {
+    display:grid;
+    gap: var(--gap-md);
+    grid-template-columns: repeat(auto-fill, minmax(clamp(var(--auto-min,160px), 25vw, var(--auto-max,300px)), 1fr));
 }
-.ve-badge-b-type {
-    background: #e3f2fd;
-    color: var(--colorBrandForeground1);
-}
-.ve-badge-b2-type {
-    background: #dff6dd;
-    color: #107c10;
+/* Ensure cards don’t overflow */
+.fluent-card,
+.service-card,
+.favorite-item,
+.stat-card {
+    max-width:100%;
 }
 
 /* Error notification */
@@ -454,6 +460,8 @@
 
 /* Muted utility (applies everywhere) */
 .icon-muted svg {
+    stroke: var(--colorNeutralForeground3);
+}
     stroke: var(--colorNeutralForeground3);
 }
 }

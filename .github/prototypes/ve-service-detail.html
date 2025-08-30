@@ -566,9 +566,14 @@
                     const btn = document.getElementById('favoriteBtn');
                     const isActive = btn.classList.toggle('text-yellow-500');
                     btn.classList.toggle('text-gray-400', !isActive);
-                    
-                    showNotification('Favorite Toggled', `OwaMailB2 has been ${isActive ? 'added to' : 'removed from'} favorites`);
-                }
+                    const serviceName = 'OwaMailB2';
+                    if (isActive) {
+                        if (window.addToSidebarFavorites) window.addToSidebarFavorites({ name: serviceName, query: serviceName, type:'service' });
+                    } else {
+                        if (window.removeFromSidebarFavorites) window.removeFromSidebarFavorites(serviceName,'service');
+                     }
+                     showNotification('Favorite Toggled', `${serviceName} has been ${isActive ? 'added to' : 'removed from'} favorites`);
+                 }
 
                 function showConfigEditor() {
                     document.getElementById('configEditorModal').classList.remove('hidden');
@@ -766,9 +771,9 @@
             <script>>
                 window.SIDEBAR_ACTIVE = 've'; /* or 'services' if preferred */
                 window.SIDEBAR_FAVORITES = [; /* or 'services' if preferred */
-                    { name:'SovBase', query:'SovBase' },
-                    { name:'ModelBSov', query:'ModelBSov' },
-                    { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
+                    { name:'SovBase', query:'SovBase', type:'ve' },
+                    { name:'ModelBSov', query:'ModelBSov', type:'ve' },
+                    { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV', type:'ve' }
                 ];  { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
             </script>
             <script src="./shared/sidebar.js"></script>

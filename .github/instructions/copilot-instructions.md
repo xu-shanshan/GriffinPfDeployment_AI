@@ -1,23 +1,33 @@
 # Griffin PilotFish Management System - Copilot Instructions
 
-GriffinPfDeployment_AI is a full-stack **Deployment Management System** with React frontend and ASP.NET Core 8 backend. It provides enterprise-grade deployment management with **role-based access control**, **Virtual Environments/service management**, and **CI/CD actions**.
+**GriffinPfDeployment_AI** is a full-stack **Deployment Management System** with a **React frontend** and an **ASP.NET Core 8 backend**.  
+It delivers enterprise-grade deployment management with:
+
+- **Role-based access control**  
+- **Virtual Environment (VE) and service management**  
+- **CI/CD automation**
 
 ## Background 
-- **Service Deployment Types**:
-  - **Model B**: Services deployed on physical machines (PE). The physical environment is called **APE** (AutoPilot Physical Environment).  
-  - **Model B2**: Services deployed on a container within a physical machine. The container environment is called **ACE** (AutoPilot Container Environment).  
+### Service Deployment Models
+- **Model B**  
+  - Services deployed directly on **physical machines (PE)**  
+  - Physical environment = **APE** (AutoPilot Physical Environment)  
 
-- **Deployment Rules**:  
-  - **Model B Service** → must be deployed by a B type VE  
-  - **Model B2 Service** → can be deployed by a B type VE or a B2 type VE  
+- **Model B2**  
+  - Services deployed inside a **container** running on a physical machine  
+  - Container environment = **ACE** (AutoPilot Container Environment)  
+
+### Deployment Rules
+- **Model B service** → must be deployed by a **B type VE**  
+- **Model B2 service** → can be deployed by a **B type VE** or a **B2 type VE**  
 
 ### VE / Environment Hierarchy & Service Onboarding
 
-| Service Type   | VE Type       | Inherited By Environment | Notes                               |
-|----------------|---------------|--------------------------|-------------------------------------|
-| Model B        | B type VE     | APE (Physical Env)       | Can only be onboarded to B type VE  |
-| Model B2       | B type VE     | APE (Physical Env)       | Can be onboarded to B type VE       |
-| Model B2       | B2 type VE    | CPE (Container Env)      | Can be onboarded to B2 type VE      |
+| Service Type   | VE Type       | Inherited Environment | Notes                               |
+|----------------|---------------|-----------------------|-------------------------------------|
+| Model B        | B type VE     | APE (Physical Env)    | Onboard only to B type VE          |
+| Model B2       | B type VE     | APE (Physical Env)    | Can onboard to B type VE       |
+| Model B2       | B2 type VE    | CPE (Container Env)   | Can onboard to B2 type VE      |
 
 #### Explanation
 
@@ -48,15 +58,15 @@ GriffinPfDeployment_AI is a full-stack **Deployment Management System** with Rea
 
 ### Mock Data 
 
-Mock data is used to simulate the actual data that will be used in the application. It helps in testing and development without relying on real data.
-mockData refer to file `.github/instructions/ReleaseMapping.json`.
+Mock data simulates actual application data and lives in:  
+`.github/instructions/ReleaseMapping.json`
 
 #### Explanation
 
 1. **ExpectedVEs**
-  Essentially a grouping of VEs, mainly used to define the **deployment scope** and for organizational management.
-  For the frontend, the core requirement is to display the list of VEs the user can operate on, along with their corresponding Services, rather than being forced to show them strictly by group.
-  In other words, the frontend only needs to know which VEs are available for selection and what Services exist under each VE.
+ - Groups of VEs, defining **deployment scope** & organizational structure  
+ - Frontend displays: available VEs + their Services  
+
 
 2. **ExpectedServices**
   This represents the mapping from **VE → Services**.

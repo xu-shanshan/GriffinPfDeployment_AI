@@ -2,127 +2,127 @@
 applyTo: '**'
 ---
 
-# Project Context
-projectName: GriffinPfDeployment_AI
-description: >
-  GriffinPfDeployment_AI is a full-stack Deployment Management System.
-  It manages Virtual Environments (VE) and services, providing enterprise-grade deployment
-  management with role-based access control, CI/CD actions, and configuration traceability.
+# GriffinPfDeployment_AI – Instruction Summary
 
-# Frontend Stack
-frontend:
-  framework: React
-  version: 19
-  language: TypeScript
-  uiLibrary: FluentUI v9
-  buildTool: Vite
-  routing: React Router v6
-  stateManagement: Zustand
-  serverStateManagement: React Query
-  codingGuidelines:
-    - Use functional components with React.FC
-    - Strict TypeScript, no 'any' types
-    - Use FluentUI makeStyles for styling
-    - React Hook Form + Zod for validation
+projectName: GriffinPfDeployment_AI  
+purpose: Deployment Management System for Virtual Environments (VEs) & Services with RBAC, CI/CD integration, traceability.
 
-# Backend Stack
-backend:
-  framework: ASP.NET Core
-  version: 8
-  database: SQL Server (EF Core)
-  caching: Redis
-  authentication: JWT
-  authorization: Role-based
-  asyncTasks: Hangfire / BackgroundService
-  azureIntegration:
-    - Azure DevOps REST API / SDK
-    - Reading INI files
-    - Fetching Pipeline artifacts
-    - OAuth2 / PAT authentication
-  codingGuidelines:
-    - Follow Clean Architecture
-    - Use Repository Pattern with generic base classes
-    - Async/await for all I/O operations
-    - Dependency injection throughout
+## Core Domain Concepts
+- VE (Virtual Environment): Logical grouping of Services + shared config.
+  - Types:
+    - B type VE → hosts Model B and Model B2 services (deploys to APE)
+    - B2 type VE → hosts Model B2 services only (deploys to CPE)
+- Environments:
+  - APE (Physical)
+  - CPE (Container)
+- Service Types:
+  - Model B → must be in B type VE → deploys to APE
+  - Model B2 → can be in B type VE (APE) OR B2 type VE (CPE)
+- Deployment Scope:
+  - VE-level (all onboarded services)
+  - Service-level (subset / single)
 
-# VE / Service Concepts
-veConcepts:
-  VE:
-    description: Logical abstraction grouping services and configurations
-    types:
-      B_type:
-        forServices: Model B
-        examples: SovBase, ModelBSov
-      B2_type:
-        forServices: Model B2
-        examples: OwaMailB2-SOV, TodoB2-SOV
-  serviceDeployment:
-    ModelB:
-      ve: B type VE
-      environment: APE
-    ModelB2:
-      ve: B type VE or B2 type VE
-      environment: APE (if B type VE) or CPE (if B2 type VE)
-  deploymentScope:
-    - VE level: deploy all onboarded services
-    - Service level: deploy individual services
-  pipelines:
-    - multiple pipelines per service
-    - each pipeline provides latest Drop URL
+## Mock Data (ReleaseMapping.json)
+Use as temporary source of truth until backend endpoints exist.
+- ExpectedVEs.* => available VE names (grouping only; UI not forced to show groups)
+- ExpectedServices => VE → [Services]
+- Services => per-Service build metadata (pipelines, build roots, patterns)
+Frontend consumption:
+1. List VEs (flatten groups)
+2. For selected VE, list services
+3. For a service, show build info, Drop URL pattern, pipelines
 
-# Permission Model
-permissions:
-  roles:
-    Admin:
-      description: Full access; manage VE/services, assign users, trigger deployments, modify configurations
-    Operator:
-      description: Can trigger deployments only for VE/services defined in AllowedToSignClaims; can view build info
-    Viewer:
-      description: Read-only access to VE, services, build history, Drop URLs
-  levels:
-    Read: Access VE/service info, build history, Drop URLs
-    Deploy:
-      description: Only users/groups in AllowedToSignClaims can trigger deployments
-      scopes: VE level, Service level
-      exampleIni:
-        path: SigningConfig.ini
-        content: |
-          [AllowedToSignClaims]
-          Groups=AME\M365-SovFleet
-          Users=AME\xushanshan,AME\chenjzha,AME\peihuazhang
-    Admin: Modify configurations, assign users, manage VE/Service settings
+## Permissions
+Roles:
+- Admin: Full (read, deploy, configure, assign)
+- Operator: Read + deploy (if in AllowedToSignClaims)
+- Viewer: Read-only
+Deploy Authorization:
+- Parse INI [AllowedToSignClaims] (Groups, Users)
+- Only listed identities can trigger deployments (VE or Service level)
+Auditing:
+- Log: user, timestamp, scope (VE / Services), build artifact references
 
-# Key Features
-features:
-  Visibility:
-    - View all VEs and services
-    - Check Build info and Drop URLs
-    - Monitor deployment status and history
-  Control:
-    - Trigger deployments at VE or Service level
-    - Respect AllowedToSignClaims
-    - Support single/batch deployment
-  Traceability:
-    - Track deployment actions (user, timestamp, affected VE/services)
-    - Maintain audit logs for compliance
-  ConfigurationManagement:
-    - Read INI files from Azure DevOps
-    - Cache frequently accessed configs in Redis
-    - Support VE-level and Service-level settings
-  IntegrationAutomation:
-    - Azure DevOps REST API / SDK for pipeline artifacts and build metadata
-    - Automate deployment workflows with permission validation
-    - Support async execution (Hangfire / BackgroundService)
+## Required Backend Capabilities
+- ASP.NET Core 8 Web API
+- EF Core (VE, Service, BuildInfo, DeploymentRecord)
+- Azure DevOps REST/SDK:
+  - Read INI
+  - Fetch pipeline artifacts
+- Redis caching (frequently accessed configs + VE/Service maps)
+- Async processing (Hangfire / BackgroundService) for deployments & artifact fetch
+- JWT + role-based authorization
+- Repository + Clean Architecture patterns
+- All I/O async
 
-# Repository Structure
-repository:
-  frontend:
-    path: /src/frontend
-    folders:
-      components: Reusable UI components (auth, layout, forms, cards)
-      pages: Page components with routing
-      hooks: Custom React hooks
-      services: API service layer
+## Required Frontend Patterns
+- React 19 + TypeScript (strict; no any)
+- FluentUI v9 styling (makeStyles)
+- Routing: React Router v6
+- State: Zustand (app), React Query (server state)
+- Forms: React Hook Form + Zod
+- Show:
+  - VE list
+  - Services per VE
+  - Build info (Drop URL resolved from pattern)
+  - Deployment history (when API available)
+- Trigger deployment only if user has deploy permission
+
+## Data Flow (Interim)
+Frontend (ReleaseMapping.json) → later replaced by API:
+1. Load VE + Service map
+2. Fetch service build details (Services section)
+3. Compose Drop URL by substituting <BuildVersion> when needed
+
+## Traceability
+Store deployment events with:
+- User principal
+- Scope (VE / service list)
+- Pipelines / build IDs
+- Artifact path(s)
+- Status + timestamps
+
+## Coding Guidelines (Condensed)
+Backend:
+- Avoid synchronous blocking
+- Keep controllers thin; delegate to Services
+- Repositories: generic base + specific
+- DTOs for external responses (no EF entities leak)
+Frontend:
+- Strong typing for domain (VE, Service, BuildInfo, DeploymentRecord)
+- Use query keys: ['ve', veName], ['service', veName, serviceName]
+- Derive computed flags (canDeploy) from permission state + AllowedToSignClaims
+
+## Non-Functional
+- Observability hooks (structured logging)
+- Cache invalidation strategy: TTL for static config; bust on manual refresh
+- Security: validate user claims each deploy request
+
+## Do / Don't (Assistant Guidance)
+Do:
+- Enforce async patterns
+- Centralize permission checks
+- Keep environment distinctions (APE vs CPE)
+- Respect grouping semantics but present flattened VE list to UI
+Don't:
+- Hardcode user identities
+- Duplicate permission logic in multiple layers
+- Mix deployment orchestration into controllers
+
+## Terminology Glossary
+- VE: Virtual Environment grouping services/config
+- APE: Physical deployment target
+- CPE: Container deployment target
+- Drop URL: Artifact location for deployment
+- AllowedToSignClaims: Users/groups authorized to deploy
+- RingPromotion: Build type with versioned promotion path
+
+## Future Replacement
+ReleaseMapping.json → replaced by:
+- GET /api/ve
+- GET /api/ve/{ve}/services
+- GET /api/services/{service}/build
+- POST /api/deploy (VE-level or service list)
       store: Zustand state management
       types: TypeScript definitions
   backend:

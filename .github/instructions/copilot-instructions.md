@@ -69,9 +69,9 @@ Mock data simulates actual application data and lives in:
 
 
 2. **ExpectedServices**
-  This represents the mapping from **VE → Services**.
+  This represents the mapping from **VE → [Services]**.
   - **Key**: VE name
-  - **Value**: Services under that VE
+  - **Value**: Service list under that VE
   The frontend must use this data to dynamically show the VE details.
 
 3. **Services**

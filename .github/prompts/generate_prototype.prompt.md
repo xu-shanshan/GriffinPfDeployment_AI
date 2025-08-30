@@ -42,14 +42,9 @@ Before moving to a full React implementation, these prototypes must serve as des
 3. **Reusable Components**    
 
 4. HTML prototype pages (after above):
-   - Each page imports:
-     - ./../shared/
-     - Required component scripts (layout + components + mock-data.js)
-   - No duplicated component code
-   - Use data-* attributes for interactive hooks
-   - Provide minimal inline script that wires page-specific interactions using shared helpers
-   - Each page openable in browser
-   - File names should match page functionality
+   - No duplicated code, imports required from ./../shared/
+   - Each page must be openable in a browser directly
+   - File names must reflect their function clearly
 
 ## Shared Foundation
 
@@ -63,10 +58,8 @@ for example:
       │   ├── fluent-ui.css
       │   ├── mock-data.js
       │   └── Layout/
-      │   └── commonComponent/
+      │   └── component/
       └── pages/
          ├── dashboard.html
          ├── project-list.html
-         ├── project-detail.html
-         ├── reports.html
-         └── settings.html
+         └── project-detail.html

@@ -16,24 +16,48 @@ Goal:
 Ensure that the interaction model, layout, and visual design are consistent, intuitive, and user-friendly before moving to full React implementation.
 
 
-
 ## Task Requirements：
 
-1. Interaction summary:
-   - For each page, provide a structured interaction summary including:
-    - Functional modules: List modules (form, table, button, navigation, chart, etc.) and their purpose.
-    - User action flows: Step-by-step interactions (click, input, filter, pagination, modal) and expected system responses.
-    - Data presentation: How data is displayed (table, card, chart, modal).
-    - Page navigation/linkage: How pages connect or respond to actions.
+IMPORTANT:
+1. First generate the shared folder structure and all shared assets (CSS, JS, layout + common components, mock data).
+2. Only after shared assets exist, generate page HTML files that import/reuse them (no duplicated inline CSS/JS except minimal page-specific script).
+3. Pages must not redefine components already placed in shared/.
 
-2. HTML prototype pages:
-   - Each page is an independent HTML file, openable in browser
-   - Use TailwindCSS or simple CSS
-   - Include interactive elements (buttons, modals, filters, pagination) with sample content
+Generation Order (must follow strictly):
+1. Shared Foundation (folder structure + shared assets)
+2. Interaction Summaries (for all pages, can reference planned shared components)
+3. Page Implementations (each HTML file importing shared assets)
+
+1. Shared Foundation (produce first):
+   - Create timestamped root folder: .github/prototype_YYYYMMDDHHMMSS/
+   - Inside /shared:
+     - common.css (core layout, typography, utility classes)
+     - common.js (namespace + helpers: pub/sub, DOM qs helpers)
+     - mock-data.js (sample VE, services, build info, deployment history arrays/objects)
+     - Layout/ (header.js, footer.js, sidebar.js exporting render functions)
+     - commonComponent/ (card.js, modal.js, tooltip.js — pure JS factories)
+   - Ensure components expose init()/render() patterns and basic BEM or utility classes aligning with common.css
+
+2. Interaction summary (after shared skeleton defined):
+   - For each page list:
+     - Functional modules
+     - User action flows
+     - Data presentation patterns
+     - Navigation / cross-link behavior
+   - Reference shared component names (e.g., Modal.open('deployModal'))
+
+3. HTML prototype pages (after above):
+   - Each page imports:
+     - ./../shared/common.css
+     - ./../shared/common.js
+     - Required component scripts (layout + components + mock-data.js)
+   - No duplicated component code
+   - Use data-* attributes for interactive hooks
+   - Provide minimal inline script that wires page-specific interactions using shared helpers
+   - Each page openable in browser
    - File names should match page functionality
 
-3. Output structure:
-Organize all output into a timestamped folder, for example:
+Output structure (unchanged, but order of generation emphasized):
    .github/prototype_YYYYMMDDHHMMSS/
       ├── shared/
       │   ├── common.css

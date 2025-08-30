@@ -12,27 +12,8 @@
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
     <div id="app-sidebar"></div>
-
-    <!-- Main Content -->
     <div class="main-content" id="mainContent" role="main" aria-label="Services Management">
-        <!-- Header refactored to top-bar like dashboard -->
-        <header class="top-bar" role="banner">
-            <div class="web-container">
-                <div class="flex justify-between items-center h-app-header">
-                    <div>
-                        <h1 class="text-lg font-semibold page-title">Services Management</h1>
-                        <p class="fluent-text-caption1">Manage and monitor all services across virtual environments</p>
-                    </div>
-                    <div class="user-profile">
-                        <div class="user-avatar">
-                            <i data-feather="user" class="fluent-icon user-icon"></i>
-                        </div>
-                        <span class="text-sm user-name">John Doe</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
+        <div id="app-header"></div>
         <div class="web-container content-area">
             <!-- Search and Filters -->
             <div class="fluent-card section-spacing">
@@ -96,7 +77,10 @@
             </div>
         </div>
     </div>
-
+    <script src="./shared/header.js"></script>
+    <script>
+      initHeader({ title:'Services Management', subtitle:'Manage and monitor all services across virtual environments', user:{ name:'John Doe' } });
+    </script>
     <script>
         // Mock services data (icon retained but not displayed now)
         const serviceMockData = [
@@ -136,10 +120,20 @@
         ];
 
         const favoriteVEs = [
-            { name:'SovBase', query:'SovBase' },
-            { name:'ModelBSov', query:'ModelBSov' },
-            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
+            { name:'SovBase' },
+            { name:'ModelBSov' },
+            { name:'OwaMailB2-SOV' }
         ];
+
+        // Helper to show an empty-state placeholder if nothing rendered
+        function renderEmptyServicesMessage() {
+            const wrap = document.getElementById('servicesGrid');
+            if (!wrap) return;
+            wrap.innerHTML = `<div class="fluent-card p-8 text-center" role="status" aria-live="polite">
+                <p class="fluent-text-title2" style="margin:0 0 4px;">No Services</p>
+                <p class="fluent-text-body1">No services match current filters.</p>
+            </div>`;
+        }
 
         function serviceStatusBadge(s) {
             if (s.statusClass === 'success') return `<span class="fluent-badge fluent-badge-success">${s.status}</span>`;
@@ -150,12 +144,32 @@
 
         function renderServices(list = serviceMockData) {
             const wrap = document.getElementById('servicesGrid');
-            if (!wrap) return;
+            if (!wrap) {
+                console.error('[services-management] #servicesGrid not found when renderServices executed.');
+                return;
+            }
+            console.debug('[services-management] renderServices start. list length =', list?.length);
             wrap.innerHTML = '';
+            if (!list || list.length === 0) {
+                renderEmptyServicesMessage();
+                console.debug('[services-management] empty list -> placeholder shown');
+                return;
+            }
             list.forEach(s => {
                 const card = document.createElement('div');
                 card.className = 'service-card fluent-card';
-                card.onclick = () => window.location.href = `service-detail.html?service=${encodeURIComponent(s.name)}`;
+                card.setAttribute('role','button');
+                card.setAttribute('tabindex','0');
+                card.addEventListener('keydown', e => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        card.click();
+                    }
+                });
+                card.onclick = () => {
+                    console.debug('[services-management] navigating to service detail', s.name);
+                    window.location.href = `service-detail.html?service=${encodeURIComponent(s.name)}`;
+                };
                 card.innerHTML = `
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="fluent-text-title2 m-0">${s.name}</h3>
@@ -189,7 +203,24 @@
                 `;
                 wrap.appendChild(card);
             });
-            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+            console.debug('[services-management] appended cards =', wrap.children.length);
+            if (wrap.children.length === 0) {
+                // Fallback diagnostic box
+                wrap.innerHTML = `<div class="fluent-card p-6" style="border:1px solid #d13438;">
+                    <p class="fluent-text-title2" style="color:#d13438;margin:0 0 4px;">Render Failure</p>
+                    <p class="fluent-text-body1">Cards failed to mount. Check console for errors in earlier scripts.</p>
+                </div>`;
+            } else {
+                // Force icon replacement after paint
+                requestAnimationFrame(() => { if (window.refreshFeatherIcons) window.refreshFeatherIcons(); });
+            }
+            // Secondary fallback (some layout shifts may clear content)
+            setTimeout(() => {
+                if (wrap.children.length === 0) {
+                    console.warn('[services-management] Post-timeout check: still no children, re-rendering once.');
+                    renderServices(list);
+                }
+            }, 100);
         }
 
         function performSearch() {
@@ -219,12 +250,18 @@
             }
         }
 
-        // Initial render
-        renderServices();
+        // Defer initial render until DOM fully parsed to avoid race conditions
+        document.addEventListener('DOMContentLoaded', () => {
+            console.debug('[services-management] DOMContentLoaded -> initial render');
+            renderServices();
+            // Sanity verification
+            const wrap = document.getElementById('servicesGrid');
+            console.debug('[services-management] after initial render child count =', wrap ? wrap.children.length : 'none');
+        });
     </script>
     <script>
         window.SIDEBAR_ACTIVE = 'services';
-        window.SIDEBAR_FAVORITES = favoriteVEs.map(v => ({ ...v, type:'ve' }));
+        window.SIDEBAR_FAVORITES = favoriteVEs.map(v => ({ name: v.name, type:'ve' }));
     </script>
     <script src="./shared/sidebar.js"></script>
     <script>

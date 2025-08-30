@@ -144,3 +144,42 @@ Prototype → Page Mapping:
 - deployment-history.html -> /deployments -> DeploymentHistoryPage
 - login.html -> /login -> LoginPage
 
+Phase 0 Implementation Plan (Pending – requires permission to add new files):
+1. Files to create (root-relative):
+   - /src/frontend/package.json (scripts: dev, build, lint; deps: react@19, react-dom, @fluentui/react-components, @tanstack/react-query, react-router-dom, zustand, zod, react-hook-form)
+   - /src/frontend/tsconfig.json (strict true, jsx: react-jsx, moduleResolution: node16/bundler)
+   - /src/frontend/vite.config.ts (ESM, @vitejs/plugin-react)
+   - /src/frontend/index.html (#root mount)
+   - /src/frontend/src/main.tsx (mount providers)
+   - /src/frontend/src/App.tsx (ErrorBoundary + AppRouter)
+   - /src/frontend/src/AppRouter.tsx (BrowserRouter + routes: /login, /dashboard, /ves, /ve/:name, /ve/:ve/service/:service, /services, /service/:id, /deployments; temporary placeholders)
+   - /src/frontend/src/theme/fluentTheme.ts (FluentProvider custom theme)
+   - /src/frontend/src/components/layout/AppSidebar.tsx
+   - /src/frontend/src/components/layout/AppHeader.tsx
+   - /src/frontend/src/components/layout/AppLayout.tsx
+   - /src/frontend/src/store/layout.ts (Zustand slice placeholder: sidebarCollapsed)
+   - /src/frontend/src/store/auth.ts (auth role placeholder)
+   - /src/frontend/src/hooks/usePrefersReducedMotion.ts
+   - /src/frontend/src/hooks/queries/ (empty index placeholder for Phase 3)
+   - /src/frontend/src/types/navigation.ts (Nav item + favorite types)
+2. Initial Routes return simple <div> placeholders; no prototype logic yet (ensures dev server runs clean).
+3. After scaffold confirms (npm install --legacy-peer-deps && npm run dev) proceed to Phase 1 layout components (Sidebar/Header/Layout) then Phase 2 page transformations.
+4. No business logic; only structural + accessibility (roles: navigation, banner, main; aria-current for active link).
+
+Prototype Enumeration (for Phase 2 mapping confirmation):
+- dashboard.html -> DashboardPage (/dashboard)
+- ve-management.html -> VeManagementPage (/ves)
+- ve-detail.html -> VeDetailPage (/ve/:name)
+- ve-service-detail.html -> VeServiceDetailPage (/ve/:ve/service/:service)
+- services-management.html -> ServicesManagementPage (/services)
+- service-detail.html -> ServiceDetailPage (/service/:id)
+- deployment-history.html -> DeploymentHistoryPage (/deployments)
+- login.html -> LoginPage (/login)
+
+Awaiting Instruction:
+Please confirm: "Proceed with Phase 0 scaffold" so new files can be generated. Once confirmed, I will output each new file in separate code blocks per project conventions.
+
+Regeneration / Safety:
+- Will not modify existing prototype HTML files until scaffold + core layout components exist.
+- Subsequent responses will keep changes minimal and grouped per file as required.
+

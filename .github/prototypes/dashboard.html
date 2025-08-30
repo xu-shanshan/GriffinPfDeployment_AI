@@ -11,28 +11,11 @@
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
-    <div id="app-sidebar"></div><!-- injected sidebar -->
+    <div id="app-sidebar"></div>
 
     <!-- Main Content -->
     <main class="main-content" id="mainContent" role="main" aria-label="Dashboard main content">
-        <!-- Header -->
-        <header class="top-bar" role="banner">
-            <div class="web-container">
-                <div class="flex justify-between items-center h-app-header">
-                    <div class="header-title">
-                        <h1 class="text-lg font-semibold page-title">Dashboard</h1>
-                        <p class="fluent-text-caption1">Virtual Environment Management</p>
-                    </div>
-                    <div class="user-profile">
-                        <div class="user-avatar">
-                            <i data-feather="user" class="fluent-icon user-icon" aria-hidden="true"></i>
-                        </div>
-                        <span class="text-sm user-name">John Doe</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
+        <div id="app-header"></div>
         <div class="web-container content-area">
             <!-- Welcome Section -->
             <section class="welcome-section section-spacing">
@@ -91,9 +74,9 @@
             { icon:'upload-cloud', color:'orange', number:23, label:'Recent Deployments', badge:{text:'Last 24 hours', type:'info'}, footerIcon:'clock', navigate:'deployment-history.html' }
         ],
         favoriteVEs: [
-            { name:'SovBase', services:67, type:'B Type', typeClass:'neutral', updated:'2 hours ago', query:'SovBase' },
-            { name:'ModelBSov', services:65, type:'B Type', typeClass:'neutral', updated:'4 hours ago', query:'ModelBSov' },
-            { name:'OwaMailB2-SOV', services:1, type:'B2 Type', typeClass:'success', updated:'2 minutes ago', query:'OwaMailB2-SOV' }
+            { name:'SovBase', services:67, type:'B Type', typeClass:'neutral', updated:'2 hours ago' },
+            { name:'ModelBSov', services:65, type:'B Type', typeClass:'neutral', updated:'4 hours ago' },
+            { name:'OwaMailB2-SOV', services:1, type:'B2 Type', typeClass:'success', updated:'2 minutes ago' }
         ],
         favoriteServices: [
             { name:'OwaMailB2', instances:2, status:'Active', statusClass:'success', updated:'1 hour ago' },
@@ -137,7 +120,7 @@
         const wrap = document.getElementById('favoriteVEs');
         mockData.favoriteVEs.forEach(v => {
             const d = el('div','favorite-item');
-            d.dataset.navigate = `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
+            d.dataset.navigate = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
             d.innerHTML = `
                 <div class="favorite-item-content">
                     <div class="favorite-details">
@@ -215,8 +198,12 @@
     <script>
         // Provide sidebar context & favorites before loading sidebar.js
         window.SIDEBAR_ACTIVE = 'dashboard';
-        window.SIDEBAR_FAVORITES = (mockData.favoriteVEs || []).map(v => ({ name: v.name, query: v.query, type:'ve' }));
+        window.SIDEBAR_FAVORITES = (mockData.favoriteVEs || []).map(v => ({ name: v.name, type:'ve' }));
     </script>
     <script src="./shared/sidebar.js"></script>
+    <script src="./shared/header.js"></script>
+    <script>
+      initHeader({ title:'Dashboard', subtitle:'Virtual Environment Management', user:{ name:'John Doe' } });
+    </script>
 </body>
 </html>

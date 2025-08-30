@@ -17,26 +17,10 @@
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
-    <div id="app-sidebar"></div><!-- shared sidebar injection -->
+    <div id="app-sidebar"></div>
 
     <main class="main-content" id="mainContent" role="main" aria-label="Virtual Environment Detail">
-        <header class="top-bar" role="banner">
-            <div class="web-container">
-                <div class="flex justify-between items-center h-app-header">
-                    <div>
-                        <h1 class="text-lg font-semibold page-title">SovBase - Virtual Environment</h1>
-                        <p class="fluent-text-caption1">Virtual Environment Management</p>
-                    </div>
-                    <div class="user-profile">
-                        <div class="user-avatar">
-                            <i data-feather="user" class="fluent-icon user-icon" aria-hidden="true"></i>
-                        </div>
-                        <span class="text-sm user-name">John Doe</span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
+        <div id="app-header"></div>
         <div class="web-container content-area">
             <!-- Breadcrumb -->
             <nav class="flex items-center space-x-2 text-sm mb-6 text-muted">
@@ -194,7 +178,10 @@
             </div>
         </div>
     </main>
-
+    <script src="./shared/header.js"></script>
+    <script>
+      initHeader({ title:'SovBase - Virtual Environment', subtitle:'Virtual Environment Management', user:{ name:'John Doe' } });
+    </script>
     <script>
         // Global state management
         const appState = {
@@ -713,9 +700,9 @@
     <script>
         window.SIDEBAR_ACTIVE = 've';
         window.SIDEBAR_FAVORITES = [
-            { name:'SovBase', query:'SovBase', type:'ve' },
-            { name:'ModelBSov', query:'ModelBSov', type:'ve' },
-            { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV', type:'ve' }
+            { name:'SovBase', type:'ve' },
+            { name:'ModelBSov', type:'ve' },
+            { name:'OwaMailB2-SOV', type:'ve' }
         ];
     </script>
     <script src="./shared/sidebar.js"></script>

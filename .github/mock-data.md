@@ -1,6 +1,4 @@
-# GriffinPfDeployment_AI – Copilot Context
 
-## Data Structure
 ```json
 {
   "CloudBuildRoot": "https://cloudbuild.microsoft.com",
@@ -117,45 +115,3 @@
 - Services
 每个 Service 的具体信息（Build、Pipeline、Drop URL 等）。
 前端需要显示和操作这些信息（触发部署、选择 Build 等）。
-
-
-## Page Layout
-┌───────────────────────────────────────────────┐
-│ Header: GriffinPfDeployment_AI               │
-│-----------------------------------------------│
-│ Top Filter (Right Top)                        │
-│ ┌───────────────────────────┐               │
-│ │ VE Filter Input           │               │
-│ │ Service Filter Input      │               │
-│ └───────────────────────────┘               │
-│-----------------------------------------------│
-│ Left Panel: VE Tree                            │
-│ ┌─────────────┐                                │
-│ │ VE 1        │                                │
-│ │   ├─ Svc1   │                                │
-│ │   └─ Svc2   │                                │
-│ │ VE 2        │                                │
-│ │   ├─ Svc3   │                                │
-│ │   └─ Svc4   │                                │
-│ └─────────────┘                                │
-│-----------------------------------------------│
-│ Right Panel: Service Panel                     │
-│ Service Name + Deploy Button                   │
-│ Build Type Blocks:                             │
-│ ┌─────────────┐ ┌─────────────┐ ┌─────────┐ │
-│ │ RingPromotion │ │ Incremental │ │ Mainline ││
-│ │ - Version     │ │ - Version   │ │ - Version││
-│ │ - Drop URL    │ │ - Drop URL  │ │ - Drop URL││
-│ └─────────────┘ └─────────────┘ └─────────┘ │
-│-----------------------------------------------│
-│ Footer: Log Panel                             │
-│ - Show deploy status / progress / errors     │
-└───────────────────────────────────────────────┘
-
-## Security:
-- Azure DevOps PAT stored only in backend.
-- Frontend never sees PAT directly.
-- Backend handles all authentication and API calls.
-
-Concurrency:
-- Backend queries Build info and Drop URLs asynchronously to improve speed.

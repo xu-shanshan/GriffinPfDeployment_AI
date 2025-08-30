@@ -45,27 +45,7 @@ Organize all output into a timestamped folder, for example:
 
 ---
 
-## Project Background Knowledge
-Service Deployment Types:
-  - Model B → deployed on AutoPilot Physical Environment (APE).
-  - Model B2 → deployed in AutoPilot Container Environment (ACE), which runs on APE.
 
-Virtual Environment (VE): Abstracts shared configurations for PE/CE; allows reuse.
-- B type VE
-  for example：SovBase, ModelBSov
-- B2 type VE 
-  for example：OwaMailB2-SOV, TodoB2-SOV
-
-Deployment Rules:
-- Model B → must use B type VE
-- Model B2 → can use B type VE or B2 VE
-
-GriffinPfDeployment_AI: Web application for VE & Service deployment. Users can:
-- View VE list and associated Services
-- Favorite VEs for quick access
-- Check each service’s Build info and Drop URLs; services have multiple pipelines and Drop URLs
-- Trigger deployment for single service or all services under a VE
-- Select a pipeline/build for a service deployment, or use default pipeline for batch deployment(multi VE multi service)
 
 ### Currently Mock Data:
 
@@ -178,10 +158,3 @@ Notes:
 - ExpectedServices: Maps VE → Services; front-end shows available Services under each VE.
 - Services: Each service’s info (Build, Pipeline, Drop URL). Front-end does not need to consider deployment type.
 
-
-
-## Additional Instructions
-
-
-1. this is a web application, not desktop software, open with a browser
-2.  Layout： Left, right header, right content (Left only shows module link, no tree)

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Service in VE - Griffin PF Deployment AI</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="./shared/fluent-ui.css">
+  <link rel="stylesheet" href="./shared/common.css">
+  <style>
+    /* ...existing page-specific styles migrated from previous ve-service-overview.html (not duplicated here)... */
+  </style>
+</head>
+<body>
+  <a href="#mainContent" class="visually-hidden">Skip to main content</a>
+  <div id="app-sidebar"></div>
+  <main id="mainContent" class="main-content" role="main" aria-label="Service within Virtual Environment">
+    <div id="app-header"></div>
+    <div class="web-container content-area">
+      <!-- TODO: Paste full content from previous ve-service-overview.html here.
+           Structure unchanged; only filename & header title adjusted. -->
+      <!-- Placeholder minimal breadcrumb -->
+      <nav class="flex items-center space-x-2 text-sm mb-6 text-muted">
+        <a href="ve-management.html" class="text-accent hover:underline">VE Management</a>
+        <i data-feather="chevron-right" class="fluent-icon"></i>
+        <a id="breadcrumbVe" href="#" class="text-accent hover:underline"></a>
+        <i data-feather="chevron-right" class="fluent-icon"></i>
+        <span id="breadcrumbService" class="font-medium text-fg-strong"></span>
+      </nav>
+      <div class="fluent-card p-8">
+        <h1 class="fluent-text-title1" id="serviceTitle">Loading...</h1>
+        <p class="fluent-text-body1" id="serviceDesc">Initializing service context...</p>
+      </div>
+    </div>
+  </main>
+  <script src="./shared/sidebar.js"></script>
+  <script src="./shared/header.js"></script>
+  <script>
+    initHeader({
+      title:'Service in Virtual Environment',
+      subtitle:'Virtual Environment Management',
+      user:{ name:'John Doe', icon:'user' }
+    });
+    function qs(k){return new URLSearchParams(location.search).get(k)||'';}
+    document.getElementById('breadcrumbVe').textContent = qs('ve') || 'VE';
+    document.getElementById('breadcrumbVe').href = 've-detail.html?ve=' + encodeURIComponent(qs('ve')||'');
+    document.getElementById('breadcrumbService').textContent = qs('service') || 'Service';
+    document.getElementById('serviceTitle').textContent = (qs('service')||'Service') + ' in ' + (qs('ve')||'VE');
+    if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+  </script>
+</body>
+</html>

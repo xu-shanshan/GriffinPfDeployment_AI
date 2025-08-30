@@ -138,11 +138,12 @@ Prototype → Page Mapping:
 - dashboard.html -> /dashboard -> DashboardPage
 - ve-management.html -> /ves -> VeManagementPage
 - ve-detail.html -> /ve/:name -> VeDetailPage
-- ve-service-detail.html -> /ve/:ve/service/:service -> VeServiceDetailPage
+- service-in-ve.html -> /ve/:ve/service/:service -> VeServiceInVePage
 - services-management.html -> /services -> ServicesManagementPage
 - service-detail.html -> /service/:id -> ServiceDetailPage
 - deployment-history.html -> /deployments -> DeploymentHistoryPage
 - login.html -> /login -> LoginPage
+- NOTE: Replaced ve-service-overview.html with service-in-ve.html for clarity.
 
 Phase 0 Implementation Plan (Pending – requires permission to add new files):
 1. Files to create (root-relative):
@@ -170,7 +171,7 @@ Prototype Enumeration (for Phase 2 mapping confirmation):
 - dashboard.html -> DashboardPage (/dashboard)
 - ve-management.html -> VeManagementPage (/ves)
 - ve-detail.html -> VeDetailPage (/ve/:name)
-- ve-service-detail.html -> VeServiceDetailPage (/ve/:ve/service/:service)
+- service-in-ve.html -> VeServiceInVePage (/ve/:ve/service/:service)
 - services-management.html -> ServicesManagementPage (/services)
 - service-detail.html -> ServiceDetailPage (/service/:id)
 - deployment-history.html -> DeploymentHistoryPage (/deployments)
@@ -182,4 +183,7 @@ Please confirm: "Proceed with Phase 0 scaffold" so new files can be generated. O
 Regeneration / Safety:
 - Will not modify existing prototype HTML files until scaffold + core layout components exist.
 - Subsequent responses will keep changes minimal and grouped per file as required.
+
+NOTE: Renamed ve-service-detail.html to ve-service-overview.html for clarity.
+Update any remaining references during Phase 2 component generation.
 

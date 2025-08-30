@@ -31,8 +31,7 @@ Before moving to a full React implementation, these prototypes must serve as des
 
 1. **Phased Generation Order (strict)**  
    1. Shared Foundation (folder structure + shared assets)  
-   2. Interaction Summaries (per page, describing flows & components)  
-   3. Page Implementations (HTML prototypes importing shared assets)  
+   2. Page Implementations (HTML prototypes importing shared assets)  
 
 2. **Shared Assets First**  
    - All common CSS/JS/components must be placed in `/shared/`.  

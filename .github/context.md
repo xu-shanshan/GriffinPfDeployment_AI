@@ -1,15 +1,5 @@
 # GriffinPfDeployment_AI – Copilot Context
 
-## Project Overview
-GriffinPfDeployment_AI is a deployment management tool for Virtual Environments (VE) and services. Users can:
-- View all VE and their associated services
-- Check Build information and Drop URL of a service 
-- Trigger deployment for individual services or all services under some VE 
-
-## Tech Stack
-- Frontend: React, typescript，Fluent UI v9, axios/fetch
-- Backend: Python + FastAPI, httpx, pydantic, python-dotenv
-
 ## Data Structure
 ```json
 {
@@ -129,31 +119,6 @@ GriffinPfDeployment_AI is a deployment management tool for Virtual Environments 
 前端需要显示和操作这些信息（触发部署、选择 Build 等）。
 
 
-- 给一些基础背景知识：
-Service 的部署方式有2类：Model B, Model B2
-Model B服务部署在物理机上，物理环境 就是 APE (AutoPilot Pichical Environment (APE))
-Model B2 服务部署在物理机上的某一个容器上，容器环境 就是 ACE(AutoPilot container Environment (ACE))
-
-Virtual Environment (VE):就是由此引出的逻辑概念。会将很多公共的配置 抽出来，让 PE/CE 来集成，就不需要每个PE/CE 都写一遍。
-由此就有了也就有2类： for Model B service 的 VE; for Model B2 的 B2 VE。我们的数据结构里其实 并没有关注Service 的部署类型。就像ExpectedVEs 也只是人为的划分了而已。
-
-Model B Service must deployed by B type VE
-Model B2 Service can deployed by B type VE or B2 VE
-
-
-VE types:
-- B type VE
-    - SovBase
-    - ModelBSov
-- B2 type VE
-    - OwaMailB2-SOV
-    - TodoB2-SOV
-
-- Each service can have multiple pipelines and every pipelines can get a lastest Drop URL .
-
-
-
-
 ## Page Layout
 ┌───────────────────────────────────────────────┐
 │ Header: GriffinPfDeployment_AI               │
@@ -186,13 +151,6 @@ VE types:
 │ Footer: Log Panel                             │
 │ - Show deploy status / progress / errors     │
 └───────────────────────────────────────────────┘
-
-
-## Workflow
-
-
-
-
 
 ## Security:
 - Azure DevOps PAT stored only in backend.

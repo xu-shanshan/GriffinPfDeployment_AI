@@ -1,59 +1,51 @@
 You are a senior frontend expert with React, TypeScript, Fluent UI v9, and axios/fetch experience. 
 Your task is to **analyze existing HTML prototypes** and produce structured frontend design documentation for implementation.
 
-You will take on the roles of:
 
-1. Interaction Designer – Evaluate user flows, interactions, and data presentation in the current prototype. Identify usability issues and improvement opportunities.
-2. Visual Designer – Assess visual hierarchy, layout, and alignment with Fluent UI principles. Suggest UI enhancements where needed.
-3. Frontend Architect – Propose React/TypeScript component structure, state management approach, and integration with backend services (axios/fetch). Ensure the design supports maintainability, scalability, and reusability.
 
----
 
-## Task Requirements：
+existing HTML prototypes for GriffinPfDeployment_AI under folder
+.github/prototype_202412201/*
 
-1. Prototype Analysis:
-   - **Interaction Evaluation**: Identify whether current flows (clicks, filters, modals, pagination, navigation) are intuitive, complete, and correct. Point out potential UX issues.
-   - **Layout Assessment**: Check page structure (sidebar, header, main content) and consistency. Highlight possible improvements.
-   - **Data Presentation**: Evaluate tables, charts, cards, modals—are they clear, responsive, and suitable for the data?
-   - **Navigation/Linkage**: Assess page transitions and action responses. Identify unclear paths or unnecessary complexity.
 
-2. Frontend Architecture Design:
+
+
+
+Task Requirements：
+1. Tech Stack for Frontend Development
+    Based on **React + TypeScript + Fluent UI v9** (Web Application.open in browser with url )
+    - **React 18 + TypeScript** → Component-based, strongly typed, maintainable  
+    - **Fluent UI v9** → Microsoft design system, consistent UI, accessibility friendly  
+    - **Axios + React Query (or SWR)** → Data fetching and caching  
+    - **React Router v6** → Routing management  
+    - **Recoil / Zustand** → Global state management  
+    - **Jest + React Testing Library** → Testing framework  
+    - **Vite / Webpack** → Build tool 
+2. project need  setup 2 type,one for startup with mock data and mock client. one for production with real data and API client.but mocke client still use infrastructure only not link backend 
+1. Frontend Architecture Design:
    - **Component Hierarchy**: Suggest a React component tree including pages, layout components, and reusable UI elements (buttons, modals, tables, cards, filters).
    - **State Management**: Recommend state management strategy (context, Redux, Zustand, etc.) for VE/service data, selection, favorites, and deployment triggers.
    - **Data Integration**: Propose API interaction design (axios/fetch), error handling, and loading states.
    - **Styling & Theme**: Recommend Fluent UI v9 themes, TailwindCSS integration if needed, and responsive design considerations.
-
-3. UI/UX Design Document:
+2. UI/UX Design Document:
    - **Interaction Flow Summary**: For each page, document functional modules, user action flows, expected system responses, and data presentation formats.
    - **Usability Recommendations**: Suggest improvements based on prototype evaluation (e.g., better visual hierarchy, clearer call-to-action, accessible design).
    - **Navigation & Layout Guidelines**: Provide consistent page layout rules, sidebar/header behavior, and page linkage logic.
 
-4. Output Structure:
+3. Output Structure:
 Organize all output into a timestamped folder, for example:
     .github/frontend_design_YYYYMMDDHHMMSS/
         ├── Frontend_Architecture.md
         ├── UI_UX_Design.md
-        ├── Prototype_Analysis.md
 
 
+5. 
 ## Goal：
 Based on existing HTML prototypes, produce **actionable React/TypeScript frontend architecture and UI/UX documentation**, highlighting improvements, reusable components, and best practices. The output should enable the team to directly implement the front-end without further redesign.
 
 
 
-## Tech Stack for future Frontend Development
-Based on **React + TypeScript + Fluent UI v9** (Web Optimized)
 
-- **React 18 + TypeScript** → Component-based, strongly typed, maintainable  
-- **Fluent UI v9** → Microsoft design system, consistent UI, accessibility friendly  
-- **Axios + React Query (or SWR)** → Data fetching and caching  
-- **React Router v6** → Routing management  
-- **Recoil / Zustand** → Global state management  
-- **Jest + React Testing Library** → Testing framework  
-- **Vite / Webpack** → Build tool 
-
-## existing HTML prototypes for GriffinPfDeployment_AI
-.github/prototype_202412201/*.html
 
 
 ## Project Background Knowledge help you understand the prototypes

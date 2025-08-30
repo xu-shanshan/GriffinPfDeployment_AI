@@ -8,6 +8,7 @@ You are a senior frontend expert with expertise in React, TypeScript, Fluent UI 
 Your task is to create static HTML prototypes to validate:
 
 - UX/UI design
+  - The design should resemble the future Fluent UI v9 implementation as closely as possible.
 - Interaction logic
 - Page layout
 
@@ -23,7 +24,6 @@ Before moving to a full React implementation, these prototypes must serve as des
 - Interaction model is consistent
 - Layout is intuitive
 - Visual design is user-friendly
-- The UI can be as close as possible to the future effect based on Fluent UI v9 (Fluent UI React).
 
 # Task Requirements：
 
@@ -39,9 +39,7 @@ Before moving to a full React implementation, these prototypes must serve as des
    - Pages must **import** shared assets — no duplication.  
    - Only minimal page-specific script allowed.  
 
-3. **Reusable Components**  
-   - Components expose `init()` or `render()` patterns.  
-   - Follow **BEM** or utility-class conventions in `common.css`.  
+3. **Reusable Components**    
 
 4. HTML prototype pages (after above):
    - Each page imports:
@@ -63,16 +61,9 @@ for example:
    .github/prototype_YYYYMMDDHHMMSS/
       ├── shared/
       │   ├── fluent-ui.css
-      │   └── common.js
-      │   └── mock-data.js
+      │   ├── mock-data.js
       │   └── Layout/
-      │       ├── header.js
-      │       ├── footer.js
-      │       └── sidebar.js
-      │   └── commonComponent
-      │       ├── card.js
-      │       ├── modal.js
-      │       └── tooltip.js
+      │   └── commonComponent/
       └── pages/
          ├── dashboard.html
          ├── project-list.html

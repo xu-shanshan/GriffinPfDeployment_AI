@@ -1,52 +1,612 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Service in VE - Griffin PF Deployment AI</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/feather-icons"></script>
-  <link rel="stylesheet" href="./shared/fluent-ui.css">
-  <link rel="stylesheet" href="./shared/common.css">
-  <style>
-    /* ...existing page-specific styles migrated from previous ve-service-overview.html (not duplicated here)... */
-  </style>
+    <meta charset="UTF-8">
+    <title>Service in VE - Griffin PF Deployment AI</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="./shared/fluent-ui.css">
+    <link rel="stylesheet" href="./shared/common.css">
+    <style>
+        /* Page specific */
+        .pipeline-card { transition:all .12s cubic-bezier(.33,0,.67,1); }
+        .pipeline-card:hover { box-shadow:var(--shadow4); }
+        .pipeline-card.default-pipeline { border-color:var(--colorBrandForeground1); background:#e3f2fd; }
+        .star-toggle svg.feather-star { stroke:currentColor; }
+        .star-toggle.active svg.feather-star { fill:currentColor; }
+        .config-actions { opacity:0; transition:opacity .2s; }
+        .table-row:hover .config-actions { opacity:1; }
+        body, main, .fluent-card { max-width:100%; overflow-x:hidden; }
+        textarea#configEditor.config-invalid { outline:1px solid #d13438; }
+        textarea#configEditor.config-valid { outline:1px solid #107c10; }
+        .modal-backdrop { backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px); }
+    </style>
 </head>
 <body>
-  <a href="#mainContent" class="visually-hidden">Skip to main content</a>
-  <div id="app-sidebar"></div>
-  <main id="mainContent" class="main-content" role="main" aria-label="Service within Virtual Environment">
+<a href="#mainContent" class="visually-hidden">Skip to main content</a>
+<div id="app-sidebar"></div>
+<main class="main-content" id="mainContent" role="main" aria-label="Service in Virtual Environment">
     <div id="app-header"></div>
     <div class="web-container content-area">
-      <!-- TODO: Paste full content from previous ve-service-overview.html here.
-           Structure unchanged; only filename & header title adjusted. -->
-      <!-- Placeholder minimal breadcrumb -->
-      <nav class="flex items-center space-x-2 text-sm mb-6 text-muted">
-        <a href="ve-management.html" class="text-accent hover:underline">VE Management</a>
-        <i data-feather="chevron-right" class="fluent-icon"></i>
-        <a id="breadcrumbVe" href="#" class="text-accent hover:underline"></a>
-        <i data-feather="chevron-right" class="fluent-icon"></i>
-        <span id="breadcrumbService" class="font-medium text-fg-strong"></span>
-      </nav>
-      <div class="fluent-card p-8">
-        <h1 class="fluent-text-title1" id="serviceTitle">Loading...</h1>
-        <p class="fluent-text-body1" id="serviceDesc">Initializing service context...</p>
+        <!-- Breadcrumb -->
+        <nav class="flex items-center space-x-2 text-sm mb-6 text-muted" aria-label="Breadcrumb">
+            <a href="ve-management.html" class="text-accent hover:underline">VE Management</a>
+            <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+            <a id="breadcrumbVe" href="#" class="text-accent hover:underline"></a>
+            <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+            <span id="breadcrumbService" class="font-medium text-fg-strong"></span>
+        </nav>
+
+        <!-- Header -->
+        <div class="fluent-card mb-8" aria-label="Service header summary">
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center bg-success-soft">
+                            <i data-feather="mail" class="w-6 h-6" style="color:#107c10;"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1">
+                                <h1 id="serviceTitle" class="fluent-text-title1">Service</h1>
+                                <button id="favoriteBtn" class="star-toggle hover:opacity-80" aria-label="Toggle favorite" onclick="toggleFavorite()">
+                                    <i data-feather="star"></i>
+                                </button>
+                            </div>
+                            <p id="serviceDescription" class="fluent-text-body1 mb-3">Loading description...</p>
+                            <div class="flex items-center space-x-3">
+                                <span id="serviceBuildType" class="fluent-badge fluent-badge-neutral">BuildType</span>
+                                <span id="serviceVeType" class="fluent-badge fluent-badge-success">VE Type</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-right">
+                            <div class="flex items-center space-x-2 mb-1">
+                                <div class="w-2 h-2 rounded-full bg-green-600"></div>
+                                <span class="text-sm font-medium text-success">Healthy</span>
+                            </div>
+                            <div id="serviceVersionTag" class="text-xs text-neutral-3">Version: -</div>
+                        </div>
+                        <button onclick="showConfigEditor()" class="fluent-button fluent-button-primary">
+                            <i data-feather="edit-3" class="fluent-icon inline mr-2"></i>Edit Configuration
+                        </button>
+                    </div>
+                </div>
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-3 gap-6">
+                    <div class="text-center p-4 rounded-lg bg-neutral-2">
+                        <div id="metricCurrentBuild" class="text-2xl font-semibold text-neutral-1">-</div>
+                        <div class="text-sm text-neutral-2">Current Build</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg bg-neutral-2">
+                        <div id="metricActivePipelines" class="text-2xl font-semibold" style="color:var(--colorBrandForeground1);">-</div>
+                        <div class="text-sm text-neutral-2">Active Pipelines</div>
+                    </div>
+                    <div class="text-center p-4 rounded-lg bg-neutral-2">
+                        <div id="metricLastDeploy" class="text-2xl font-semibold text-neutral-1">-</div>
+                        <div class="text-sm text-neutral-2">Last Deploy</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Deploy -->
+        <div class="fluent-card mb-8" aria-label="Quick deploy panel">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center space-x-2">
+                    <i data-feather="play" class="w-5 h-5" style="color:#107c10;"></i>
+                    <h3 class="fluent-text-title2 m-0">Quick Deploy</h3>
+                </div>
+            </div>
+            <div class="p-6">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <div class="flex flex-col md:flex-row md:items-center gap-4">
+                        <label class="flex items-center gap-2 text-sm text-neutral-2">
+                            Pipeline:
+                            <select id="quickPipelineSelect" class="fluent-select">
+                                <option value="1418">Main Pipeline (Default)</option>
+                                <option value="33874">Incremental Build</option>
+                                <option value="custom">Custom Pipeline</option>
+                            </select>
+                        </label>
+                        <label class="flex items-center gap-2 text-sm text-neutral-2">
+                            Version:
+                            <select id="quickVersionSelect" class="fluent-select">
+                                <option value="latest">Latest</option>
+                                <option value="prev1">Previous -1</option>
+                                <option value="prev2">Previous -2</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="flex gap-3">
+                        <button type="button" onclick="showAdvancedDeploy()" class="fluent-button fluent-button-subtle">
+                            <i data-feather="settings" class="fluent-icon inline mr-2"></i>Advanced
+                        </button>
+                        <button type="button" onclick="quickDeploy()" class="fluent-button" style="background:#107c10;color:#fff;">
+                            <i data-feather="play" class="fluent-icon inline mr-2"></i>Deploy Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pipeline Management -->
+        <div class="fluent-card" aria-label="Pipeline management">
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-2">
+                        <i data-feather="layers" class="w-5 h-5" style="color:var(--colorBrandForeground1);"></i>
+                        <h3 class="fluent-text-title2 m-0">Pipeline Management</h3>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-neutral-2">Default:</span>
+                        <span id="currentDefaultPipeline" class="fluent-badge" style="background:#e3f2fd;color:var(--colorBrandForeground1);">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-6">
+                <div id="pipelineCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Set Default Pipeline Modal -->
+    <div id="setDefaultPipelineModal" class="hidden fixed inset-0 modal-backdrop bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <i data-feather="star" class="w-6 h-6 text-yellow-600 mr-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900 m-0">Set Default Pipeline</h3>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    Set <span id="pipelineNameToSet" class="font-semibold"></span> as the default pipeline for
+                    <span id="modalServiceName" class="font-semibold"></span>?
+                </p>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4 text-sm text-yellow-800">
+                    Impacts batch deployments and quick deploy defaults.
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end gap-3">
+                <button onclick="closeSetDefaultModal()" class="fluent-button fluent-button-subtle">Cancel</button>
+                <button onclick="confirmSetDefault()" class="fluent-button" style="background:#ca8a04;color:#fff;">
+                    <i data-feather="star" class="fluent-icon inline mr-2"></i>Set Default
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Configuration Editor Modal -->
+    <div id="configEditorModal" class="hidden fixed inset-0 modal-backdrop bg-black/40 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] flex flex-col">
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <i data-feather="edit-3" class="w-6 h-6 text-purple-600"></i>
+                    <h3 class="text-lg font-semibold m-0">Edit Service Configuration</h3>
+                </div>
+                <button onclick="closeConfigEditor()" class="text-gray-400 hover:text-gray-600">
+                    <i data-feather="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="flex-1 p-6 overflow-y-auto">
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="text-sm font-medium text-gray-700 m-0">Service: <span id="configServiceName">-</span></h4>
+                    <div class="flex items-center gap-2">
+                        <button onclick="validateConfig()" class="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-md hover:bg-blue-200 text-sm">
+                            <i data-feather="check-circle" class="w-3 h-3 inline mr-1"></i>Validate
+                        </button>
+                        <button onclick="resetConfig()" class="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 text-sm">
+                            <i data-feather="refresh-cw" class="w-3 h-3 inline mr-1"></i>Reset
+                        </button>
+                    </div>
+                </div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Configuration JSON</label>
+                <div class="border border-gray-300 rounded-lg overflow-hidden">
+                    <div class="bg-gray-50 px-4 py-2 border-b border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-gray-500">JSON Editor</span>
+                            <div id="configStatus" class="flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                                <span class="text-xs text-green-600">Valid</span>
+                            </div>
+                        </div>
+                        <button onclick="formatConfig()" class="text-xs text-gray-500 hover:text-gray-700">Format</button>
+                    </div>
+                    <textarea id="configEditor" class="w-full h-96 p-4 font-mono text-sm resize-none focus:outline-none" spellcheck="false"></textarea>
+                </div>
+                <div id="validationErrors" class="hidden mt-3 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+                    <strong class="block mb-1">Configuration Errors:</strong>
+                    <ul id="errorsList" class="list-disc list-inside"></ul>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-between items-center">
+                <label class="flex items-center gap-2 text-sm">
+                    <input type="checkbox" id="createPRConfig" checked class="rounded border-gray-300">
+                    Create Pull Request
+                </label>
+                <div class="flex gap-3">
+                    <button onclick="closeConfigEditor()" class="fluent-button fluent-button-subtle">Cancel</button>
+                    <button id="saveConfigBtn" onclick="saveConfiguration()" class="fluent-button fluent-button-primary">
+                        <i data-feather="save" class="fluent-icon inline mr-2"></i>Save Configuration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="hidden fixed top-4 right-4 fluent-card p-4 z-50" role="alert" aria-live="polite">
+        <strong id="notification-title" class="block mb-1"></strong>
+        <span id="notification-message" class="fluent-text-body1"></span>
+    </div>
+</main>
+
+<script>
+/* ----- Context (sidebar + header) ----- */
+window.SIDEBAR_ACTIVE = 've';
+window.SIDEBAR_FAVORITES = [
+    { name:'SovBase', type:'ve' },
+    { name:'ModelBSov', type:'ve' },
+    { name:'OwaMailB2-SOV', type:'ve' }
+];
+</script>
+<script src="./shared/sidebar.js"></script>
+<script src="./shared/header.js"></script>
+<script>
+initHeader({
+    title:'Service in Virtual Environment',
+    subtitle:'Virtual Environment Management',
+    user:{ name:'John Doe', icon:'user' }
+});
+
+/* ----- Data & State ----- */
+const serviceConfigs = {
+  OwaMailB2: {
+    name: 'OwaMailB2',
+    description: 'Outlook Web App Mail Backend Service',
+    buildType: 'RingPromotion',
+    veType: 'B2 Type',
+    currentBuild: '20241220.5',
+    activePipelines: 3,
+    lastDeploy: '2h',
+    version: '20241220.5',
+    configJson: {
+      BuildType: 'RingPromotion',
+      PipelineId: 1418,
+      IncrementalBuildPipelineId: 33874,
+      RingPromotionRootPath: 'autopilot',
+      BuildRoot: 'https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt',
+      PpeVeName: 'OwaMailB2-PPE',
+      BuildPathPattern: 'VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot'
+    }
+  }
+};
+
+const pipelineConfigs = {
+  1418: {
+    id:1418,
+    name:'Main Pipeline',
+    description:'Primary build pipeline for OwaMailB2',
+    type:'main',
+    color:'blue',
+    icon:'zap',
+    latestBuild:'20241220.5',
+    dropUrl:'VSO://.../owamailb2_ms/20241220.5?root=autopilot'
+  },
+  33874: {
+    id:33874,
+    name:'Incremental Build',
+    description:'Fast incremental build pipeline',
+    type:'incremental',
+    color:'purple',
+    icon:'refresh-cw',
+    latestBuild:'20241220.3',
+    dropUrl:'VSO://.../owamailb2_ms/20241220.3?root=autopilot'
+  },
+  31234: {
+    id:31234,
+    name:'Incremental Build Alt',
+    description:'Alternative incremental build',
+    type:'incremental',
+    color:'green',
+    icon:'refresh-cw',
+    latestBuild:'20241220.2',
+    dropUrl:'VSO://.../owamailb2_ms/20241220.2?root=autopilot'
+  }
+};
+
+let currentDefaultPipelineId = 1418;
+let pendingDefaultPipelineId = null;
+const currentServiceName = new URLSearchParams(location.search).get('service') || 'OwaMailB2';
+const currentVeName = new URLSearchParams(location.search).get('ve') || 'SovBase';
+
+/* ----- Init ----- */
+document.addEventListener('DOMContentLoaded', () => {
+  hydrateServiceHeader();
+  renderPipelineSection();
+  hydrateBreadcrumb();
+  if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+});
+
+function hydrateBreadcrumb() {
+  document.getElementById('breadcrumbVe').textContent = currentVeName;
+  document.getElementById('breadcrumbVe').href = 've-detail.html?ve=' + encodeURIComponent(currentVeName);
+  document.getElementById('breadcrumbService').textContent = currentServiceName;
+}
+
+function hydrateServiceHeader() {
+  const svc = serviceConfigs[currentServiceName];
+  if (!svc) { showNotification('Error', 'Service config not found'); return; }
+  document.getElementById('serviceTitle').textContent = svc.name;
+  document.getElementById('serviceDescription').textContent = svc.description;
+  document.getElementById('serviceBuildType').textContent = svc.buildType;
+  document.getElementById('serviceVeType').textContent = svc.veType;
+  document.getElementById('serviceVersionTag').textContent = 'Version: ' + svc.version;
+  document.getElementById('metricCurrentBuild').textContent = svc.currentBuild;
+  document.getElementById('metricActivePipelines').textContent = svc.activePipelines;
+  document.getElementById('metricLastDeploy').textContent = svc.lastDeploy;
+  document.getElementById('configEditor').value = JSON.stringify(svc.configJson, null, 2);
+  document.getElementById('configServiceName').textContent = svc.name;
+  updateDefaultPipelineDisplay();
+}
+
+/* ----- Pipelines ----- */
+function renderPipelineSection() {
+  const container = document.getElementById('pipelineCardsContainer');
+  container.innerHTML = '';
+  [1418,33874,31234].forEach(id => {
+    const cfg = pipelineConfigs[id];
+    if (cfg) container.appendChild(createPipelineCard(cfg));
+  });
+  if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+}
+
+function createPipelineCard(cfg) {
+  const isDefault = cfg.id === currentDefaultPipelineId;
+  const card = document.createElement('div');
+  card.className = 'pipeline-card rounded-lg p-4 cursor-pointer' + (isDefault ? ' default-pipeline' : '');
+  card.setAttribute('tabindex','0');
+  card.addEventListener('keydown', e => { if (['Enter',' '].includes(e.key)) { e.preventDefault(); card.click(); }});
+  card.onclick = () => selectPipeline(cfg.id);
+
+  const badge = isDefault
+    ? `<span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded inline-flex items-center">
+         <i data-feather="star" class="w-3 h-3 mr-1"></i>Default
+       </span>`
+    : `<span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${cfg.type}</span>`;
+
+  card.innerHTML = `
+    <div class="flex items-start justify-between mb-3">
+      <div class="flex items-center space-x-2">
+        <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+          <i data-feather="${cfg.icon}" class="w-3 h-3 text-gray-600"></i>
+        </div>
+        <div>
+          <h4 class="font-medium text-gray-900">${cfg.name}</h4>
+          <p class="text-xs text-gray-500">ID: ${cfg.id}</p>
+        </div>
+      </div>
+      ${badge}
+    </div>
+    <p class="text-xs text-gray-600 mb-3">${cfg.description}</p>
+    <div class="space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Latest:</span>
+        <span class="font-mono text-gray-900">${cfg.latestBuild}</span>
+      </div>
+      <div class="bg-gray-50 rounded p-2">
+        <p class="font-mono text-xs text-gray-700 break-all">${cfg.dropUrl}</p>
       </div>
     </div>
-  </main>
-  <script src="./shared/sidebar.js"></script>
-  <script src="./shared/header.js"></script>
-  <script>
-    initHeader({
-      title:'Service in Virtual Environment',
-      subtitle:'Virtual Environment Management',
-      user:{ name:'John Doe', icon:'user' }
-    });
-    function qs(k){return new URLSearchParams(location.search).get(k)||'';}
-    document.getElementById('breadcrumbVe').textContent = qs('ve') || 'VE';
-    document.getElementById('breadcrumbVe').href = 've-detail.html?ve=' + encodeURIComponent(qs('ve')||'');
-    document.getElementById('breadcrumbService').textContent = qs('service') || 'Service';
-    document.getElementById('serviceTitle').textContent = (qs('service')||'Service') + ' in ' + (qs('ve')||'VE');
+    <div class="mt-3 pt-3 border-t border-gray-100 text-center">
+      ${!isDefault
+        ? `<button class="px-3 py-1.5 bg-gray-100 text-gray-700 text-sm rounded hover:bg-gray-200"
+             onclick="event.stopPropagation(); showSetDefaultModal(${cfg.id}, '${cfg.name}')">
+             <i data-feather="star" class="w-3 h-3 inline mr-1"></i>Set as Default</button>`
+        : `<span class="px-3 py-1.5 bg-blue-100 text-blue-700 text-sm rounded inline-flex items-center justify-center">
+             <i data-feather="star" class="w-3 h-3 inline mr-1"></i>Default Pipeline
+           </span>`}
+    </div>
+  `;
+  return card;
+}
+
+function selectPipeline(id) {
+  const cfg = pipelineConfigs[id];
+  if (!cfg) return;
+  showNotification('Pipeline Selected', `${cfg.name} activated`);
+}
+
+function showSetDefaultModal(id, name) {
+  pendingDefaultPipelineId = id;
+  document.getElementById('pipelineNameToSet').textContent = name;
+  document.getElementById('modalServiceName').textContent = currentServiceName;
+  document.getElementById('setDefaultPipelineModal').classList.remove('hidden');
+  if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+}
+
+function closeSetDefaultModal() {
+  pendingDefaultPipelineId = null;
+  document.getElementById('setDefaultPipelineModal').classList.add('hidden');
+}
+
+function confirmSetDefault() {
+  if (!pendingDefaultPipelineId) return;
+  currentDefaultPipelineId = pendingDefaultPipelineId;
+  closeSetDefaultModal();
+  updateDefaultPipelineDisplay();
+  renderPipelineSection();
+  const cfg = pipelineConfigs[currentDefaultPipelineId];
+  showNotification('Default Updated', `${cfg?.name || currentDefaultPipelineId} set as default`);
+}
+
+function updateDefaultPipelineDisplay() {
+  const badge = document.getElementById('currentDefaultPipeline');
+  if (badge) badge.textContent = `Pipeline (ID: ${currentDefaultPipelineId})`;
+}
+
+/* ----- Favorites ----- */
+function toggleFavorite() {
+  const btn = document.getElementById('favoriteBtn');
+  const active = btn.classList.toggle('active');
+  if (active) {
+    window.addToSidebarFavorites && window.addToSidebarFavorites({ name: currentServiceName, type:'service' });
+  } else {
+    window.removeFromSidebarFavorites && window.removeFromSidebarFavorites(currentServiceName,'service');
+  }
+  showNotification('Favorites', `${currentServiceName} ${active ? 'added to' : 'removed from'} favorites`);
+}
+
+/* ----- Config Editor ----- */
+function showConfigEditor() {
+  document.getElementById('configEditorModal').classList.remove('hidden');
+  if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+}
+function closeConfigEditor() {
+  document.getElementById('configEditorModal').classList.add('hidden');
+}
+
+function resetConfig() {
+  const svc = serviceConfigs[currentServiceName];
+  if (!svc) return;
+  document.getElementById('configEditor').value = JSON.stringify(svc.configJson, null, 2);
+  validateConfig();
+  showNotification('Reset', 'Configuration reset to original');
+}
+
+function validateConfig() {
+  const editor = document.getElementById('configEditor');
+  const status = document.getElementById('configStatus');
+  const validationErrors = document.getElementById('validationErrors');
+  const errorsList = document.getElementById('errorsList');
+  const saveBtn = document.getElementById('saveConfigBtn');
+
+  try {
+    const text = editor.value.trim();
+    if (!text) throw new Error('Configuration cannot be empty');
+    const parsed = JSON.parse(text);
+    const issues = validateConfigStructure(parsed);
+    if (issues.length === 0) {
+      status.innerHTML = `<div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                          <span class="text-xs text-green-600">Valid</span>`;
+      editor.classList.remove('config-invalid');
+      editor.classList.add('config-valid');
+      validationErrors.classList.add('hidden');
+      saveBtn.disabled = false;
+    } else {
+      status.innerHTML = `<div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                          <span class="text-xs text-red-600">Invalid</span>`;
+      editor.classList.add('config-invalid');
+      editor.classList.remove('config-valid');
+      errorsList.innerHTML = issues.map(e => `<li>${e}</li>`).join('');
+      validationErrors.classList.remove('hidden');
+      saveBtn.disabled = true;
+    }
+  } catch (e) {
+    status.innerHTML = `<div class="w-2 h-2 bg-red-400 rounded-full"></div>
+                        <span class="text-xs text-red-600">Invalid JSON</span>`;
+    editor.classList.add('config-invalid');
+    editor.classList.remove('config-valid');
+    errorsList.innerHTML = `<li>${e.message}</li>`;
+    validationErrors.classList.remove('hidden');
+    saveBtn.disabled = true;
+  }
+}
+
+function validateConfigStructure(cfg) {
+  const errors = [];
+  ['BuildType','PipelineId','BuildRoot'].forEach(f => {
+    if (cfg[f] === undefined || cfg[f] === null || cfg[f] === '') errors.push(`Missing required field: ${f}`);
+  });
+  if (cfg.PipelineId && typeof cfg.PipelineId !== 'number') errors.push('PipelineId must be a number');
+  if (cfg.IncrementalBuildPipelineId && typeof cfg.IncrementalBuildPipelineId !== 'number') errors.push('IncrementalBuildPipelineId must be a number');
+  if (cfg.BuildRoot && !isValidUrl(cfg.BuildRoot)) errors.push('BuildRoot must be a valid URL');
+  return errors;
+}
+
+function isValidUrl(u) {
+  try { new URL(u); return true; } catch { return false; }
+}
+
+function formatConfig() {
+  const editor = document.getElementById('configEditor');
+  const text = editor.value.trim();
+  if (!text) return;
+  try {
+    const parsed = JSON.parse(text);
+    editor.value = JSON.stringify(parsed, null, 2);
+    validateConfig();
+  } catch {
+    showNotification('Format Error','Invalid JSON – cannot format');
+  }
+}
+
+function saveConfiguration() {
+  const btn = document.getElementById('saveConfigBtn');
+  const editor = document.getElementById('configEditor');
+  try {
+    JSON.parse(editor.value); // validation pass
+  } catch {
+    showNotification('Save Error','Fix JSON before saving');
+    return;
+  }
+  const original = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i data-feather="loader" class="fluent-icon inline mr-2 animate-spin"></i>Saving...';
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = original;
+    closeConfigEditor();
+    showNotification('Configuration Saved',
+      document.getElementById('createPRConfig').checked
+        ? 'Config saved and PR created'
+        : 'Config saved successfully');
     if (window.refreshFeatherIcons) window.refreshFeatherIcons();
-  </script>
+  }, 1200);
+}
+
+let configInputDebounce;
+document.addEventListener('input', (e) => {
+  if (e.target.id === 'configEditor') {
+    clearTimeout(configInputDebounce);
+    configInputDebounce = setTimeout(validateConfig, 400);
+  }
+});
+
+/* ----- Quick Deploy Stubs ----- */
+function quickDeploy() {
+  showNotification('Deployment Triggered','Quick deploy started');
+}
+function showAdvancedDeploy() {
+  showNotification('Advanced Deploy','Advanced options not implemented in prototype');
+}
+
+/* ----- Modals Helpers ----- */
+function closeOnBackdrop(e) {
+  if (e.target.id === 'setDefaultPipelineModal') closeSetDefaultModal();
+  if (e.target.id === 'configEditorModal') closeConfigEditor();
+}
+document.getElementById('setDefaultPipelineModal').addEventListener('click', closeOnBackdrop);
+document.getElementById('configEditorModal').addEventListener('click', closeOnBackdrop);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeSetDefaultModal();
+    closeConfigEditor();
+  }
+});
+
+/* ----- Notifications ----- */
+function showNotification(title, message) {
+  const n = document.getElementById('notification');
+  document.getElementById('notification-title').textContent = title;
+  document.getElementById('notification-message').textContent = message;
+  n.classList.remove('hidden');
+  setTimeout(() => n.classList.add('hidden'), 3000);
+}
+
+</script>
+<script>
+if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+</script>
 </body>
 </html>

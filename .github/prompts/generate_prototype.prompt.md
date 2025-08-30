@@ -35,14 +35,21 @@ Ensure that the interaction model, layout, and visual design are consistent, int
 3. Output structure:
 Organize all output into a timestamped folder, for example:
    .github/prototype_YYYYMMDDHHMMSS/
-      ├── dashboard.html
-      ├── project-list.html
-      ├── project-detail.html
-      ├── reports.html
-      └── UI_UX_Design.md
-      └── Frontend_Architecture.m
-
-
-
-
-
+      ├── shared/
+      │   ├── common.css
+      │   └── common.js
+      │   └── mock-data.js
+      │   └── Layout/
+      │       ├── header.js
+      │       ├── footer.js
+      │       └── sidebar.js
+      │   └── commonComponent
+      │       ├── card.js
+      │       ├── modal.js
+      │       └── tooltip.js
+      └── pages/
+         ├── dashboard.html
+         ├── project-list.html
+         ├── project-detail.html
+         ├── reports.html
+         └── settings.html

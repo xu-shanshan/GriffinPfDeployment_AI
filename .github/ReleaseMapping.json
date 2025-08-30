@@ -1,4 +1,4 @@
- {
+{
   "CloudBuildRoot": "https://cloudbuild.microsoft.com",
   "ExpectedVEs": {
     "SovBaseVEs": ["SovBase"],

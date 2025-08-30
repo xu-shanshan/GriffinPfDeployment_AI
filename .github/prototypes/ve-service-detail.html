@@ -18,12 +18,16 @@
         .search-highlight{background:rgba(59,130,246,.08);border:2px solid #3B82F6;}
         .star-toggle svg.feather-star{stroke:currentColor;}
         .star-toggle.active svg.feather-star{fill:currentColor;}
+
+        /* Prevent accidental horizontal scroll in this page */
+        body, main, .fluent-card { max-width:100%; overflow-x:hidden; }
     </style>
 </head>
 <body>
+    <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
     <div id="app-sidebar"></div><!-- shared sidebar injection -->
 
-    <main class="main-content" role="main">
+    <main class="main-content" id="mainContent" role="main" aria-label="VE Service Detail">
         <header class="top-bar" role="banner">
             <div class="web-container">
                 <div class="flex justify-between items-center h-app-header">
@@ -52,7 +56,7 @@
             </nav>
 
             <!-- Service Header (unchanged structure except star-toggle class) -->
-            <div class="fluent-card mb-8">
+            <div class="fluent-card mb-8" aria-label="Service header summary">
                 <div class="p-8">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center space-x-4">
@@ -106,7 +110,7 @@
             </div>
 
             <!-- Fluent Quick Deploy -->
-            <div class="fluent-card mb-8">
+            <div class="fluent-card mb-8" aria-label="Quick deploy panel">
                 <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
                     <div class="flex items-center space-x-2">
                         <i data-feather="play" class="w-5 h-5" style="color: #107c10;"></i>
@@ -135,10 +139,10 @@
                             </div>
                         </div>
                         <div class="flex space-x-3">
-                            <button onclick="showAdvancedDeploy()" class="fluent-button fluent-button-subtle">
+                            <button type="button" onclick="showAdvancedDeploy()" class="fluent-button fluent-button-subtle">
                                 <i data-feather="settings" class="fluent-icon inline mr-2"></i>Advanced
                             </button>
-                            <button onclick="quickDeploy()" class="fluent-button" style="background: #107c10; color: white;">
+                            <button type="button" onclick="quickDeploy()" class="fluent-button" style="background: #107c10; color: white;">
                                 <i data-feather="play" class="fluent-icon inline mr-2"></i>Deploy Now
                             </button>
                         </div>
@@ -147,7 +151,7 @@
             </div>
 
             <!-- Fluent Pipeline Management -->
-            <div class="fluent-card">
+            <div class="fluent-card" aria-label="Pipeline management"><!-- no pagination; internal scroll allowed -->
                 <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
@@ -592,187 +596,187 @@
                         
                         const config = JSON.parse(configText);
                         const errors = validateConfigStructure(config);
-                        
                         if (errors.length === 0) {
                             // Valid configuration
-                            status.innerHTML = `
+                            status.innerHTML = `on
                                 <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                                <span class="text-xs text-green-600">Valid</span>
-                            `;
+                                <span class="text-xs text-green-600">Valid</span>div>
+                            `;  <span class="text-xs text-green-600">Valid</span>
                             editor.classList.remove('config-invalid');
-                            editor.classList.add('config-valid');
+                            editor.classList.add('config-valid');id');
                             validationErrors.classList.add('hidden');
-                            saveBtn.disabled = false;
-                        } else {
+                            saveBtn.disabled = false;t.add('hidden');
+                        } else {Btn.disabled = false;
                             // Invalid configuration
-                            status.innerHTML = `
+                            status.innerHTML = `tion
                                 <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-                                <span class="text-xs text-red-600">Invalid</span>
-                            `;
+                                <span class="text-xs text-red-600">Invalid</span>v>
+                            `;  <span class="text-xs text-red-600">Invalid</span>
                             editor.classList.remove('config-valid');
+                            editor.classList.add('config-invalid');;
                             editor.classList.add('config-invalid');
-                            
                             errorsList.innerHTML = errors.map(error => `<li>${error}</li>`).join('');
-                            validationErrors.classList.remove('hidden');
-                            saveBtn.disabled = true;
+                            validationErrors.classList.remove('hidden');<li>${error}</li>`).join('');
+                            saveBtn.disabled = true;st.remove('hidden');
+                        }   saveBtn.disabled = true;
                         }
-                        
                     } catch (e) {
                         // JSON parsing error
-                        status.innerHTML = `
+                        status.innerHTML = `r
                             <div class="w-2 h-2 bg-red-400 rounded-full"></div>
                             <span class="text-xs text-red-600">Invalid JSON</span>
-                        `;
+                        `;  <span class="text-xs text-red-600">Invalid JSON</span>
                         editor.classList.remove('config-valid');
+                        editor.classList.add('config-invalid');;
                         editor.classList.add('config-invalid');
-                        
                         errorsList.innerHTML = `<li>Invalid JSON syntax: ${e.message}</li>`;
-                        validationErrors.classList.remove('hidden');
-                        saveBtn.disabled = true;
-                    }
+                        validationErrors.classList.remove('hidden');tax: ${e.message}</li>`;
+                        saveBtn.disabled = true;st.remove('hidden');
+                    }   saveBtn.disabled = true;
+                }   }
                 }
-
                 function validateConfigStructure(config) {
+                    const errors = [];gStructure(config) {
                     const errors = [];
-                    
                     // Required fields validation
                     const requiredFields = ['BuildType', 'PipelineId', 'BuildRoot'];
-                    requiredFields.forEach(field => {
-                        if (!config[field]) {
+                    requiredFields.forEach(field => {e', 'PipelineId', 'BuildRoot'];
+                        if (!config[field]) {eld => {
                             errors.push(`Missing required field: ${field}`);
-                        }
+                        }   errors.push(`Missing required field: ${field}`);
+                    }); }
                     });
-                    
                     // Type validation
                     if (config.PipelineId && typeof config.PipelineId !== 'number') {
-                        errors.push('PipelineId must be a number');
+                        errors.push('PipelineId must be a number');Id !== 'number') {
+                    }   errors.push('PipelineId must be a number');
                     }
-                    
                     if (config.IncrementalBuildPipelineId && typeof config.IncrementalBuildPipelineId !== 'number') {
-                        errors.push('IncrementalBuildPipelineId must be a number');
+                        errors.push('IncrementalBuildPipelineId must be a number');talBuildPipelineId !== 'number') {
+                    }   errors.push('IncrementalBuildPipelineId must be a number');
                     }
-                    
                     // URL validation
                     if (config.BuildRoot && !isValidUrl(config.BuildRoot)) {
-                        errors.push('BuildRoot must be a valid URL');
+                        errors.push('BuildRoot must be a valid URL');oot)) {
+                    }   errors.push('BuildRoot must be a valid URL');
                     }
-                    
                     return errors;
+                }   return errors;
                 }
-
                 function isValidUrl(string) {
-                    try {
+                    try {isValidUrl(string) {
                         new URL(string);
-                        return true;
-                    } catch (_) {
+                        return true;ng);
+                    } catch (_) {ue;
                         return false;
-                    }
+                    }   return false;
+                }   }
                 }
-
                 // Enhanced format function
-                function formatConfig() {
+                function formatConfig() {on
                     const editor = document.getElementById('configEditor');
+                    const json = editor.value.trim();tById('configEditor');
                     const json = editor.value.trim();
-                    
                     if (!json) return;
-
+                    if (!json) return;
                     try {
                         const obj = JSON.parse(json);
                         editor.value = JSON.stringify(obj, null, 2);
-                        editor.classList.remove('config-invalid');
-                        validateConfig();
-                    } catch (e) {
+                        editor.classList.remove('config-invalid'););
+                        validateConfig();remove('config-invalid');
+                    } catch (e) {onfig();
                         showNotification('Format Error', 'Cannot format invalid JSON');
-                    }
+                    }   showNotification('Format Error', 'Cannot format invalid JSON');
+                }   }
                 }
-
                 // Enhanced save configuration
                 function saveConfiguration() {
                     const editor = document.getElementById('configEditor');
                     const createPR = document.getElementById('createPRConfig').checked;
-                    
+                    const createPR = document.getElementById('createPRConfig').checked;
                     try {
                         const config = JSON.parse(editor.value);
-                        
+                        const config = JSON.parse(editor.value);
                         // Show loading state
                         const saveBtn = document.getElementById('saveConfigBtn');
-                        const originalText = saveBtn.innerHTML;
+                        const originalText = saveBtn.innerHTML;('saveConfigBtn');
                         saveBtn.innerHTML = '<i data-feather="loader" class="w-4 h-4 inline mr-2 animate-spin"></i>Saving...';
+                        saveBtn.disabled = true;data-feather="loader" class="w-4 h-4 inline mr-2 animate-spin"></i>Saving...';
                         saveBtn.disabled = true;
-                        
                         setTimeout(() => {
                             closeConfigEditor();
                             showNotification('Configuration Saved', 
                                 createPR ? 'Configuration saved and PR created successfully' : 'Configuration saved successfully');
-                            
+                                createPR ? 'Configuration saved and PR created successfully' : 'Configuration saved successfully');
                             // Reset button
                             saveBtn.innerHTML = originalText;
-                            saveBtn.disabled = false;
+                            saveBtn.disabled = false;nalText;
+                        }, 2000);tn.disabled = false;
                         }, 2000);
-                        
                     } catch (e) {
                         showNotification('Save Error', 'Cannot save invalid configuration');
-                    }
+                    }   showNotification('Save Error', 'Cannot save invalid configuration');
+                }   }
                 }
-
                 // Add validation on input
                 document.addEventListener('DOMContentLoaded', function() {
                     const editor = document.getElementById('configEditor');
-                    if (editor) {
+                    if (editor) {= document.getElementById('configEditor');
                         let timeout;
                         editor.addEventListener('input', function() {
-                            clearTimeout(timeout);
+                            clearTimeout(timeout);nput', function() {
                             timeout = setTimeout(validateConfig, 500);
-                        });
+                        }); timeout = setTimeout(validateConfig, 500);
+                    }   });
                     }
-                    
                     // ...existing initialization code...
+                }); // ...existing initialization code...
                 });
-
                 // Unified sidebar functionality
-                function toggleSidebar() {
+                function toggleSidebar() {nality
                     const sidebar = document.getElementById('sidebar');
                     const overlay = document.getElementById('sidebarOverlay');
-                    
+                    const overlay = document.getElementById('sidebarOverlay');
                     sidebar.classList.toggle('open');
                     overlay.classList.toggle('show');
+                }   overlay.classList.toggle('show');
                 }
-                
                 // Initialize sidebar state
                 document.addEventListener('DOMContentLoaded', function() {
-                    if (window.innerWidth >= 1024) {
+                    if (window.innerWidth >= 1024) {tLoaded', function() {
                         const sidebar = document.getElementById('sidebar');
-                        sidebar.classList.add('open');
-                    }
+                        sidebar.classList.add('open');ementById('sidebar');
+                    }   sidebar.classList.add('open');
+                }); }
                 });
-                
                 // Handle window resize
                 window.addEventListener('resize', function() {
                     const sidebar = document.getElementById('sidebar');
                     const overlay = document.getElementById('sidebarOverlay');
-                    
+                    const overlay = document.getElementById('sidebarOverlay');
                     if (window.innerWidth >= 1024) {
                         sidebar.classList.add('open');
                         overlay.classList.remove('show');
-                    } else {
+                    } else {lay.classList.remove('show');
                         sidebar.classList.remove('open');
                         overlay.classList.remove('show');
-                    }
-                });
+                    }   overlay.classList.remove('show');
+                }); }
             </script>
-            <script>
+            <script>>
                 window.SIDEBAR_ACTIVE = 've'; /* or 'services' if preferred */
-                window.SIDEBAR_FAVORITES = [
+                window.SIDEBAR_FAVORITES = [; /* or 'services' if preferred */
                     { name:'SovBase', query:'SovBase' },
                     { name:'ModelBSov', query:'ModelBSov' },
                     { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
-                ];
+                ];  { name:'OwaMailB2-SOV', query:'OwaMailB2-SOV' }
             </script>
             <script src="./shared/sidebar.js"></script>
-            <script>
+            <script>src="./shared/sidebar.js"></script>
                 if(window.refreshFeatherIcons) window.refreshFeatherIcons();
-            </script>
-        </div>
-    </main>
-</body>
+            </script>ndow.refreshFeatherIcons) window.refreshFeatherIcons();
+        </div>script>
+    </main>iv>
+</body>ain>
+</html>
 </html>

@@ -216,14 +216,6 @@
     color: #107c10;
 }
 
-@media (max-width: 900px) {
-    :root { --page-gutter: 20px; }
-    .favorites-grid-wrap { grid-template-columns: 1fr; }
-    .services-grid {
-        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
-}
-
 /* Error notification */
 @keyframes slideIn {
     from { transform:translateX(100%); opacity:0; }
@@ -386,43 +378,6 @@
     font-size: 0.875rem;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .stat-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .stat-content {
-        text-align: left;
-    }
-    
-    .favorites-grid .grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* Animation for error notifications */
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.error-notification {
-    animation: slideIn 0.3s ease;
-}
-
 /* Sidebar Quick Access injected favorites normalization */
 #sidebarFavoritesSection .sidebar-nav-item {
     /* enforce same visual scale */
@@ -445,6 +400,20 @@
     background: var(--colorNeutralBackground3, rgba(0,0,0,0.04));
 }
 
+/* A11y utility */
+.visually-hidden {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0 0 0 0);
+  border:0;
+}
+
+/* NOTE: Duplicated stat / favorites / icon blocks removed in earlier cleanup. */
+
 /* Unified icon normalization (dashboard + services) */
 .sidebar .sidebar-nav-item svg,
 .top-bar svg,
@@ -456,6 +425,37 @@
     stroke: currentColor;
     stroke-width: 1.8;
     vector-effect: non-scaling-stroke;
+}
+
+/* Larger context icons (stats / service primary icons) */
+.stat-card .stat-icon svg,
+.service-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 1.6;
+}
+
+/* Ensure removal of leftover Tailwind size classes after replacement */
+.stat-card .stat-icon svg[class*="w-"],
+.service-icon svg[class*="w-"],
+.favorites-header .favorites-title svg[class*="w-"] {
+    width: inherit;
+    height: inherit;
+}
+
+/* Star fill consistency */
+.sidebar .sidebar-nav-item svg.feather-star.favorite-fill,
+.star-toggle.active svg.feather-star,
+.favorites-card .favorites-title svg.feather-star.favorite-fill {
+    fill: currentColor;
+    stroke: currentColor;
+    stroke-width: 1.4;
+}
+
+/* Muted utility (applies everywhere) */
+.icon-muted svg {
+    stroke: var(--colorNeutralForeground3);
+}
 }
 
 /* Larger context icons (stats / service primary icons) */

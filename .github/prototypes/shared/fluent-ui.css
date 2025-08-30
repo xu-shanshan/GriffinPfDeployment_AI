@@ -29,6 +29,22 @@ body {
     margin: 0;
     background: var(--colorNeutralBackground2);
     min-height: 100vh;
+    overflow-x: hidden; /* prevent page-level horizontal scroll */
+}
+html {
+    overflow-x: hidden; /* safeguard root */
+}
+/* Optional guard: any direct child causing accidental wide overflow gets clipped */
+.main-content, .fluent-card, .fluent-card * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Tables auto-fit inside container instead of forcing horizontal scroll wrappers */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
 }
 
 /* Cards */
@@ -84,7 +100,7 @@ body {
     background: var(--colorNeutralBackground1);
     border-right: 1px solid var(--colorNeutralStroke2);
     box-shadow: var(--shadow2);
-    overflow-y: auto;
+    /* removed overflow-y to prevent independent scroll; body now controls vertical scrolling */
     z-index: 1000;
 }
 .sidebar-header {
@@ -128,7 +144,6 @@ body {
 .main-content {
     margin-left: 256px;
     min-height: 100vh;
-    overflow-y: auto;
 }
 
 /* Navigation */
@@ -222,48 +237,4 @@ body {
     width: 16px;
     height: 16px;
 }
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 16px;
-}
-.fluent-badge-success {
-    background: #dff6dd;
-    color: #107c10;
-}
-.fluent-badge-info {
-    background: #e3f2fd;
-    color: var(--colorBrandForeground1);
-}
-.fluent-badge-neutral {
-    background: var(--colorNeutralBackground3);
-    color: var(--colorNeutralForeground2);
-}
 
-/* Icons */
-.fluent-icon {
-    width: 16px;
-    height: 16px;
-}
-
-/* Responsive Design */
-@media (max-width: 1023px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-    .main-content {
-        margin-left: 0;
-    }
-    .sidebar-toggle {
-        display: block !important;
-    }
-}
-@media (min-width: 1024px) {
-    .sidebar {
-        transform: translateX(0);
-    }
-    .sidebar-toggle {
-        display: none;
-    }
-}

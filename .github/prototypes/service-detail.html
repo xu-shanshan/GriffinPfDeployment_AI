@@ -21,11 +21,14 @@
         .loading-overlay.hidden { display:none; }
         .star-toggle svg.feather-star { stroke:currentColor; }
         .star-toggle.active svg.feather-star { fill:currentColor; }
+        /* Horizontal scroll prevention */
+        body, .main-content, .fluent-card { max-width:100%; overflow-x:hidden; }
     </style>
 </head>
 <body>
+    <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
     <div id="app-sidebar"></div><!-- shared sidebar injected -->
-    <div class="main-content"><!-- replaced previous margin-left logic via shared layout -->
+    <div class="main-content" id="mainContent" role="main" aria-label="Service Detail"><!-- no vertical scroll enforced; pagination handled where needed -->
         <!-- Fluent Navigation -->
         <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
             <div class="container mx-auto px-6">
@@ -68,7 +71,7 @@
             </nav>
 
             <!-- Service Header -->
-            <div class="fluent-card mb-8">
+            <div class="fluent-card mb-8" aria-label="Service header summary">
                 <div class="p-8">
                     <div class="flex items-center justify-between mb-6">
                         <div class="flex items-center space-x-4">

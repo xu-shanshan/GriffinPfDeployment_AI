@@ -7,8 +7,8 @@
     ];
 
     function navItem(href, icon, label, key) {
-        const active = ACTIVE_KEY === key ? ' active" aria-current="page' : '';
-        return `<a href="${href}" class="sidebar-nav-item${active}">
+        const isActive = ACTIVE_KEY === key;
+        return `<a href="${href}" class="sidebar-nav-item${isActive ? ' active' : ''}"${isActive ? ' aria-current="page"' : ''}>
             <i data-feather="${icon}" class="fluent-icon mr-3" aria-hidden="true"></i>${label}
         </a>`;
     }

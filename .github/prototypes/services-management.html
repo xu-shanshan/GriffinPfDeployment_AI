@@ -8,12 +8,16 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
     <link rel="stylesheet" href="./shared/common.css"><!-- added shared styles -->
+    <style>
+      body, .main-content, .services-grid, .fluent-card { max-width:100%; overflow-x:hidden; }
+    </style>
 </head>
 <body>
-    <div id="app-sidebar"></div><!-- injected sidebar -->
+    <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
+    <div id="app-sidebar"></div>
 
     <!-- Main Content -->
-    <div class="main-content">
+    <div class="main-content" id="mainContent" role="main" aria-label="Services Management">
         <!-- Header refactored to top-bar like dashboard -->
         <header class="top-bar" role="banner">
             <div class="web-container">

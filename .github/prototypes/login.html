@@ -46,10 +46,22 @@
         .fluent-button-primary:hover {
             background: var(--colorBrandBackgroundHover);
         }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
     </style>
 </head>
 <body style="background: var(--colorNeutralBackground2); min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-    <div class="fluent-card p-8 w-full max-w-md">
+    <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
+    <div class="fluent-card p-8 w-full max-w-md" id="mainContent" role="main" aria-label="Login form">
         <div class="text-center mb-8">
             <div class="w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center" style="background: var(--colorBrandBackground);">
                 <i data-feather="layers" class="w-8 h-8 text-white"></i>
@@ -72,7 +84,7 @@
                 class="w-full fluent-button-primary"
                 aria-describedby="login-help"
                 id="loginBtn"
-            >
+                type="button">
                 <i data-feather="log-in" class="w-4 h-4 inline mr-2"></i>
                 <span id="loginText">Sign in with Microsoft</span>
             </button>

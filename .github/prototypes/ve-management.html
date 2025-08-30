@@ -8,11 +8,15 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
     <link rel="stylesheet" href="./shared/common.css"><!-- added shared layout + icon unification -->
+    <style>
+      body, .main-content, #veCardsGrid { max-width:100%; overflow-x:hidden; }
+    </style>
 </head>
 <body>
-    <div id="app-sidebar"></div><!-- shared sidebar injection -->
+    <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
+    <div id="app-sidebar"></div>
 
-    <main class="main-content" role="main">
+    <main class="main-content" id="mainContent" role="main" aria-label="Virtual Environment Management">
         <header class="top-bar" role="banner">
             <div class="web-container">
                 <div class="flex justify-between items-center h-app-header">

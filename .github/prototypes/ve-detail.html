@@ -16,9 +16,10 @@
     </style>
 </head>
 <body>
+    <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
     <div id="app-sidebar"></div><!-- shared sidebar injection -->
 
-    <main class="main-content" role="main">
+    <main class="main-content" id="mainContent" role="main" aria-label="Virtual Environment Detail">
         <header class="top-bar" role="banner">
             <div class="web-container">
                 <div class="flex justify-between items-center h-app-header">
@@ -129,20 +130,20 @@
                         </button>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="min-w-full" id="servicesTable">
+                <div><!-- removed overflow-x-auto previously -->
+                    <table class="min-w-full" id="servicesTable" aria-label="Services in this virtual environment" style="width:100%;table-layout:auto;">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-4 w-12">
+                                <th scope="col" class="px-6 py-4 w-12">
                                     <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300">
                                 </th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Name</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Dragon</th>
-                                <th class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">PFGold</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Version</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Default Pipeline</th>
-                                <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service Name</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Dragon</th>
+                                <th scope="col" class="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">PFGold</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Version</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Default Pipeline</th>
+                                <th scope="col" class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="servicesTableBody" class="bg-white divide-y divide-gray-200"></tbody>
@@ -188,7 +189,7 @@
             </div>
 
             <!-- Notification -->
-            <div id="notification" class="fixed top-4 right-4 hidden fluent-card p-4 z-50">
+            <div id="notification" class="fixed top-4 right-4 hidden fluent-card p-4 z-50" role="alert" aria-live="polite">
                 <strong id="notification-title" class="block mb-1"></strong>
                 <span id="notification-message" class="fluent-text-body1"></span>
             </div>

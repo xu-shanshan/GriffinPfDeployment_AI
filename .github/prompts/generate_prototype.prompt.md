@@ -57,7 +57,7 @@ Generation Order (must follow strictly):
    - Each page openable in browser
    - File names should match page functionality
 
-Output structure (unchanged, but order of generation emphasized):
+Output structure, for example:
    .github/prototype_YYYYMMDDHHMMSS/
       ├── shared/
       │   ├── common.css

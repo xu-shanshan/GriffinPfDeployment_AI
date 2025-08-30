@@ -19,7 +19,7 @@ GriffinPfDeployment_AI is a full-stack **Deployment Management System** with Rea
 | Model B2       | B type VE     | APE (Physical Env)       | Can be onboarded to B type VE       |
 | Model B2       | B2 type VE    | CPE (Container Env)      | Can be onboarded to B2 type VE      |
 
-### Explanation
+#### Explanation
 
 1. **Virtual Environment (VE)**
    - Logical abstraction that groups services and configurations  
@@ -44,6 +44,131 @@ GriffinPfDeployment_AI is a full-stack **Deployment Management System** with Rea
    - **Pipeline / Drop URL**:  
      - Each service can have multiple pipelines  
      - Each pipeline can produce a latest **Drop URL** for deployment
+
+
+### Mock Data 
+
+Mock data is used to simulate the actual data that will be used in the application. It helps in testing and development without relying on real data.
+mockData refer to file `.github/instructions/ReleaseMapping.json`.
+
+mockData = {
+  "CloudBuildRoot": "https://cloudbuild.microsoft.com",
+  "ExpectedVEs": {
+    "SovBaseVEs": ["SovBase"],
+    "ModelBSovVEs": ["ModelBSov"],
+    "ModelB2SovVEs": [
+      "TBA1-SOV","OwaMailB2-SOV","EBA1-SOV","M365Coral1B2-SOV","FastV2B2-SOV",
+      "MessagesIngestionServiceB2-SOV","ConnectorsB2-SOV","VSOB2-SOV","ProtocolsB2-SOV",
+      "ContentEnrichmentServiceB2-SOV","GraphAnalyticsB2-SOV","TodoB2-SOV",
+      "MicroSvcB2-SOV","GraphConnectorsB2-SOV","FlowControlB2-SOV"
+    ]
+  },
+
+  "ExpectedServices": {
+    "SovBase": [
+      "ActionsAssistants","ActionsB2NetCore","AHCoreB2","ApplicationHost","ClearData",
+      "ComplianceAuthServerV2","CompliancePolicyNetCore","ContentEnhancementService",
+      "ControllerService","DirectoryReplication","DNPublisher","DocParserServiceNetCore",
+      "ESS","FlowControl","GraphAnalytics","GraphConnectors","GriffinDataBus",
+      "GriffinLocalWatchdog","GriffinLocalWatchdogNetCore","GriffinPrivilegedSetupService",
+      "GriffinRoutingUpdateService","GriffinUtilityNetCore","LinkExtraction",
+      "LocalShardSearch","LogScrubServer","ManagementNetCore","MessagesIngestionService",
+      "NetworkWatchdog","NotesFabric","OwaMailB2","OwaWatchDog","OWS","PDAS",
+      "PingB2NetCore","Pop3B2","portablerankerserviceb2","PrimeCore","ProcessorsB2NetCore",
+      "RecB2","SdsProcessors","SearchInsightsNetCore","SearchNetCore","SignalB2Service",
+      "SignalPatchService","SignalPropagation","SigsMLService","SpellerB2SubstrateSDK",
+      "SpoolsScaleOutCore","SpoonsCore","SpoonsProcessorsCore","SsmsNetCore",
+      "StoreExtension","SubsHwWatchdog","SubstrateAppWatchdogNetCore",
+      "SubstrateArchiveService","SubstrateSearchAssistants","TenantDataSink",
+      "TenantSearchProcessorsCore","TokenIssuerSAPs","UserContext","UserKnowledgeBase",
+      "WebhookB2NetCore"
+    ],
+    "ModelBSov": [
+      "ActionsAssistants","ActionsB2NetCore","AHCoreB2","ApplicationHost","ClearData",
+      "ComplianceAuthServerV2","CompliancePolicyNetCore","ContentEnhancementService",
+      "ControllerService","DirectoryReplication","DNPublisher","DocParserServiceNetCore",
+      "ESS","FlowControl","GraphAnalytics","GraphConnectors","GriffinDataBus",
+      "GriffinLocalWatchdog","GriffinLocalWatchdogNetCore","GriffinPrivilegedSetupService",
+      "GriffinRoutingUpdateService","GriffinUtilityNetCore","LinkExtraction",
+      "LocalShardSearch","LogScrubServer","ManagementNetCore","MessagesIngestionService",
+      "NetworkWatchdog","OwaMailB2","OwaWatchDog","OWS","PDAS","PingB2NetCore",
+      "Pop3B2","portablerankerserviceb2","PrimeCore","ProcessorsB2NetCore","RecB2",
+      "SdsProcessors","SearchInsightsNetCore","SearchNetCore","SignalB2Service",
+      "SignalPatchService","SignalPropagation","SigsMLService","SpellerB2SubstrateSDK",
+      "SpoolsScaleOutCore","SpoonsCore","SpoonsProcessorsCore","SsmsNetCore",
+      "StoreExtension","SubstrateAppWatchdogNetCore","SubstrateArchiveService",
+      "SubstrateSearchAssistants","TenantDataSink","TenantSearchProcessorsCore",
+      "TokenIssuerSAPs","UserContext","UserKnowledgeBase","WebhookB2NetCore"
+    ],
+    "TBA1-SOV": ["PingB2NetCore","TenantSearchProcessorsCore"],
+    "OwaMailB2-SOV": ["OwaMailB2"],
+    "EBA1-SOV": ["DNPublisher","DirectoryReplication","SignalPropagation","ClearData","Ssmsnetcore","SearchInsightsNetCore"],
+    "M365Coral1B2-SOV": ["SdsProcessors"],
+    "FastV2B2-SOV": ["SpoonsProcessorsCore","LinkExtraction","PrimeCore"],
+    "MessagesIngestionServiceB2-SOV": ["MessagesIngestionService"],
+    "ConnectorsB2-SOV": ["ProcessorsB2NetCore","WebhookB2NetCore","ActionsB2NetCore","ActionsAssistants"],
+    "VSOB2-SOV": ["ESS","PDAS","UserKnowledgeBase","SignalB2Service","SigsMLService"],
+    "ProtocolsB2-SOV": ["Pop3B2"],
+    "ContentEnrichmentServiceB2-SOV": ["ContentEnhancementService"],
+    "GraphAnalyticsB2-SOV": ["GraphAnalytics"],
+    "TodoB2-SOV": ["SignalPatchService"],
+    "MicroSvcB2-SOV": ["SubstrateArchiveService","DocParserServiceNetCore"],
+    "GraphConnectorsB2-SOV": ["GraphConnectors"],
+    "FlowControlB2-SOV": ["FlowControl"]
+  },
+  "Apps": {
+    "AHCoreB2": { "ServiceName": "AHB2" },
+    "ApplicationHost": { "ServiceName": "AH" },
+    "ReplicationDeliveryProcessorService": { "ServiceName": "RDPService" }
+  },
+
+  "Services": {
+    "OwaMailB2": {
+      "BuildType": "RingPromotion",
+      "IncrementalBuildPipelineId": 33874,
+      "PipelineId": 1418,
+      "RingPromotionRootPath": "autopilot",
+      "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/owamailb2/prod_image.txt",
+      "PpeVeName": "OwaMailB2-PPE",
+      "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/owamailb2_ms/<BuildVersion>?root=autopilot"
+    },
+    "OWS": {
+      "BuildType": "RingPromotion",
+      "IncrementalBuildPipelineId": 33876,
+      "RingPromotionRootPath": "autopilot",
+      "BuildRoot": "https://outlookgriffinservice.blob.core.windows.net/ows/prod_image.txt",
+      "PpeVename": "OWA-PPE",
+      "BuildPathPattern": "VSO://https://outlookweb.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/ows_ms/<BuildVersion>?root=autopilot"
+    },
+    "GriffinRoutingUpdateService": {
+      "BuildType": "RingPromotion",
+      "IncrementalBuildPipelineId": 31234,
+      "MainlineBuildPipelineId": 31235,
+      "PipelineId": 31238,
+      "RingPromotionRootPath": "target/distrib/Autopilot/Microsoft.Griffin.BricksV2.RoutingUpdateService",
+      "BuildRoot": "target/distrib/Autopilot/Microsoft.Griffin.BricksV2.RoutingUpdateService",
+      "PpeVeName": "AutoPPE",
+      "BuildPathPattern": "VSO://https://ossinfra.artifacts.visualstudio.com/DefaultCollection/_apis/drop/drops/secondary/OSS_RoutingPlane_Retail_Drops_Signing_Git/Sec.1.0.0.<BuildVersion>?root=/target/distrib/Autopilot/Microsoft.Griffin.BricksV2.RoutingUpdateService"
+    }
+  }
+}
+
+#### Explanation
+
+1. **ExpectedVEs**
+  Essentially a grouping of VEs, mainly used to define the **deployment scope** and for organizational management.
+  For the frontend, the core requirement is to display the list of VEs the user can operate on, along with their corresponding Services, rather than being forced to show them strictly by group.
+  In other words, the frontend only needs to know which VEs are available for selection and what Services exist under each VE.
+
+2. **ExpectedServices**
+  This represents the mapping from **VE → Services**.
+  - **Key**: VE name
+  - **Value**: Services under that VE
+  The frontend must use this data to dynamically show the VE details.
+
+3. **Services**
+  Contains detailed information for each Service (Build info, Pipeline, Drop URL, etc.).
+  The frontend needs to display and operate on this information (e.g., trigger deployments, select builds, etc.).
 
 
 ## Architecture

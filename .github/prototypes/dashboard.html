@@ -8,6 +8,53 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/fluent-ui.css">
     <link rel="stylesheet" href="./shared/common.css">
+    <style>
+      /* Non-scrolling full viewport layout */
+      html, body, .main-content { height:100vh; overflow:hidden; }
+      .content-area {
+        display:flex;
+        flex-direction:column;
+        height:calc(100vh - var(--app-header-height, 64px));
+        overflow:hidden;
+      }
+      .welcome-section { flex-shrink:0; }
+      .stats-section { flex-shrink:0; }
+      .favorites-grid { flex:1 1 auto; overflow:hidden; } /* remove internal scroll */
+      /* Safety: avoid horizontal scroll */
+      body, .main-content, .web-container { max-width:100%; overflow-x:hidden; }
+      :root { --favorites-bottom-gap: 32px; --favorites-compact-threshold: 7; }
+      .favorites-grid { position:relative; }
+      .favorites-grid-wrap {
+         padding-bottom: var(--favorites-bottom-gap); /* ensures visual space above page bottom */
+         transition: padding .2s ease;
+      }
+      /* Compact density when many favorites */
+      .favorites-grid-wrap.compact .favorites-content { padding: 0.85rem 1rem 0.5rem; }
+      .favorites-grid-wrap.compact .favorite-item { padding: 0.55rem 0.65rem !important; }
+      .favorites-grid-wrap.compact .favorite-name { font-size: 0.875rem; }
+      .favorites-grid-wrap.compact .favorite-meta span,
+      .favorites-grid-wrap.compact .favorite-timestamp span { font-size: 0.6875rem; }
+      .favorites-grid-wrap.compact .favorite-timestamp { gap: .5rem; }
+      .favorites-grid-wrap.compact .favorites-header { padding: 1.0rem 1.0rem .75rem; }
+      .favorites-grid-wrap.compact .favorites-header h3 { font-size: 1rem; line-height:1.25rem; }
+
+     /* Multi-level compaction for favorites (level 0 = normal) */
+     .favorites-grid-wrap.compact-1 .favorites-header { padding:1.0rem 1.0rem .75rem; }
+     .favorites-grid-wrap.compact-1 .favorites-content { padding:0.9rem 1.0rem 0.6rem; }
+     .favorites-grid-wrap.compact-1 .favorite-item { padding:0.65rem 0.75rem !important; }
+     .favorites-grid-wrap.compact-1 .favorite-name { font-size:.9rem; }
+     .favorites-grid-wrap.compact-1 .favorite-meta span,
+     .favorites-grid-wrap.compact-1 .favorite-timestamp span { font-size:.7rem; }
+
+     .favorites-grid-wrap.compact-2 .favorites-header { padding:.75rem .75rem .5rem; }
+     .favorites-grid-wrap.compact-2 .favorites-header h3 { font-size:.9rem; line-height:1.15rem; }
+     .favorites-grid-wrap.compact-2 .favorites-content { padding:.6rem .65rem .45rem; }
+     .favorites-grid-wrap.compact-2 .favorite-item { padding:.45rem .5rem !important; }
+     .favorites-grid-wrap.compact-2 .favorite-name { font-size:.8rem; }
+     .favorites-grid-wrap.compact-2 .favorite-meta span,
+     .favorites-grid-wrap.compact-2 .favorite-timestamp span { font-size:.62rem; }
+     .favorites-grid-wrap.compact-2 .favorite-timestamp { gap:.4rem; }
+    </style>
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
@@ -69,7 +116,7 @@
     // Mock data JSON
     const mockData = {
         stats: [
-            { icon:'database', color:'blue', number:18, label:'Total VEs', badge:{text:'+2 this month', type:'success'}, footerIcon:'trending-up', navigate:'ve-management.html' },
+            { icon:'database', color:'blue', number:18, label:'Total VEs', badge:{text:' 2 this month', type:'success'}, footerIcon:'trending-up', navigate:'ve-management.html' },
             { icon:'layers', color:'green', number:156, label:'Active Services', badge:{text:'98.7% uptime', type:'success'}, status:'active', navigate:'services-management.html' },
             { icon:'upload-cloud', color:'orange', number:23, label:'Recent Deployments', badge:{text:'Last 24 hours', type:'info'}, footerIcon:'clock', navigate:'deployment-history.html' }
         ],
@@ -118,24 +165,26 @@
 
     function renderFavoritesVE() {
         const wrap = document.getElementById('favoriteVEs');
-        mockData.favoriteVEs.forEach(v => {
-            const d = el('div','favorite-item');
-            d.dataset.navigate = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
-            d.innerHTML = `
-                <div class="favorite-item-content">
-                    <div class="favorite-details">
-                        <h4 class="favorite-name">${v.name}</h4>
-                        <div class="favorite-meta">
-                            <span class="fluent-text-body1">${v.services} services</span>
-                            <span class="fluent-badge fluent-badge-${v.typeClass}">${v.type}</span>
-                        </div>
-                    </div>
+        const list = mockData.favoriteVEs || [];
+        wrap.innerHTML = '';
+        list.forEach(v => {
+          const d = el('div','favorite-item');
+          d.dataset.navigate = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
+          d.innerHTML = `
+            <div class="favorite-item-content">
+              <div class="favorite-details">
+                <h4 class="favorite-name">${v.name}</h4>
+                <div class="favorite-meta">
+                  <span class="fluent-text-body1">${v.services} services</span>
+                  <span class="fluent-badge fluent-badge-${v.typeClass}">${v.type}</span>
                 </div>
-                <div class="favorite-timestamp">
-                    <span>${v.updated}</span>
-                    <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                </div>`;
-            wrap.appendChild(d);
+              </div>
+            </div>
+            <div class="favorite-timestamp">
+              <span>${v.updated}</span>
+              <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
+            </div>`;
+          wrap.appendChild(d);
         });
     }
 
@@ -185,14 +234,36 @@
         });
     }
 
+    function adjustFavoritesDensity() {
+      const grid = document.querySelector('.favorites-grid');
+      const wrap = document.querySelector('.favorites-grid-wrap');
+      if (!grid || !wrap) return;
+
+      // Reset compaction
+      wrap.classList.remove('compact-1','compact-2');
+
+      const maxLevel = 2;
+      let level = 0;
+
+      // Measure and escalate compaction until fits (no vertical scroll)
+      while (level <= maxLevel && grid.scrollHeight > grid.clientHeight) {
+        level++;
+        wrap.classList.remove('compact-1','compact-2');
+        if (level === 1) wrap.classList.add('compact-1');
+        if (level === 2) wrap.classList.add('compact-2');
+      }
+    }
+
+    const debounce = (fn, d=150)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; };
     document.addEventListener('DOMContentLoaded', () => {
         renderStats();
         renderFavoritesVE();
         renderFavoritesServices();
         enableNavigation();
         animateNumbers();
-        // use centralized icon refresh
+        adjustFavoritesDensity();
         if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+        window.addEventListener('resize', debounce(adjustFavoritesDensity, 120));
     });
     </script>
     <script>

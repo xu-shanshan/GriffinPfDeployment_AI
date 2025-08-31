@@ -100,8 +100,7 @@
                                    id="searchInput"
                                    aria-label="Search by VE name or Service name"
                                    placeholder="Search by VE name or Service name..."
-                                   class="fluent-input with-icon w-80"
-                                   oninput="performSearch()">
+                                   class="fluent-input with-icon w-80">
                         </div>
                         <select class="fluent-select" aria-label="Filter by VE type" onchange="applyFilters()">
                             <option>All Types</option>
@@ -122,6 +121,8 @@
                          <p id="searchSummaryText" class="text-sm" style="color:var(--colorBrandForeground1);"></p>
                      </div>
                 </div>
+                <!-- Add hidden live region for a11y announcements -->
+                <div id="searchLive" class="visually-hidden" aria-live="polite"></div>
             </div>
 
             <!-- VE Cards Grid (dynamic now) -->
@@ -146,8 +147,8 @@
       });
     </script>
     <script>
-
-        const veServicesMap = window.mockeVeServicesMap;
+        // Harden veServicesMap fallback
+        const veServicesMap = (window.mockeVeServicesMap && typeof window.mockeVeServicesMap === 'object') ? window.mockeVeServicesMap : {};
         const { dataset: veDataset } = buildVeDetails();
 
         /* ===== Pagination State (no scrolling) ===== */
@@ -427,24 +428,32 @@
            renderVEs();
        }
 
+        /* ===== SEARCH & FILTER FUNCTIONS (restored) ===== */
         function performSearch() {
-            const term = document.getElementById('searchInput').value.trim().toLowerCase();
+            const si = document.getElementById('searchInput');
+            if (!si) return;
+            const term = si.value.trim().toLowerCase();
             const typeFilter = document.querySelectorAll('.fluent-select')[0].value;
             const groupFilter = document.querySelectorAll('.fluent-select')[1].value;
+
+            // Base filter (type + group)
             let filtered = veDataset.filter(v => {
                 const matchesType = typeFilter === 'All Types' || v.type === typeFilter;
                 const matchesGroup = groupFilter === 'All Groups' || v.group === groupFilter;
                 return matchesType && matchesGroup;
             });
+
+            // Text filter (VE name or any service under VE)
             if (term) {
                 filtered = filtered.filter(v => {
                     const nameMatch = v.name.toLowerCase().includes(term);
-                    const svcMatch = (veServicesMap[v.name]||[]).some(s => s.toLowerCase().includes(term));
+                    const svcMatch = (veServicesMap[v.name] || []).some(s => s.toLowerCase().includes(term));
                     return nameMatch || svcMatch;
                 });
             }
+
             currentFiltered = filtered;
-            currentPage = 1; // reset to first page on new filter
+            currentPage = 1;
             renderVEs(currentFiltered);
             updateSearchSummary(term, filtered, veServicesMap);
         }
@@ -452,38 +461,61 @@
         function updateSearchSummary(term, list, serviceMap) {
             const summary = document.getElementById('searchSummary');
             const textEl = document.getElementById('searchSummaryText');
-            if (!term) { summary.classList.add('hidden'); return; }
+            const liveEl = document.getElementById('searchLive');
+            if (!summary || !textEl) return;
+
+            if (!term) {
+                summary.classList.add('hidden');
+                if (liveEl) liveEl.textContent = '';
+                return;
+            }
+
             let additional = '';
             const svcHits = list.filter(v =>
                 !v.name.toLowerCase().includes(term) &&
-                (serviceMap[v.name]||[]).some(s => s.toLowerCase().includes(term))
+                (serviceMap[v.name] || []).some(s => s.toLowerCase().includes(term))
             );
             if (svcHits.length) {
-                additional = ' containing service "' + term + '":' +
-                    svcHits.map(v => ` ${v.name} (${(serviceMap[v.name]||[]).filter(s=>s.toLowerCase().includes(term)).join(', ')})`).join('');
+                additional = ' (matched services in: ' + svcHits.map(v => {
+                    const matched = (serviceMap[v.name] || [])
+                        .filter(s => s.toLowerCase().includes(term))
+                        .join(', ');
+                    return `${v.name}: ${matched}`;
+                }).join('; ') + ')';
             }
-            textEl.textContent = `Found ${list.length} virtual environment(s)` + additional;
+
+            const msg = `Found ${list.length} virtual environment${list.length !== 1 ? 's' : ''} for "${term}"${additional}`;
+            textEl.textContent = msg;
             summary.classList.remove('hidden');
+            if (liveEl) liveEl.textContent = msg;
         }
 
         function clearSearch() {
-            document.getElementById('searchInput').value = '';
-            document.querySelectorAll('.fluent-select')[0].selectedIndex = 0;
-            document.querySelectorAll('.fluent-select')[1].selectedIndex = 0;
+            const si = document.getElementById('searchInput');
+            if (si) si.value = '';
+            // Reset selects
+            const selects = document.querySelectorAll('.fluent-select');
+            if (selects[0]) selects[0].selectedIndex = 0;
+            if (selects[1]) selects[1].selectedIndex = 0;
+
             currentFiltered = [...veDataset];
             currentPage = 1;
             renderVEs(currentFiltered);
             updateSearchSummary('', currentFiltered, veServicesMap);
+            const liveEl = document.getElementById('searchLive');
+            if (liveEl) liveEl.textContent = 'Search cleared. Showing all virtual environments.';
         }
 
-        function applyFilters() { performSearch(); }
+        function applyFilters() {
+            performSearch(); // unify logic
+        }
 
         function toggleStar(btn, name) {
             const active = btn.classList.toggle('active');
             if (active) {
-                if (window.addToSidebarFavorites) window.addToSidebarFavorites({ name, query: name, type:'ve' });
+                window.addToSidebarFavorites && window.addToSidebarFavorites({ name, query: name, type: 've' });
             } else {
-                if (window.removeFromSidebarFavorites) window.removeFromSidebarFavorites(name,'ve');
+                window.removeFromSidebarFavorites && window.removeFromSidebarFavorites(name, 've');
             }
         }
 
@@ -495,6 +527,18 @@
             // One more delayed recalculation for fonts async / icon replacement shifts
             setTimeout(() => { updateCardWidth(); recalculatePageSize(); }, 300);
             setTimeout(adjustForOverflow, 450);
+            // Replace direct inline oninput with debounced listener + IME composition handling
+            let debouncedPerformSearch;
+            const si = document.getElementById('searchInput');
+            if (si) {
+                debouncedPerformSearch = debounce(() => performSearch(), 160);
+                si.addEventListener('compositionstart', () => { si._composing = true; });
+                si.addEventListener('compositionend', () => { si._composing = false; performSearch(); });
+                si.addEventListener('input', () => {
+                    if (si._composing) return;
+                    debouncedPerformSearch();
+                });
+            }
         });
     </script>
     <script>

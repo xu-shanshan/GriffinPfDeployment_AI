@@ -102,17 +102,8 @@
                                    placeholder="Search by VE name or Service name..."
                                    class="fluent-input with-icon w-80">
                         </div>
-                        <select class="fluent-select" aria-label="Filter by VE type" onchange="applyFilters()">
-                            <option>All Types</option>
-                            <option>B Type VE</option>
-                            <option>B2 Type VE</option>
-                        </select>
-                        <select class="fluent-select" aria-label="Filter by VE group" onchange="applyFilters()">
-                            <option>All Groups</option>
-                            <option>SovBaseVEs</option>
-                            <option>ModelBSovVEs</option>
-                            <option>ModelB2SovVEs</option>
-                        </select>
+                        <select id="typeFilter" class="fluent-select" aria-label="Filter by VE type"></select>
+                        <select id="groupFilter" class="fluent-select" aria-label="Filter by VE group"></select>
                         <button type="button" onclick="clearSearch()" class="fluent-button fluent-button-subtle">Clear All</button>
                     </div>
                 </div>
@@ -428,22 +419,53 @@
            renderVEs();
        }
 
-        /* ===== SEARCH & FILTER FUNCTIONS (restored) ===== */
+        // NEW: build filter options dynamically
+        function populateFilterOptions() {
+            const typeSel = document.getElementById('typeFilter');
+            const groupSel = document.getElementById('groupFilter');
+            if (!typeSel || !groupSel) return;
+
+            const types = Array.from(new Set(veDataset.map(v => v.type))).sort();
+            const groups = Array.from(
+                new Set(
+                    veDataset.flatMap(v => Array.isArray(v.group) ? v.group : [v.group])
+                )
+            ).sort();
+
+            // Helper to build option nodes
+            function fillSelect(sel, allLabel, values) {
+                sel.innerHTML = '';
+                const optAll = document.createElement('option');
+                optAll.value = '';
+                optAll.textContent = allLabel;
+                sel.appendChild(optAll);
+                values.forEach(val => {
+                    const o = document.createElement('option');
+                    o.value = val;
+                    o.textContent = val;
+                    sel.appendChild(o);
+                });
+            }
+
+            fillSelect(typeSel, 'All Types', types);
+            fillSelect(groupSel, 'All Groups', groups);
+        }
+
+        /* ===== SEARCH & FILTER FUNCTIONS (updated to use ids) ===== */
         function performSearch() {
             const si = document.getElementById('searchInput');
             if (!si) return;
             const term = si.value.trim().toLowerCase();
-            const typeFilter = document.querySelectorAll('.fluent-select')[0].value;
-            const groupFilter = document.querySelectorAll('.fluent-select')[1].value;
+            const typeFilterVal = (document.getElementById('typeFilter')?.value || '').trim();
+            const groupFilterVal = (document.getElementById('groupFilter')?.value || '').trim();
 
-            // Base filter (type + group)
             let filtered = veDataset.filter(v => {
-                const matchesType = typeFilter === 'All Types' || v.type === typeFilter;
-                const matchesGroup = groupFilter === 'All Groups' || v.group === groupFilter;
+                const matchesType = !typeFilterVal || v.type === typeFilterVal;
+                const vGroups = Array.isArray(v.group) ? v.group : [v.group];
+                const matchesGroup = !groupFilterVal || vGroups.includes(groupFilterVal);
                 return matchesType && matchesGroup;
             });
 
-            // Text filter (VE name or any service under VE)
             if (term) {
                 filtered = filtered.filter(v => {
                     const nameMatch = v.name.toLowerCase().includes(term);
@@ -458,46 +480,11 @@
             updateSearchSummary(term, filtered, veServicesMap);
         }
 
-        function updateSearchSummary(term, list, serviceMap) {
-            const summary = document.getElementById('searchSummary');
-            const textEl = document.getElementById('searchSummaryText');
-            const liveEl = document.getElementById('searchLive');
-            if (!summary || !textEl) return;
-
-            if (!term) {
-                summary.classList.add('hidden');
-                if (liveEl) liveEl.textContent = '';
-                return;
-            }
-
-            let additional = '';
-            const svcHits = list.filter(v =>
-                !v.name.toLowerCase().includes(term) &&
-                (serviceMap[v.name] || []).some(s => s.toLowerCase().includes(term))
-            );
-            if (svcHits.length) {
-                additional = ' (matched services in: ' + svcHits.map(v => {
-                    const matched = (serviceMap[v.name] || [])
-                        .filter(s => s.toLowerCase().includes(term))
-                        .join(', ');
-                    return `${v.name}: ${matched}`;
-                }).join('; ') + ')';
-            }
-
-            const msg = `Found ${list.length} virtual environment${list.length !== 1 ? 's' : ''} for "${term}"${additional}`;
-            textEl.textContent = msg;
-            summary.classList.remove('hidden');
-            if (liveEl) liveEl.textContent = msg;
-        }
-
         function clearSearch() {
             const si = document.getElementById('searchInput');
             if (si) si.value = '';
-            // Reset selects
-            const selects = document.querySelectorAll('.fluent-select');
-            if (selects[0]) selects[0].selectedIndex = 0;
-            if (selects[1]) selects[1].selectedIndex = 0;
-
+            document.getElementById('typeFilter').selectedIndex = 0;
+            document.getElementById('groupFilter').selectedIndex = 0;
             currentFiltered = [...veDataset];
             currentPage = 1;
             renderVEs(currentFiltered);
@@ -507,16 +494,7 @@
         }
 
         function applyFilters() {
-            performSearch(); // unify logic
-        }
-
-        function toggleStar(btn, name) {
-            const active = btn.classList.toggle('active');
-            if (active) {
-                window.addToSidebarFavorites && window.addToSidebarFavorites({ name, query: name, type: 've' });
-            } else {
-                window.removeFromSidebarFavorites && window.removeFromSidebarFavorites(name, 've');
-            }
+            performSearch();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -539,6 +517,9 @@
                     debouncedPerformSearch();
                 });
             }
+            populateFilterOptions();
+            document.getElementById('typeFilter')?.addEventListener('change', applyFilters);
+            document.getElementById('groupFilter')?.addEventListener('change', applyFilters);
         });
     </script>
     <script>

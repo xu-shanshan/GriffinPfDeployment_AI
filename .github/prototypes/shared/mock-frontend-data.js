@@ -71,41 +71,56 @@ window.mockDeploymentScopesMap = window.deploymentScopesMap
  */
 
 function buildVeDetails() {
-  const deploymentScopesMap = 
-        (window.mockDeploymentScopesMap && typeof window.mockDeploymentScopesMap === 'object'
-          ? window.mockDeploymentScopesMap
-          : (typeof window.deploymentScopesMap === 'function' ? window.deploymentScopesMap() : {}));
-    const veServicesMap =
-        (window.mockeVeServicesMap && typeof window.mockeVeServicesMap === 'object'
-          ? window.mockeVeServicesMap
-          : (typeof window.VeServicesMap === 'function' ? window.VeServicesMap() : {}));
+  const deploymentScopesMap =
+    (window.mockDeploymentScopesMap && typeof window.mockDeploymentScopesMap === 'object'
+      ? window.mockDeploymentScopesMap
+      : (typeof window.deploymentScopesMap === 'function' ? window.deploymentScopesMap() : {}));
 
-    const favoritesRich = window.MockFavorites?.favoriteVEs || [];
-    const favoriteNames = new Set([
-        ...favoritesRich.map(f => f.name),
-        ...(window.MockFavorites?.VEs || [])
-    ]);
-    const deploymentScope = window.
+  const veServicesMap =
+    (window.mockeVeServicesMap && typeof window.mockeVeServicesMap === 'object'
+      ? window.mockeVeServicesMap
+      : (typeof window.VeServicesMap === 'function' ? window.VeServicesMap() : {}));
 
-    const veDetails = [];
+  const favoritesRich = window.MockFavorites?.favoriteVEs || [];
+  const favoriteNames = new Set([
+    ...favoritesRich.map(f => f.name),
+    ...(window.MockFavorites?.VEs || [])
+  ]);
 
-    Object.entries(veServicesMap || {}).forEach(([veName, services]) => {
-        const svcArr = Array.isArray(services) ? services : [];
-        const veType = veName.includes('B2') ? 'B2 Type' : 'B Type';
-        veDetails.push({
-            name: veName,
-            type: veType + ' VE',
-            baseType: veType,
-            group:  deploymentScopesMap[veName] || [],
-            deployments: svcArr.length,
-            griffinServices: svcArr.length,
-            status: (svcArr.length > 0) ? 'normal' : 'inactive',
-            favorite: favoriteNames.has(veName)
-        });
+  // Invert deploymentScopesMap:
+  // deploymentScopesMap = { ScopeKey: [VE1, VE2], ScopeKey2: [VE2, VE3] }
+  // => veToScopes = { VE1:[ScopeKey], VE2:[ScopeKey,ScopeKey2], VE3:[ScopeKey2] }
+  const veToScopes = {};
+  Object.entries(deploymentScopesMap || {}).forEach(([scopeKey, veList]) => {
+    (veList || []).forEach(veName => {
+      if (!veToScopes[veName]) veToScopes[veName] = [];
+      veToScopes[veName].push(scopeKey);
     });
+  });
 
-    // Return shape expected by ve-management.html
-    return { dataset: veDetails };
+  const veDetails = [];
+
+  Object.entries(veServicesMap || {}).forEach(([veName, services]) => {
+    const svcArr = Array.isArray(services) ? services : [];
+    const veType = veName.includes('B2') ? 'B2 Type' : 'B Type';
+    // Removed fallbackGroup: if no scopes, leave empty array
+    const scopes = veToScopes[veName] && veToScopes[veName].length
+      ? [...new Set(veToScopes[veName])]
+      : [];
+
+    veDetails.push({
+      name: veName,
+      type: veType + ' VE',
+      baseType: veType,
+      group: scopes,            // may be empty []
+      deployments: svcArr.length,
+      griffinServices: svcArr.length,
+      status: (svcArr.length > 0) ? 'normal' : 'inactive',
+      favorite: favoriteNames.has(veName)
+    });
+  });
+
+  return { dataset: veDetails };
 }
 
 // Expose for existing usage (optional)

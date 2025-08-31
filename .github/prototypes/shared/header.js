@@ -18,7 +18,7 @@
     const {
       title = '',
       subtitle = '',
-      user = DEFAULT_USER,
+      user = (window.Auth && Auth.getUser() ? { name: Auth.getUser().name, icon:'user' } : DEFAULT_USER),
       actions = []
     } = opts || {};
     mount.innerHTML = `

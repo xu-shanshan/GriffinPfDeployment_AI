@@ -116,169 +116,218 @@
         </div>
     </main>
 
+    <script src="./shared/auth-mock.js"></script>
+    <script src="./shared/mock-backend-data.js"></script>
+    <script src="./shared/mock-frontend-data.js"></script>
     <script>
-    // Mock data JSON
-    const mockData = {
-        stats: [
-            { icon:'database', color:'blue', number:18, label:'Total VEs', badge:{text:' 2 this month', type:'success'}, footerIcon:'trending-up', navigate:'ve-management.html' },
-            { icon:'layers', color:'green', number:156, label:'Active Services', badge:{text:'98.7% uptime', type:'success'}, status:'active', navigate:'services-management.html' },
-            { icon:'upload-cloud', color:'orange', number:23, label:'Recent Deployments', badge:{text:'Last 24 hours', type:'info'}, footerIcon:'clock', navigate:'deployment-history.html' }
-        ],
-        favoriteVEs: [
-            { name:'SovBase', services:67, type:'B Type', typeClass:'neutral', updated:'2 hours ago' },
-            { name:'ModelBSov', services:65, type:'B Type', typeClass:'neutral', updated:'4 hours ago' },
-            { name:'OwaMailB2-SOV', services:1, type:'B2 Type', typeClass:'success', updated:'2 minutes ago' }
-        ],
-        favoriteServices: [
-            { name:'OwaMailB2', instances:2, status:'Active', statusClass:'success', updated:'1 hour ago' },
-            { name:'Exchange', instances:2, status:'Active', statusClass:'success', updated:'3 hours ago' },
-            { name:'GraphConnectors', instances:2, status:'Not Deployed', statusClass:'neutral', updated:'6 hours ago' }
-        ]
-    };
+  // Reworked: removed network fetch; data comes from shared/mock-data.js
+  function el(tag, cls='', html=''){ const e=document.createElement(tag); if(cls) e.className=cls; if(html) e.innerHTML=html; return e; }
 
-    function el(tag, cls='', html='') {
-        const e = document.createElement(tag);
-        if (cls) e.className = cls;
-        if (html) e.innerHTML = html;
-        return e;
+  function deriveModel(data){
+    if(!data) return null;
+    const veGroups = Object.values(data.ExpectedVEs||{});
+    const allVEs = [...new Set(veGroups.flat())];
+    const expectedServices = data.ExpectedServices || {};
+    const allServices = [...new Set(Object.values(expectedServices).flat())];
+    return { allVEs, expectedServices, allServices };
+  }
+
+  function buildStats(model){
+    if(!model){
+      return [
+        { icon:'database', color:'blue', number:0, label:'Total VEs', badge:{text:'unavailable', type:'neutral'} },
+        { icon:'layers', color:'green', number:0, label:'Services', badge:{text:'unavailable', type:'neutral'} },
+        { icon:'upload-cloud', color:'orange', number:0, label:'Recent Deployments', badge:{text:'placeholder', type:'info'} }
+      ];
     }
+    return [
+      { icon:'database', color:'blue', number:model.allVEs.length, label:'Total VEs', badge:{text:`${model.allVEs.length} loaded`, type:'success'}, footerIcon:'trending-up', navigate:'ve-management.html' },
+      { icon:'layers', color:'green', number:model.allServices.length, label:'Services', badge:{text:`Across ${model.allVEs.length} VEs`, type:'success'}, footerIcon:'layers', navigate:'services-management.html' },
+      { icon:'upload-cloud', color:'orange', number:23, label:'Recent Deployments', badge:{text:'Last 24h (mock)', type:'info'}, footerIcon:'clock', navigate:'deployment-history.html' }
+    ];
+  }
 
-    function renderStats() {
-        const wrap = document.getElementById('statsCards');
-        mockData.stats.forEach(s => {
-            const a = el('article','stat-card');
-            a.dataset.navigate = s.navigate;
-            a.innerHTML = `
-                <div class="stat-card-header">
-                    <div class="stat-icon stat-icon-${s.color}">
-                        <i data-feather="${s.icon}" aria-hidden="true"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-number">${s.number}</div>
-                        <div class="fluent-text-body1">${s.label}</div>
-                    </div>
-                </div>
-                <hr class="stat-divider">
-                <div class="stat-footer">
-                    <span class="fluent-badge fluent-badge-${s.badge.type}">${s.badge.text}</span>
-                    ${s.status ? '<div class="status-indicator status-active"></div>' : (s.footerIcon ? `<i data-feather="${s.footerIcon}" class="trend-icon" aria-hidden="true"></i>`:'')}
-                </div>`;
-            wrap.appendChild(a);
-        });
-    }
+  function renderStats(stats){
+    const wrap=document.getElementById('statsCards');
+    wrap.innerHTML='';
+    stats.forEach(s=>{
+      const a = el('article','stat-card');
+      if(s.navigate) a.dataset.navigate = s.navigate;
+      a.innerHTML = `
+        <div class="stat-card-header">
+          <div class="stat-icon stat-icon-${s.color}"><i data-feather="${s.icon}"></i></div>
+          <div class="stat-content">
+            <div class="stat-number">${s.number}</div>
+            <div class="fluent-text-body1">${s.label}</div>
+          </div>
+        </div>
+        <hr class="stat-divider">
+        <div class="stat-footer">
+          <span class="fluent-badge fluent-badge-${s.badge.type}">${s.badge.text}</span>
+          ${s.footerIcon?`<i data-feather="${s.footerIcon}" class="trend-icon"></i>`:''}
+        </div>`;
+      wrap.appendChild(a);
+    });
+  }
 
-    function renderFavoritesVE() {
-        const wrap = document.getElementById('favoriteVEs');
-        const list = mockData.favoriteVEs || [];
-        wrap.innerHTML = '';
-        list.forEach(v => {
-          const d = el('div','favorite-item');
-          d.dataset.navigate = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
-          d.innerHTML = `
-            <div class="favorite-item-content">
-              <div class="favorite-details">
-                <h4 class="favorite-name">${v.name}</h4>
-                <div class="favorite-meta">
-                  <span class="fluent-text-body1">${v.services} services</span>
-                  <span class="fluent-badge fluent-badge-${v.typeClass}">${v.type}</span>
-                </div>
-              </div>
+  function renderFavoriteVEs(list){
+    const wrap=document.getElementById('favoriteVEs');
+    wrap.innerHTML='';
+    list.forEach(entry=>{
+      const v = typeof entry === 'string' ? { name:entry } : entry;
+      const typeBadgeClass = v.typeClass ? `fluent-badge-${v.typeClass}` : 'fluent-badge-neutral';
+      const servicesCount = (v.services!=null ? v.services : '-') + (v.services!=null ? ' services':'');
+      const badge = v.type ? `<span class="fluent-badge ${typeBadgeClass}">${v.type}</span>`
+                           : `<span class="fluent-badge fluent-badge-neutral">VE</span>`;
+      const d=el('div','favorite-item');
+      d.dataset.navigate=`ve-detail.html?ve=${encodeURIComponent(v.name)}`;
+      d.innerHTML = `
+        <div class="favorite-item-content">
+          <div class="favorite-details">
+            <h4 class="favorite-name">${v.name}</h4>
+            <div class="favorite-meta">
+              <span class="fluent-text-body1">${servicesCount}</span>
+              ${badge}
             </div>
-            <div class="favorite-timestamp">
-              <span>${v.updated}</span>
-              <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-            </div>`;
-          wrap.appendChild(d);
-        });
+          </div>
+        </div>
+        <div class="favorite-timestamp">
+          <span>${v.updated || '—'}</span>
+          <i data-feather="chevron-right" class="fluent-icon"></i>
+        </div>`;
+      wrap.appendChild(d);
+    });
+  }
+
+  function renderFavoriteServices(list){
+    const wrap=document.getElementById('favoriteServices');
+    wrap.innerHTML='';
+    list.forEach(entry=>{
+      const s = typeof entry === 'string' ? { name:entry } : entry;
+      const statusClass = s.statusClass ? `fluent-badge-${s.statusClass}` : 'fluent-badge-success';
+      const instances = s.instances!=null ? `${s.instances} VE ${s.instances===1?'instance':'instances'}` : 'Service';
+      const badge = s.status ? `<span class="fluent-badge ${statusClass}">${s.status}</span>`
+                             : `<span class="fluent-badge fluent-badge-success">Active</span>`;
+      const d=el('div','favorite-item');
+      d.dataset.navigate=`service-detail.html?service=${encodeURIComponent(s.name)}`;
+      d.innerHTML=`
+        <div class="favorite-item-content">
+          <div class="favorite-details">
+            <h4 class="favorite-name">${s.name}</h4>
+            <div class="favorite-meta">
+              <span class="fluent-text-body1">${instances}</span>
+              ${badge}
+            </div>
+          </div>
+        </div>
+        <div class="favorite-timestamp">
+          <span>${s.updated || '—'}</span>
+          <i data-feather="chevron-right" class="fluent-icon"></i>
+        </div>`;
+      wrap.appendChild(d);
+    });
+  }
+
+  function animateNumbers(){
+    document.querySelectorAll('#statsCards .stat-number').forEach(el=>{
+      const target = +el.textContent;
+      el.textContent='0';
+      const start=performance.now(), dur=800;
+      function step(now){
+        const p=Math.min(1,(now-start)/dur);
+        el.textContent = Math.round(target*p);
+        if(p<1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  }
+
+  function enableNavigation(){
+    document.body.addEventListener('click',e=>{
+      const t=e.target.closest('[data-navigate]');
+      if(t) location.href=t.dataset.navigate;
+    });
+  }
+
+  function pickFavorites(model){
+    // Prefer rich metadata arrays if present
+    const richVE = window.MockFavorites?.favoriteVEs;
+    const richSvc = window.MockFavorites?.favoriteServices;
+    if (Array.isArray(richVE) && richVE.length && Array.isArray(richSvc) && richSvc.length) {
+      return {
+        favVEs: richVE.slice(0,3),
+        favSvcs: richSvc.slice(0,3)
+      };
     }
+    // Fallback to name-only arrays
+    const allVEs = model?.allVEs || [];
+    const allServices = model?.allServices || [];
+    const namesVE = (window.MockFavorites?.VEs || []).filter(v=>allVEs.includes(v)).slice(0,3);
+    const namesSvc = (window.MockFavorites?.Services || []).filter(s=>allServices.includes(s)).slice(0,3);
+    return {
+      favVEs: namesVE.length ? namesVE : allVEs.slice(0,3),
+      favSvcs: namesSvc.length ? namesSvc : allServices.slice(0,3)
+    };
+  }
 
-    function renderFavoritesServices() {
-        const wrap = document.getElementById('favoriteServices');
-        mockData.favoriteServices.forEach(s => {
-            const d = el('div','favorite-item');
-            d.dataset.navigate = `service-detail.html?service=${encodeURIComponent(s.name)}`;
-            d.innerHTML = `
-                <div class="favorite-item-content">
-                    <div class="favorite-details">
-                        <h4 class="favorite-name">${s.name}</h4>
-                        <div class="favorite-meta">
-                            <span class="fluent-text-body1">${s.instances} VE instances</span>
-                            <span class="fluent-badge fluent-badge-${s.statusClass}">${s.status}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="favorite-timestamp">
-                    <span>${s.updated}</span>
-                    <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                </div>`;
-            wrap.appendChild(d);
-        });
-    }
+  function initDashboard(){
+    const data = window.MockReleaseMapping || null;
+    let model = deriveModel(data);
 
-    function enableNavigation() {
-        document.body.addEventListener('click', e => {
-            const t = e.target.closest('[data-navigate]');
-            if (t) location.href = t.dataset.navigate;
-        });
-    }
-
-    // Added animation (migrated from deprecated dashboard.js)
-    function animateNumbers() {
-        document.querySelectorAll('#statsCards .stat-card .stat-number').forEach(el => {
-            const target = parseInt(el.textContent, 10) || 0;
-            el.textContent = '0';
-            const start = performance.now();
-            const duration = 800;
-            function step(now) {
-                const p = Math.min((now - start) / duration, 1);
-                el.textContent = Math.round(target * p);
-                if (p < 1) requestAnimationFrame(step);
-            }
-            requestAnimationFrame(step);
-        });
-    }
-
-    function adjustFavoritesDensity() {
-      const grid = document.querySelector('.favorites-grid');
-      const wrap = document.querySelector('.favorites-grid-wrap');
-      if (!grid || !wrap) return;
-
-      // Reset compaction
-      wrap.classList.remove('compact-1','compact-2');
-
-      const maxLevel = 2;
-      let level = 0;
-
-      // Measure and escalate compaction until fits (no vertical scroll)
-      while (level <= maxLevel && grid.scrollHeight > grid.clientHeight) {
-        level++;
-        wrap.classList.remove('compact-1','compact-2');
-        if (level === 1) wrap.classList.add('compact-1');
-        if (level === 2) wrap.classList.add('compact-2');
+    // NEW: Reconcile with buildVeDetails() (source used by ve-management)
+    if (typeof buildVeDetails === 'function') {
+      try {
+        const veDetailsData = buildVeDetails().dataset || [];
+        if (veDetailsData.length) {
+          const unifiedVeNames = Array.from(new Set(veDetailsData.map(v => v.name)));
+          // If model missing or counts differ, adopt unified list to keep dashboard consistent
+          if (!model || unifiedVeNames.length !== (model.allVEs?.length || 0)) {
+            model = model || {};
+            model.allVEs = unifiedVeNames;
+            // Preserve existing expectedServices; if absent, create minimal map from veDetails services if available
+            if (!model.expectedServices) model.expectedServices = {};
+          }
+        }
+      } catch(e) {
+        console.warn('[dashboard] buildVeDetails reconciliation failed', e);
       }
     }
 
-    const debounce = (fn, d=150)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; };
-    document.addEventListener('DOMContentLoaded', () => {
-        renderStats();
-        renderFavoritesVE();
-        renderFavoritesServices();
-        enableNavigation();
-        animateNumbers();
-        adjustFavoritesDensity();
-        if (window.refreshFeatherIcons) window.refreshFeatherIcons();
-        window.addEventListener('resize', debounce(adjustFavoritesDensity, 120));
-    });
+    const stats = buildStats(model);
+    renderStats(stats);
+
+    const { favVEs, favSvcs } = pickFavorites(model);
+    renderFavoriteVEs(favVEs);
+    renderFavoriteServices(favSvcs);
+
+    if(window.setSidebarFavorites){
+      window.setSidebarFavorites([
+        ...favVEs.map(v=>({ name: (typeof v==='string'?v:v.name), type:'ve' })),
+        ...favSvcs.map(s=>({ name: (typeof s==='string'?s:s.name), type:'service' }))
+      ]);
+    }
+    if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+    animateNumbers();
+  }
+
+  const debounce=(fn,d=150)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),d);}};
+
+  document.addEventListener('DOMContentLoaded', () => {
+    enableNavigation();
+    initDashboard();
+    window.addEventListener('resize', debounce(()=>{},120));
+  });
     </script>
     <script>
-        // Provide sidebar context & favorites before loading sidebar.js
-        window.SIDEBAR_ACTIVE = 'dashboard';
-        window.SIDEBAR_FAVORITES = (mockData.favoriteVEs || []).map(v => ({ name: v.name, type:'ve' }));
+        // Sidebar context early (empty favorites; will be updated after fetch)
+        window.SIDEBAR_ACTIVE='dashboard';
+        window.SIDEBAR_FAVORITES=[];
     </script>
     <script src="./shared/sidebar.js"></script>
     <script src="./shared/header.js"></script>
     <script>
-      initHeader({ title:'Dashboard', subtitle:'Virtual Environment Management', user:{ name:'John Doe' } });
-    </script>
+    const userCtx = (window.Auth && Auth.getUser()) || { name:'Guest' };
+    initHeader({ title:'Dashboard', subtitle:'Virtual Environment Management', user:userCtx });
+  </script>
 </body>
 </html>

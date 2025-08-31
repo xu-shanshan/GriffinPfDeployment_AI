@@ -114,34 +114,34 @@
         </div>
     </div>
 
+    <script src="./shared/auth-mock.js"></script>
     <script>
         feather.replace();
-
+        // Auto redirect if session exists
+        if (window.Auth && Auth.isAuthenticated()) {
+            window.location.href = 'dashboard.html';
+        }
         function handleLogin() {
             const btn = document.getElementById('loginBtn');
             const text = document.getElementById('loginText');
             const errorDiv = document.getElementById('loginError');
-            
-            // Hide any previous errors
             errorDiv.classList.add('hidden');
-            
-            // Show loading state
             btn.disabled = true;
             text.innerHTML = '<div class="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full inline mr-2"></div>Signing in...';
-            
-            // Simulate authentication
-            setTimeout(() => {
-                try {
-                    // In a real app, this would make an actual API call
-                    const success = Math.random() > 0.1; // 90% success rate for demo
-                    
-                    if (success) {
-                        window.location.href = 'dashboard.html';
-                    } else {
-                        throw new Error('Authentication failed');
-                    }
-                } catch (error) {
-                    // Show error state
+            // Use mock directory first entry (or extend with a field later)
+            Auth.signIn('john.doe@contoso.com')
+              .then(()=> window.location.href='dashboard.html')
+              .catch(()=>{
+                errorDiv.classList.remove('hidden');
+                btn.disabled=false;
+                text.innerHTML='Sign in with Microsoft';
+                feather.replace();
+              });
+        }
+        document.addEventListener('keydown', e=>{ if(e.key==='Enter'){ handleLogin(); }});
+    </script>
+</body>
+</html>
                     errorDiv.classList.remove('hidden');
                     document.getElementById('errorMessage').textContent = 'Unable to sign in. Please check your credentials and try again.';
                     

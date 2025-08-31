@@ -5453,10 +5453,15 @@ window.getVeServices = function getVeServices(veName) {
   return Array.isArray(map[veName]) ? map[veName].slice() : [];
 };
 
+window.deploymentScopesMap = function deploymentScopesMap() {
+  return window.MockReleaseMapping?.ExpectedVEs || {};
+};
 
-
-
-
+window.getDeploymentScopeVEs = function getDeploymentScopeVEs(deploymentScope) {
+  if (!deploymentScope) return [];
+  const map = (window.MockReleaseMapping && window.MockReleaseMapping.ExpectedVEs) || {};
+  return Array.isArray(map[deploymentScope]) ? map[deploymentScope].slice() : [];
+};
 
 // Simulate future API contract shapes
 window.apiMock = {

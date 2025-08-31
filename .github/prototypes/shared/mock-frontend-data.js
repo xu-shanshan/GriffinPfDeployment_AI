@@ -27,8 +27,9 @@ window.listAllMockServices = window.listAllServices
   window.mockeVeServicesMap = raw && typeof raw === 'object' ? raw : {};
 })();
 
-window.listAllMockVes = window.listAllVEs 
+window.listAllMockVes = window.listAllVEs
 
+window.mockDeploymentScopesMap = window.deploymentScopesMap
 
 /**
  * {
@@ -70,6 +71,10 @@ window.listAllMockVes = window.listAllVEs
  */
 
 function buildVeDetails() {
+  const deploymentScopesMap = 
+        (window.mockDeploymentScopesMap && typeof window.mockDeploymentScopesMap === 'object'
+          ? window.mockDeploymentScopesMap
+          : (typeof window.deploymentScopesMap === 'function' ? window.deploymentScopesMap() : {}));
     const veServicesMap =
         (window.mockeVeServicesMap && typeof window.mockeVeServicesMap === 'object'
           ? window.mockeVeServicesMap
@@ -80,6 +85,7 @@ function buildVeDetails() {
         ...favoritesRich.map(f => f.name),
         ...(window.MockFavorites?.VEs || [])
     ]);
+    const deploymentScope = window.
 
     const veDetails = [];
 
@@ -90,7 +96,7 @@ function buildVeDetails() {
             name: veName,
             type: veType + ' VE',
             baseType: veType,
-            group: veType === 'B2 Type' ? 'ModelB2SovVEs' : (veName.includes('ModelB') ? 'ModelBSovVEs' : 'SovBaseVEs'),
+            group:  deploymentScopesMap[veName] || [],
             deployments: svcArr.length,
             griffinServices: svcArr.length,
             status: (svcArr.length > 0) ? 'normal' : 'inactive',

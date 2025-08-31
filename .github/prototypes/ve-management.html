@@ -55,6 +55,33 @@
       .ve-fav-btn:hover { background: rgba(255,255,255,0.9); transform: scale(1.05); }
       .ve-fav-btn.active { background: #fff7e0; }
       .ve-fav-btn i svg { width:16px; height:16px; }
+
+      /* Compact VE card adjustments */
+      .ve-card { padding:1rem !important; }
+      .ve-card h3.fluent-text-title2 { font-size:18px; line-height:24px; }
+      .ve-card .metrics-inner h4 { margin-bottom:4px !important; }
+      .ve-card .metrics-inner .text-xl { font-size:1.125rem; } /* was ~1.25rem */
+      .ve-card .metrics-wrap { align-items:flex-start; }
+      .ve-card .card-footer { padding-top:.5rem !important; }
+
+      /* Status styling */
+      .ve-card.status-deploying { border:1px solid #ca5010; }
+      .ve-card.status-attention { border:1px solid #d13438; }
+      .ve-card.status-normal { border:1px solid var(--colorNeutralStroke2); }
+      .ve-card.status-normal:hover { border-color: var(--colorNeutralStroke1); }
+      .status-dot {
+        width:8px;
+        height:8px;
+        border-radius:50%;
+        background:#107c10;
+        display:inline-block;
+      }
+      .ve-card .card-footer .health {
+        display:flex;
+        align-items:center;
+        gap:6px;
+        color:#107c10;
+      }
     </style>
 </head>
 <body>
@@ -107,37 +134,30 @@
         </div>
     </main>
     <script src="./shared/header.js"></script>
+    <script src="./shared/mock-backend-data.js"></script>
+    <script src="./shared/mock-frontend-data.js"></script>
     <script>
-      initHeader({ title:'Virtual Environment Management', subtitle:'Manage and monitor all virtual environments', user:{ name:'John Doe' } });
+      // Use Auth user if available (optional; safe fallback)
+      const userCtx = (window.Auth && Auth.getUser && Auth.getUser()) || { name:'John Doe' };
+      initHeader({
+        title:'Virtual Environment Management',
+        subtitle:'Manage and monitor all virtual environments',
+        user:userCtx
+      });
     </script>
     <script>
-        // Dynamic VE dataset
-        const veDataset = [
-            { name:'SovBase', type:'B Type VE', baseType:'B Type', group:'SovBaseVEs', deployments:67, griffinServices:89, status:'normal', favorite:true },
-            { name:'ModelBSov', type:'B Type VE', baseType:'B Type', group:'ModelBSovVEs', deployments:65, griffinServices:65, status:'normal', favorite:true },
-            { name:'OwaMailB2-SOV', type:'B2 Type VE', baseType:'B2 Type', group:'ModelB2SovVEs', deployments:1, griffinServices:1, status:'normal', favorite:true },
-            { name:'GraphConnectorsB2-SOV', type:'B2 Type VE', baseType:'B2 Type', group:'ModelB2SovVEs', deployments:0, griffinServices:1, status:'deploying', favorite:false },
-            { name:'FlowControlB2-SOV', type:'B2 Type VE', baseType:'B2 Type', group:'ModelB2SovVEs', deployments:0, griffinServices:1, status:'attention', favorite:false },
-            { name:'TodoB2-SOV', type:'B2 Type VE', baseType:'B2 Type', group:'ModelB2SovVEs', deployments:1, griffinServices:1, status:'normal', favorite:false }
-        ];
 
-        const veServicesMap = {
-            'SovBase':['Exchange.MailboxService','Outlook.WebApp','Teams.ChatService','SharePoint.DocumentService','OneDrive.SyncService','Calendar.EventService'],
-            'ModelBSov':['Exchange.MailboxService','Outlook.WebApp','Teams.ChatService','SharePoint.DocumentService','Calendar.EventService'],
-            'OwaMailB2-SOV':['Outlook.WebApp'],
-            'GraphConnectorsB2-SOV':['Graph.ConnectorService'],
-            'FlowControlB2-SOV':['Flow.ControlService'],
-            'TodoB2-SOV':['Todo.TaskService']
-        };
+        const veServicesMap = window.mockeVeServicesMap;
+        const { dataset: veDataset } = buildVeDetails();
 
         /* ===== Pagination State (no scrolling) ===== */
         let pageSize = 6; // initial
         let currentPage = 1;
         let currentFiltered = [...veDataset];
         /* Card sizing constraints */
-        const MIN_CARD_WIDTH = 260;
-        const MAX_CARD_WIDTH = 360;
-        const TARGET_CARD_WIDTH = 300; // preferred midpoint
+        const MIN_CARD_WIDTH = 220;
+        const MAX_CARD_WIDTH = 320;
+        const TARGET_CARD_WIDTH = 260; // adjusted midpoint for denser layout
 
        /**
         * Compute optimal card width so that an integer column count fits within container
@@ -190,8 +210,15 @@
                             <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
                         </div>`;
             }
-            return `<span class="fluent-text-body1">Click to explore</span>
-                    <i data-feather="chevron-right" class="fluent-icon icon-muted" aria-hidden="true"></i>`;
+            /* normal */
+            return `<div class="health">
+                        <span class="status-dot" aria-hidden="true"></span>
+                        <span class="fluent-text-body1">Healthy</span>
+                    </div>
+                    <div class="flex items-center text-accent">
+                        <span class="fluent-text-body1 font-medium mr-1">Open</span>
+                        <i data-feather="chevron-right" class="fluent-icon icon-muted" aria-hidden="true"></i>
+                    </div>`;
         }
 
         function renderVEs(list = currentFiltered) {
@@ -207,7 +234,7 @@
             pageItems.forEach(v => {
                 const specialLayout = ['GraphConnectorsB2-SOV','FlowControlB2-SOV'].includes(v.name);
                 const card = document.createElement('div');
-                card.className = 'fluent-card p-6 cursor-pointer ve-card';
+                card.className = `fluent-card p-4 cursor-pointer ve-card status-${v.status}`;
                 card.onclick = () => window.location.href = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
                 card.innerHTML = `
                     <button type="button"
@@ -227,7 +254,7 @@
                         </div>
                     </div>
                     ${specialLayout ? specialMetrics(v) : normalMetrics(v)}
-                    <div class="flex items-center justify-between pt-4 divider-top card-footer">
+                    <div class="flex items-center justify-between pt-3 divider-top card-footer">
                         ${statusFooter(v)}
                     </div>`;
                 wrap.appendChild(card);
@@ -325,9 +352,9 @@
         function normalMetrics(v) {
             const svcCount = (typeof v.griffinServices === 'number' ? v.griffinServices : (veServicesMap[v.name]||[]).length) || 0;
             return `<div class="metrics-wrap">
-                        <div class="metrics-inner mb-6">
-                            <h4 class="text-sm font-medium text-muted mb-2">Service Number</h4>
-                            <div class="flex justify-center gap-6">
+                        <div class="metrics-inner mb-4">
+                            <h4 class="text-xs font-medium text-muted">Service Number</h4>
+                            <div class="flex justify-center gap-4 mt-2">
                                 <div class="text-center">
                                     <div class="text-xl font-semibold text-fg-strong">${v.deployments}</div>
                                     <div class="fluent-text-caption1">In PFGold</div>
@@ -343,9 +370,9 @@
 
         function specialMetrics(v) {
             const svcCount = (typeof v.griffinServices === 'number' ? v.griffinServices : (veServicesMap[v.name]||[]).length) || 0;
-            return `<div class="mb-6 text-center">
-                        <h4 class="text-sm font-medium text-muted mb-2">Service Number</h4>
-                        <div class="flex justify-center gap-6">
+            return `<div class="mb-4 text-center">
+                        <h4 class="text-xs font-medium text-muted mb-2">Service Number</h4>
+                        <div class="flex justify-center gap-4">
                             <div class="text-center">
                                 <div class="text-xl font-semibold ${v.status==='attention'?'text-red-600': (v.status==='deploying'?'text-warning':'text-fg-strong')}">${v.deployments}</div>
                                 <div class="fluent-text-caption1">Deployment</div>

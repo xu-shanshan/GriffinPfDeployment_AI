@@ -55,7 +55,7 @@ You are acting as a senior full-stack/architecture assistant.
 - Each page is a **standalone HTML file** in `/pages/`.  
 - File names should **clearly reflect page functionality**.  
 - Each page must have its **own CSS file**, named `<page_name>.css`.  
-- Page-specific CSS class names: `<page_name>-<functional_name>`.  
+- Page-specific CSS class names: `fluent-<page_name>-<functional_name>`.  
 - Pages import shared assets via <link> or <script> tags.
 
 ### Output structure example 

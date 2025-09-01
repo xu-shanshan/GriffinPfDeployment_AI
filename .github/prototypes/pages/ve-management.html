@@ -6,9 +6,9 @@
     <title>VE Management - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="./shared/css/common.css">
-    <link rel="stylesheet" href="./shared/css/layout.css">
-    <link rel="stylesheet" href="./pages/ve-management.css">
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="ve-management.css">
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
@@ -51,9 +51,9 @@
             </div>
         </div>
     </main>
-    <script src="./shared/js/header.js"></script>
-    <script src="./shared/js/mockData.js"></script>
-    <script src="./shared/js/pageInit.js"></script>
+    <script src="../shared/js/header.js"></script>
+    <script src="../shared/js/mockData.js"></script>
+    <script src="../shared/js/pageInit.js"></script>
     <script>
       window.SIDEBAR_ACTIVE = 've';
       window.SIDEBAR_FAVORITES = (function(){
@@ -63,7 +63,7 @@
         } catch(_) { return [{ name:'SovBase', type:'ve' }]; }
       })();
     </script>
-    <script src="./shared/js/sidebar.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
     <!-- Added explicit header initialization (was missing) -->
     <script>
       (function(){

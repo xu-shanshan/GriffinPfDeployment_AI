@@ -6,9 +6,10 @@
     <title>Dashboard - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="./shared/css/common.css">
-    <link rel="stylesheet" href="./shared/css/layout.css">
-    <link rel="stylesheet" href="./pages/dashboard.css">
+    <!-- UPDATED paths -->
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
@@ -60,9 +61,10 @@
         </div>
     </main>
 
-    <script src="./shared/js/auth-mock.js"></script>
-    <script src="./shared/js/mockData.js"></script>
-    <script src="./shared/js/pageInit.js"></script>
+    <!-- UPDATED script paths -->
+    <script src="../shared/js/auth-mock.js"></script>
+    <script src="../shared/js/mockData.js"></script>
+    <script src="../shared/js/pageInit.js"></script>
     <script>
   function el(tag, cls='', html=''){ const e=document.createElement(tag); if(cls) e.className=cls; if(html) e.innerHTML=html; return e; }
 
@@ -209,7 +211,7 @@
     var veServicesMap = data.veServicesMap || {};
     var veDetails = Array.isArray(data.veDetails) ? data.veDetails : [];
     var allVEs = (data.allVes && data.allVes.length ? data.allVes : data.allVEs) ||
-                 (data.allVEs || veDetails.map(function(v){ return v.name; }));
+                 (data.allVES || veDetails.map(function(v){ return v.name; }));
     var unionSet = {};
     (allVEs||[]).forEach(function(n){ unionSet[n]=true; });
     Object.keys(veServicesMap).forEach(function(n){ unionSet[n]=true; });
@@ -263,8 +265,8 @@
         window.SIDEBAR_ACTIVE='dashboard';
         window.SIDEBAR_FAVORITES=[];
     </script>
-    <script src="./shared/js/sidebar.js"></script>
-    <script src="./shared/js/header.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
+    <script src="../shared/js/header.js"></script>
     <script>
     const userCtx = (window.Auth && Auth.getUser()) || { name:'Guest' };
     initHeader({ title:'Dashboard', subtitle:'Virtual Environment Management', user:userCtx });

@@ -6,9 +6,10 @@
     <title>Deployment History - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="./shared/css/common.css">
-    <link rel="stylesheet" href="./shared/css/layout.css">
-    <link rel="stylesheet" href="./pages/deployment-history.css">
+    <!-- CHANGED asset paths -->
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="deployment-history.css">
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
@@ -103,7 +104,9 @@
             </div>
         </div>
     </main>
-    <script src="./shared/js/header.js"></script>
+    <!-- CHANGED script path -->
+    <script src="../shared/js/header.js"></script>
+    <!-- header.js now loads correctly, initHeader call below works -->
     <script>
       initHeader({ title:'Deployment History', subtitle:'Virtual Environment Management', user:{ name:'John Doe' } });
     </script>
@@ -247,7 +250,7 @@
             { name:'OwaMailB2-SOV', type:'ve' }
         ];
     </script>
-    <script src="./shared/js/sidebar.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
     <script>
         if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     </script>

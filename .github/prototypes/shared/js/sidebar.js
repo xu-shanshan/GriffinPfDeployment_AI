@@ -41,9 +41,17 @@
         try { localStorage.setItem(LS_KEY, JSON.stringify(normalizeFavorites(list))); } catch(e) { /* ignore */ }
     }
 
+    // NEW: determine base path ('' when already in /pages/, otherwise 'pages/')
+    var BASE_PATH = (function(){
+        try {
+            var p = location.pathname.replace(/\\/g,'/').toLowerCase();
+            return /\/pages\/[^/]+$/.test(p) ? '' : 'pages/';
+        } catch(_) { return ''; }
+    })();
+
     function navItem(href, icon, label, key) {
         const isActive = ACTIVE_KEY === key;
-        return `<a href="${href}" class="sidebar-nav-item${isActive ? ' active' : ''}"${isActive ? ' aria-current="page"' : ''}>
+        return `<a href="${BASE_PATH}${href}" class="sidebar-nav-item${isActive ? ' active' : ''}"${isActive ? ' aria-current="page"' : ''}>
             <i data-feather="${icon}" class="fluent-icon mr-3" aria-hidden="true"></i>${label}
         </a>`;
     }
@@ -58,8 +66,8 @@
             if(!items.length) return '';
             const links = items.map(v => {
                 const href = v.type === 'service'
-                    ? `service-detail.html?service=${encodeURIComponent(v.query)}`
-                    : `ve-detail.html?ve=${encodeURIComponent(v.query)}`;
+                    ? `${BASE_PATH}service-detail.html?service=${encodeURIComponent(v.query)}`
+                    : `${BASE_PATH}ve-detail.html?ve=${encodeURIComponent(v.query)}`;
                 const icon = v.type === 'service' ? 'package' : 'server';
                 return `<a href="${href}" class="sidebar-nav-item" data-fav-type="${v.type}" aria-label="${v.name} ${v.type} quick link">
                     <i data-feather="${icon}" class="fluent-icon mr-3 favorite-icon" aria-hidden="true"></i>${v.name}

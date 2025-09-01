@@ -6,9 +6,9 @@
     <title>Services Management - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="./shared/css/common.css">
-    <link rel="stylesheet" href="./shared/css/layout.css">
-    <link rel="stylesheet" href="./pages/services-management.css">
+    <link rel="stylesheet" href="../shared/css/common.css">
+    <link rel="stylesheet" href="../shared/css/layout.css">
+    <link rel="stylesheet" href="services-management.css">
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
@@ -78,9 +78,9 @@
             </div>
         </div>
     </div>
-    <script src="./shared/js/header.js"></script>
-    <script src="./shared/js/mockData.js"></script>
-    <script src="./shared/js/pageInit.js"></script>
+    <script src="../shared/js/header.js"></script>
+    <script src="../shared/js/mockData.js"></script>
+    <script src="../shared/js/pageInit.js"></script>
     <script>
       initHeader({ title:'Services Management', subtitle:'Manage and monitor all services across virtual environments', user:{ name:'John Doe' } });
     </script>
@@ -217,7 +217,7 @@
         ? window.MockData.favorites.VEs.slice(0,3).map(n=>({ name:n, type:'ve'}))
         : [];
     </script>
-    <script src="./shared/js/sidebar.js"></script>
+    <script src="../shared/js/sidebar.js"></script>
     <script>
       if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     </script>

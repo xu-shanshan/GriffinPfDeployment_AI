@@ -1,6 +1,7 @@
 (function(){
   var ACTIVE = (window.APP_ACTIVE_PAGE||'').toLowerCase();
   function icon(name){ return `<i data-feather="${name}" class="fluent-icon" aria-hidden="true"></i>`; }
+
   function injectSidebar(){
     var host = document.getElementById('app-sidebar'); if(!host) return;
     host.innerHTML = `
@@ -12,11 +13,11 @@
             <div class="fluent-text-caption1">Prototype</div>
           </div>
         </div>
-        <nav class="fluent-sidebar-section">
+        <nav class="fluent-sidebar-section" aria-label="Main navigation">
           <div class="fluent-sidebar-section-title">MAIN NAVIGATION</div>
-          <a href="dashboard.html" class="fluent-sidebar-nav-item  ${ACTIVE==='dashboard'?'active':''}">${icon('home')}<span>Dashboard</span></a>
-          <a href="#" class="fluent-sidebar-nav-item " aria-disabled="true">${icon('server')}<span>VE Management</span></a>
-          <a href="#" class="fluent-sidebar-nav-item " aria-disabled="true">${icon('layers')}<span>Services</span></a>
+          <a href="dashboard.html" class="fluent-sidebar-nav-item ${ACTIVE==='dashboard'?'active':''}">${icon('home')}<span>Dashboard</span></a>
+          <a href="#" class="fluent-sidebar-nav-item" aria-disabled="true">${icon('server')}<span>VE Management</span></a>
+          <a href="#" class="fluent-sidebar-nav-item" aria-disabled="true">${icon('layers')}<span>Services</span></a>
         </nav>
         <div class="fluent-sidebar-section">
           <div class="fluent-sidebar-section-title">QUICK ACCESS</div>
@@ -25,12 +26,13 @@
       </aside>`;
     if(window.feather) feather.replace();
   }
+
   function injectHeader(opts){
-    var host = document.getElementById('app-header'); if(!host) return;
+    var host = document.getElementById('fluent-app-header'); if(!host) return;
     opts = opts||{};
     host.innerHTML = `
       <header class="fluent-header-bar" role="banner">
-        <div class="web-container fluent-header-inner">
+        <div class="fluent-web-container fluent-header-inner">
           <div>
             <h1 class="fluent-text-title2 page-title" id="pageTitle">${opts.title||''}</h1>
             ${opts.subtitle?`<div class="fluent-text-caption1">${opts.subtitle}</div>`:''}
@@ -43,6 +45,7 @@
       </header>`;
     if(window.feather) feather.replace();
   }
+
   window.injectSidebar = injectSidebar;
   window.injectHeader = injectHeader;
 })();

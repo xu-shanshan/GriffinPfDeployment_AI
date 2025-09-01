@@ -39,6 +39,8 @@ Added (new prototype only):
 - Added gap design tokens (--gap-sm/md/lg) in new prototype common.css
 - Dashboard page updated to use .fluent-container alongside legacy .web-container
 
+Update: New prototype classes normalized to fluent-* prefix (sidebar, header, layout, utilities). Non‑fluent legacy class names removed from page markup.
+
 Let's create a empty dashboard page first.only contains sidebar and header
 
 only change new prototype code

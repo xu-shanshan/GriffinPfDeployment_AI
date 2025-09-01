@@ -53,9 +53,8 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--colorBrandForegr
 
 .fluent-web-container {
   max-width:var(--page-max-width);
-  margin:0 auto;
   width:100%;
-  padding:0 var(--page-gutter);
+  padding:32px 32px 48px;
 }
 
 .fluent-header-bar { height:var(--app-header-height); display:flex; align-items:center; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); background:rgba(255,255,255,.85); border-bottom:1px solid var(--colorNeutralStroke2); }
@@ -125,6 +124,7 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--colorBrandForegr
   gap:var(--gap-lg);
   grid-template-columns:repeat(auto-fill,minmax(clamp(320px,45%,520px),1fr));
   align-items:start;
+  padding: 10px 0 0 0;
 }
 
 /* Card surface helpers (dashboard uses) */

@@ -1,11 +1,5 @@
 /* Dashboard page specific (fluent-dashboard-*) */
 
-.fluent-dashboard-section {
-  padding:32px 0 48px;
-  display:flex;
-  flex-direction:column;
-  gap:48px;
-}
 
 /* Stat cards */
 .fluent-dashboard-stat-card {

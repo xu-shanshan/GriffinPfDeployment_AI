@@ -75,41 +75,9 @@
         });
       })();
     </script>
+    <!-- REPLACED duplicate scripts with one consolidated implementation -->
     <script>
-      /* Simplified: rely on precomputed MockData.veDetails */
-      let veDataset = [];
-      let pageSize = 6;
-      let currentPage = 1;
-      let currentFiltered = [];
-      const MIN_CARD_WIDTH = 220;
-      const MAX_CARD_WIDTH = 320;
-      // Removed: scopeMap, buildVeModel(), ensureDataIfEmpty()
-
-      function initVePageWithData(data){
-        veDataset = (data && data.veDetails) ? data.veDetails.slice() : [];
-        console.info('[ve-management:init] dataset size:', veDataset.length);
-        currentFiltered = veDataset.slice();
-        whenGridReady(()=>initializeInteractions());
-      }
-
-      // Startup simplified
-      (function start(){
-        whenGridReady(()=>showSkeleton(6));
-        if(window.initPageWithMockData){
-          initPageWithMockData(initVePageWithData, { requireDetails:true });
-        } else {
-          initVePageWithData(window.MockData||{});
-        }
-      })();
-
-      window.addEventListener('MockDataReady', () => {
-        if(!veDataset.length){
-          initVePageWithData(window.MockData||{});
-        }
-      });
-    </script>
-    <script>
-      /* ===== Deferred init via initPageWithMockData (replaces previous immediate bootstrap) ===== */
+      /* VE Management Page Logic (consolidated) */
       let veDataset = [];
       let pageSize = 6;
       let currentPage = 1;
@@ -117,15 +85,14 @@
       const MIN_CARD_WIDTH = 220;
       const MAX_CARD_WIDTH = 320;
 
-      // --- NEW: lightweight skeleton / empty helpers ---
+      /* Skeleton / empty states */
       function showSkeleton(count=6){
-        const grid = document.getElementById('veCardsGrid');
-        if(!grid) return;
-        grid.innerHTML = '';
+        const grid=document.getElementById('veCardsGrid'); if(!grid) return;
+        grid.innerHTML='';
         for(let i=0;i<count;i++){
-          const sk = document.createElement('div');
+          const sk=document.createElement('div');
           sk.className='fluent-card p-4 ve-card skeleton';
-          sk.innerHTML = `<div class="animate-pulse">
+          sk.innerHTML=`<div class="animate-pulse">
               <div style="height:18px;width:60%;background:#eee;border-radius:4px;margin-bottom:8px;"></div>
               <div style="height:12px;width:40%;background:#f0f0f0;border-radius:4px;margin-bottom:16px;"></div>
               <div style="display:flex;gap:12px;">
@@ -137,30 +104,32 @@
         }
       }
       function showEmptyMessage(){
-        const grid = document.getElementById('veCardsGrid');
-        if(!grid) return;
-        grid.innerHTML = `<div class="fluent-card p-8 text-center" style="grid-column:1/-1;">
-            <h3 class="fluent-text-title2" style="margin:0 0 8px;">No Virtual Environments</h3>
-            <p class="fluent-text-body1" style="margin:0;">Mock data not loaded. Check mockData.js initialization.</p>
-          </div>`;
-        const pag = document.getElementById('pagination');
-        if(pag) pag.innerHTML = '';
-        const sum = document.getElementById('vePaginationSummary');
-        if(sum) sum.textContent = '0 items';
+        const grid=document.getElementById('veCardsGrid'); if(!grid) return;
+        grid.innerHTML=`<div class="fluent-card p-8 text-center" style="grid-column:1/-1;">
+          <h3 class="fluent-text-title2" style="margin:0 0 8px;">No Virtual Environments</h3>
+          <p class="fluent-text-body1" style="margin:0;">Mock data not loaded. Check mockData.js initialization.</p>
+        </div>`;
+        const pag=document.getElementById('pagination'); if(pag) pag.innerHTML='';
+        const sum=document.getElementById('vePaginationSummary'); if(sum) sum.textContent='0 items';
       }
 
-      /* === Layout / render helpers (unchanged logic) === */
+      /* Utility: wait for grid element before first render */
+      function whenGridReady(cb){
+        const tryNow=()=>{ if(document.getElementById('veCardsGrid')) cb(); else setTimeout(tryNow,40); };
+        tryNow();
+      }
+
+      /* Layout / rendering helpers */
       function updateCardWidth(){
-        const grid = document.getElementById('veCardsGrid');
-        if(!grid) return;
-        const w = grid.clientWidth; if(!w) return;
-        let chosen = MIN_CARD_WIDTH;
+        const grid=document.getElementById('veCardsGrid'); if(!grid) return;
+        const w=grid.clientWidth; if(!w) return;
+        let chosen=MIN_CARD_WIDTH;
         for(let cols=6; cols>=1; cols--){
-          const gap = parseFloat(getComputedStyle(grid).gap)||0;
-          const avail = w - (cols-1)*gap;
-          const cw = Math.floor(avail/cols);
+          const gap=parseFloat(getComputedStyle(grid).gap)||0;
+          const avail=w-(cols-1)*gap;
+          const cw=Math.floor(avail/cols);
           if(cw>=MIN_CARD_WIDTH && cw<=MAX_CARD_WIDTH){ chosen=cw; break; }
-          if(cols===1 && cw>MIN_CARD_WIDTH) chosen = Math.min(cw, MAX_CARD_WIDTH);
+          if(cols===1 && cw>MIN_CARD_WIDTH) chosen=Math.min(cw,MAX_CARD_WIDTH);
         }
         document.documentElement.style.setProperty('--ve-card-min', chosen+'px');
       }
@@ -171,11 +140,11 @@
         return `<div class="health"><span class="status-dot"></span><span class="fluent-text-body1">Healthy</span></div><div class="flex items-center text-accent"><span class="fluent-text-body1 font-medium mr-1">Open</span><i data-feather="chevron-right" class="fluent-icon icon-muted"></i></div>`;
       }
       function normalMetrics(v){
-        const svcCount = (typeof v.griffinServices==='number'?v.griffinServices:(veServicesMap[v.name]||[]).length)||0;
+        const svcCount=(typeof v.griffinServices==='number'?v.griffinServices:(veServicesMap[v.name]||[]).length)||0;
         return `<div class="metrics-wrap"><div class="metrics-inner mb-4"><h4 class="text-xs font-medium text-muted">Service Number</h4><div class="flex justify-center gap-4 mt-2"><div class="text-center"><div class="text-xl font-semibold text-fg-strong">${v.deployments}</div><div class="fluent-text-caption1">In PFGold</div></div><div class="text-center"><div class="text-xl font-semibold text-accent">${svcCount}</div><div class="fluent-text-caption1">In Dragon</div></div></div></div></div>`;
       }
       function specialMetrics(v){
-        const svcCount = (typeof v.griffinServices==='number'?v.griffinServices:(veServicesMap[v.name]||[]).length)||0;
+        const svcCount=(typeof v.griffinServices==='number'?v.griffinServices:(veServicesMap[v.name]||[]).length)||0;
         return `<div class="mb-4 text-center"><h4 class="text-xs font-medium text-muted mb-2">Service Number</h4><div class="flex justify-center gap-4"><div class="text-center"><div class="text-xl font-semibold ${v.status==='attention'?'text-red-600':(v.status==='deploying'?'text-warning':'text-fg-strong')}">${v.deployments}</div><div class="fluent-text-caption1">Deployment</div></div><div class="text-center"><div class="text-xl font-semibold text-accent">${svcCount}</div><div class="fluent-text-caption1">Service Number</div></div></div></div>`;
       }
       function paginationButton(label, disabled, onClick, ariaLabel){
@@ -189,8 +158,7 @@
       function renderPagination(total,totalPages,startIdx,endIdx){
         const summary=document.getElementById('vePaginationSummary');
         if(summary) summary.textContent = total===0 ? 'No virtual environments' : `Showing ${startIdx+1}-${endIdx} of ${total} (Page ${currentPage}/${totalPages})`;
-        const nav=document.getElementById('pagination');
-        if(!nav) return;
+        const nav=document.getElementById('pagination'); if(!nav) return;
         nav.innerHTML='';
         nav.appendChild(paginationButton('Prev', currentPage===1, ()=>setPage(currentPage-1),'Previous page'));
         const maxShow=5;
@@ -199,7 +167,7 @@
         if(ep>totalPages){ ep=totalPages; sp=Math.max(1, ep-maxShow+1); }
         for(let p=sp;p<=ep;p++){
           const btn=paginationButton(String(p), false, ()=>setPage(p), 'Page '+p);
-          if(p===currentPage) btn.classList.add('active');
+            if(p===currentPage) btn.classList.add('active');
           nav.appendChild(btn);
         }
         nav.appendChild(paginationButton('Next', currentPage===totalPages, ()=>setPage(currentPage+1),'Next page'));
@@ -207,11 +175,10 @@
       function setPage(p){ currentPage=Math.max(1,p); renderVEs(); }
 
       function renderVEs(list=currentFiltered){
-        const wrap=document.getElementById('veCardsGrid');
-        if(!wrap) return;
+        const wrap=document.getElementById('veCardsGrid'); if(!wrap) return;
         wrap.innerHTML='';
         const total=list.length;
-        const totalPages=Math.max(1, Math.ceil(total/pageSize));
+        const totalPages=Math.max(1,Math.ceil(total/pageSize));
         if(currentPage>totalPages) currentPage=totalPages;
         const start=(currentPage-1)*pageSize;
         const end=Math.min(start+pageSize,total);
@@ -255,14 +222,12 @@
         const cardH=first.getBoundingClientRect().height;
         if(!cardW||!cardH) return;
         const gridW=grid.clientWidth;
-        const cols=Math.max(1, Math.floor((gridW+gap)/(Math.max(cardW,MIN_CARD_WIDTH)+gap)));
+        const cols=Math.max(1,Math.floor((gridW+gap)/(Math.max(cardW,MIN_CARD_WIDTH)+gap)));
         const containerH=grid.getBoundingClientRect().height || (document.querySelector('.content-area')?.clientHeight - 120);
         const MIN_ROWS=2;
-        const rows=Math.max(MIN_ROWS, Math.floor((containerH+gap)/(cardH+gap)));
-        const computed=Math.max(1, Math.min(currentFiltered.length, cols*rows));
-        if(computed!==pageSize){
-          pageSize=computed; currentPage=1; renderVEs(); return;
-        }
+        const rows=Math.max(MIN_ROWS,Math.floor((containerH+gap)/(cardH+gap)));
+        const computed=Math.max(1,Math.min(currentFiltered.length, cols*rows));
+        if(computed!==pageSize){ pageSize=computed; currentPage=1; renderVEs(); return; }
         requestAnimationFrame(adjustForOverflow);
       }
       function adjustForOverflow(){
@@ -275,7 +240,7 @@
         if(!maxH) return;
         const gridW=grid.clientWidth;
         const sampleW=cards[0].getBoundingClientRect().width;
-        const cols=Math.max(1, Math.floor((gridW+gap)/(Math.max(sampleW,MIN_CARD_WIDTH)+gap)));
+        const cols=Math.max(1,Math.floor((gridW+gap)/(Math.max(sampleW,MIN_CARD_WIDTH)+gap)));
         let needed=cols*Math.max(2, Math.floor((grid.clientHeight+gap)/(maxH+gap)));
         if(needed<1) needed=1;
         let safety=8;
@@ -308,8 +273,7 @@
         filtered.forEach(v=> (map[v.name]||[]).forEach(s=>{ if(s.toLowerCase().includes(term)) svcHits++; }));
         textEl.textContent=`“${term}” matched ${filtered.length} VEs and ${svcHits} services`;
         wrap.classList.remove('hidden');
-        const live=document.getElementById('searchLive');
-        if(live) live.textContent=`${filtered.length} virtual environments and ${svcHits} services match ${term}`;
+        const live=document.getElementById('searchLive'); if(live) live.textContent=`${filtered.length} virtual environments and ${svcHits} services match ${term}`;
       }
 
       function performSearch(){
@@ -342,7 +306,7 @@
         if(!btn) return;
         btn.classList.toggle('active');
         const item=veDataset.find(v=>v.name===veName);
-        if(item) item.favorite = btn.classList.contains('active');
+        if(item) item.favorite=btn.classList.contains('active');
       }
       window.clearSearch=clearSearch;
       window.toggleStar=toggleStar;
@@ -350,17 +314,8 @@
       const debounce=(fn,d=120)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; };
       function updateVEFontScale(){
         const w=window.innerWidth||1280;
-        const scale=Math.min(1.15, Math.max(0.85, w/1400));
+        const scale=Math.min(1.15,Math.max(0.85,w/1400));
         document.documentElement.style.setProperty('--ve-font-scale', scale.toFixed(3));
-      }
-
-      // --- ADDED utility to wait for grid presence before first render ---
-      function whenGridReady(cb){
-        const attempt = ()=> {
-          if(document.getElementById('veCardsGrid')) { cb(); }
-          else setTimeout(attempt,40);
-        };
-        attempt();
       }
 
       function initializeInteractions(){
@@ -368,11 +323,7 @@
         updateCardWidth();
         populateFilterOptions();
         currentFiltered=veDataset.slice();
-        if(!veDataset.length){
-          showEmptyMessage();
-        } else {
-          renderVEs();
-        }
+        if(!veDataset.length) showEmptyMessage(); else renderVEs();
         if(window.refreshFeatherIcons) window.refreshFeatherIcons();
         const si=document.getElementById('searchInput');
         if(si){
@@ -398,7 +349,6 @@
         whenGridReady(()=>initializeInteractions());
       }
 
-      // Startup simplified
       (function start(){
         whenGridReady(()=>showSkeleton(6));
         if(window.initPageWithMockData){
@@ -408,10 +358,8 @@
         }
       })();
 
-      window.addEventListener('MockDataReady', () => {
-        if(!veDataset.length){
-          initVePageWithData(window.MockData||{});
-        }
+      window.addEventListener('MockDataReady', ()=>{
+        if(!veDataset.length) initVePageWithData(window.MockData||{});
       });
     </script>
 </body>

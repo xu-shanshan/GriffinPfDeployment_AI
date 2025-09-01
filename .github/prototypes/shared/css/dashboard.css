@@ -1,0 +1,56 @@
+
+/* Non-scrolling full viewport layout */
+html, body, .main-content { height:100vh; overflow:hidden; }
+.content-area {
+    display:flex;
+    flex-direction:column;
+    height:calc(100vh - var(--app-header-height, 64px));
+    overflow:hidden;
+}
+.welcome-section { flex-shrink:0; }
+.stats-section { flex-shrink:0; }
+.favorites-grid { flex:1 1 auto; overflow:hidden; } /* remove internal scroll */
+/* Safety: avoid horizontal scroll */
+body, .main-content, .web-container { max-width:100%; overflow-x:hidden; }
+:root { --favorites-bottom-gap: 32px; --favorites-compact-threshold: 7; }
+.favorites-grid { position:relative; }
+.favorites-grid-wrap {
+    padding-bottom: var(--favorites-bottom-gap); /* ensures visual space above page bottom */
+    transition: padding .2s ease;
+}
+/* Compact density when many favorites */
+.favorites-grid-wrap.compact .favorites-content { padding: 0.85rem 1rem 0.5rem; }
+.favorites-grid-wrap.compact .favorite-item { padding: 0.55rem 0.65rem !important; }
+.favorites-grid-wrap.compact .favorite-name { font-size: 0.875rem; }
+.favorites-grid-wrap.compact .favorite-meta span,
+.favorites-grid-wrap.compact .favorite-timestamp span { font-size: 0.6875rem; }
+.favorites-grid-wrap.compact .favorite-timestamp { gap: .5rem; }
+.favorites-grid-wrap.compact .favorites-header { padding: 1.0rem 1.0rem .75rem; }
+.favorites-grid-wrap.compact .favorites-header h3 { font-size: 1rem; line-height:1.25rem; }
+
+/* Multi-level compaction for favorites (level 0 = normal) */
+.favorites-grid-wrap.compact-1 .favorites-header { padding:1.0rem 1.0rem .75rem; }
+.favorites-grid-wrap.compact-1 .favorites-content { padding:0.9rem 1.0rem 0.6rem; }
+.favorites-grid-wrap.compact-1 .favorite-item { padding:0.65rem 0.75rem !important; }
+.favorites-grid-wrap.compact-1 .favorite-name { font-size:.9rem; }
+.favorites-grid-wrap.compact-1 .favorite-meta span,
+.favorites-grid-wrap.compact-1 .favorite-timestamp span { font-size:.7rem; }
+
+.favorites-grid-wrap.compact-2 .favorites-header { padding:.75rem .75rem .5rem; }
+.favorites-grid-wrap.compact-2 .favorites-header h3 { font-size:.9rem; line-height:1.15rem; }
+.favorites-grid-wrap.compact-2 .favorites-content { padding:.6rem .65rem .45rem; }
+.favorites-grid-wrap.compact-2 .favorite-item { padding:.45rem .5rem !important; }
+.favorites-grid-wrap.compact-2 .favorite-name { font-size:.8rem; }
+.favorites-grid-wrap.compact-2 .favorite-meta span,
+.favorites-grid-wrap.compact-2 .favorite-timestamp span { font-size:.62rem; }
+.favorites-grid-wrap.compact-2 .favorite-timestamp { gap:.4rem; }
+
+/* Two-column favorites override */
+.favorites-grid-wrap.two-col {
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+align-items:start;
+}
+@media (max-width: 900px){
+.favorites-grid-wrap.two-col { grid-template-columns:1fr; }
+}

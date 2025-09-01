@@ -6,6 +6,7 @@
     <title>Login - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="./shared/css/layout.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
@@ -114,6 +115,7 @@
         </div>
     </div>
 
+    <!-- (Login still using auth-mock original path; header/sidebar not used) -->
     <script src="./shared/auth-mock.js"></script>
     <script>
         feather.replace();
@@ -133,25 +135,14 @@
               .then(()=> window.location.href='dashboard.html')
               .catch(()=>{
                 errorDiv.classList.remove('hidden');
-                btn.disabled=false;
-                text.innerHTML='Sign in with Microsoft';
+                document.getElementById('errorMessage').textContent = 'Unable to sign in. Please check your credentials and try again.';
+                
+                // Reset button
+                btn.disabled = false;
+                text.innerHTML = 'Sign in with Microsoft';
+                
                 feather.replace();
               });
-        }
-        document.addEventListener('keydown', e=>{ if(e.key==='Enter'){ handleLogin(); }});
-    </script>
-</body>
-</html>
-                    errorDiv.classList.remove('hidden');
-                    document.getElementById('errorMessage').textContent = 'Unable to sign in. Please check your credentials and try again.';
-                    
-                    // Reset button
-                    btn.disabled = false;
-                    text.innerHTML = 'Sign in with Microsoft';
-                    
-                    feather.replace();
-                }
-            }, 1500);
         }
 
         // Allow Enter key to trigger login

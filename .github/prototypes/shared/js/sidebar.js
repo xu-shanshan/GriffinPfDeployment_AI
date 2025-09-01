@@ -74,7 +74,7 @@
     }
 
     function buildSidebar() {
-        return `<aside class="sidebar" role="navigation" aria-label="Main navigation">
+        return `<aside class="sidebar-root" role="navigation" aria-label="Main navigation">
             <div class="sidebar-header">
                 <div class="flex items-center space-x-3">
                     <div class="brand-icon">

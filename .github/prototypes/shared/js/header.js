@@ -1,3 +1,4 @@
+// ...existing code (from previous header.js)...
 (function () {
   const DEFAULT_USER = { name: 'John Doe', icon: 'user' };
 
@@ -22,8 +23,8 @@
       actions = []
     } = opts || {};
     mount.innerHTML = `
-      <header class="top-bar" role="banner" aria-label="Application header">
-        <div class="web-container">
+      <header class="fluent-header-bar" role="banner" aria-label="Application header">
+        <div class="web-container fluent-header-inner">
           <div class="flex justify-between items-center h-app-header">
             <div>
               <h1 class="text-lg font-semibold page-title">${title}</h1>

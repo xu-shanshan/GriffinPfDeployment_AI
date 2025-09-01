@@ -6,7 +6,8 @@
     <title>VE Management - Griffin PF Deployment AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="./shared/common.css"><!-- added shared layout + icon unification -->
+    <link rel="stylesheet" href="./shared/css/common.css"><!-- path updated -->
+    <link rel="stylesheet" href="./shared/css/layout.css">
     <style>
       body, .main-content, #veCardsGrid { max-width:100%; overflow-x:hidden; }
       /* VE Management scroll fix: local safeguard (primary logic in common.css) */
@@ -132,9 +133,9 @@
             </div>
         </div>
     </main>
-    <script src="./shared/header.js"></script>
-    <script src="./shared/mock-backend-data.js"></script>
-    <script src="./shared/mock-frontend-data.js"></script>
+    <script src="./shared/js/header.js"></script>
+    <script src="./shared/js/mock-backend-data.js"></script>
+    <script src="./shared/js/mock-frontend-data.js"></script>
     <script>
       // Use Auth user if available (optional; safe fallback)
       const userCtx = (window.Auth && Auth.getUser && Auth.getUser()) || { name:'John Doe' };
@@ -553,7 +554,7 @@
             { name:'OwaMailB2-SOV', type:'ve' }
         ];
     </script>
-    <script src="./shared/sidebar.js"></script>
+    <script src="./shared/js/sidebar.js"></script>
     <script>
         if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     </script>

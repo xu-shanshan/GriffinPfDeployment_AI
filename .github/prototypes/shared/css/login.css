@@ -1,0 +1,71 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+/* Fluent UI v9 Design System */
+:root {
+    --colorNeutralForeground1: #242424;
+    --colorNeutralForeground2: #424242;
+    --colorNeutralBackground1: #ffffff;
+    --colorNeutralBackground2: #f5f5f5;
+    --colorBrandBackground: #0f6cbd;
+    --colorBrandBackgroundHover: #115ea3;
+    --colorNeutralStroke1: #d1d1d1;
+    --borderRadiusSmall: 4px;
+    --borderRadiusLarge: 8px;
+    --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+}
+
+.fluent-card {
+    background: var(--colorNeutralBackground1);
+    border-radius: var(--borderRadiusLarge);
+    box-shadow: var(--shadow4);
+}
+
+.fluent-button-primary {
+    background: var(--colorBrandBackground);
+    color: white;
+    border: none;
+    border-radius: var(--borderRadiusSmall);
+    padding: 8px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+    cursor: pointer;
+}
+
+.fluent-button-primary:hover {
+    background: var(--colorBrandBackgroundHover);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+.body-centered-auth {
+    background: var(--colorNeutralBackground2);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-bg-brand {
+    background: var(--colorBrandBackground);
+}
+
+.text-neutral-1 {
+    color: var(--colorNeutralForeground1);
+}
+
+.text-neutral-2 {
+    color: var(--colorNeutralForeground2);
+}

@@ -74,7 +74,8 @@
     }
 
     function buildSidebar() {
-        return `<aside class="sidebar-root" role="navigation" aria-label="Main navigation">
+        return `
+        <aside class="sidebar-root" role="navigation" aria-label="Main navigation">
             <div class="sidebar-header">
                 <div class="flex items-center space-x-3">
                     <div class="brand-icon">
@@ -105,7 +106,8 @@
                     <i data-feather="log-out" class="fluent-icon mr-3" aria-hidden="true"></i>Logout
                 </a>
             </div>
-        </aside>`;
+        </aside>
+        `;
     }
 
     function applyIconEnhancements(root = document) {

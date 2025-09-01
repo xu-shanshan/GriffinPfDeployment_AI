@@ -1,0 +1,29 @@
+<!-- filepath: c:\src\gitXxtq\GriffinPfDeployment_AI\.github\prototype_20250901120000\pages\login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Prototype</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="../shared/styles/common.css">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body style="display:flex;align-items:center;justify-content:center;min-height:100vh;">
+  <main class="fluent-card" style="width:360px;" aria-label="Login form">
+    <div style="text-align:center;margin-bottom:24px;">
+      <div class="brand-icon" style="margin:0 auto 12px;"><i data-feather="layers" class="fluent-icon text-white"></i></div>
+      <h1 class="page-title">Sign In</h1>
+      <p class="fluent-text-caption1">Prototype access</p>
+    </div>
+    <button class="fluent-button-primary fluent-button" style="width:100%;" onclick="login()">
+      <i data-feather="log-in" class="fluent-icon" style="margin-right:6px;"></i>Continue
+    </button>
+  </main>
+<script>
+  function login(){ location.href='dashboard.html'; }
+  if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+</script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!-- filepath: c:\src\gitXxtq\GriffinPfDeployment_AI\.github\prototype_20250901120000\pages\services-management.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Services Management | Prototype</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="../shared/styles/common.css">
+  <link rel="stylesheet" href="services-management.css">
+</head>
+<body>
+  <div id="app-sidebar"></div>
+  <div id="app-header"></div>
+  <div class="main-content" id="mainContent">
+    <div class="web-container" style="padding-top:32px;padding-bottom:48px;">
+      <div class="fluent-card" style="margin-bottom:24px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <input id="svcSearch" class="fluent-input" placeholder="Search service..." style="flex:1;min-width:220px;">
+          <button class="fluent-button" onclick="clearSvc()">Clear</button>
+        </div>
+      </div>
+      <div class="grid-auto" id="svcGrid" aria-label="Services"></div>
+    </div>
+  </div>
+  <script src="../shared/js/mockData.js"></script>
+  <script src="../shared/js/utils.js"></script>
+  <script src="../shared/js/layout.js"></script>
+  <script>
+    injectSidebar({ active:'services' });
+    injectHeader({ title:'Services Management', subtitle:'Cross-VE Services', user:{ name:'Alice Admin'} });
+
+    function serviceCard(s){
+      return `<div class="fluent-card fluent-service-card" data-name="${s.name}">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <strong style="color:var(--colorNeutralForeground1);">${s.name}</strong>
+          <button class="fluent-button" style="padding:2px 6px;font-size:12px;" onclick="event.stopPropagation();toggleFav('${s.name}')">
+            <i data-feather="star" class="${s.favorite?'fav-on':''}"></i>
+          </button>
+        </div>
+        <div class="fluent-text-caption1" style="margin:8px 0;">${s.instances} VE(s)</div>
+        <div class="fluent-text-caption1" style="color:${s.statusClass==='success'?'#107c10':(s.statusClass==='warning'?'#ca5010':'#616161')}">${s.status}</div>
+      </div>`;
+    }
+    let svcData=[], svcFiltered=[];
+    function render(){
+      const host=document.getElementById('svcGrid');
+      host.innerHTML = svcFiltered.map(serviceCard).join('') || '<div class="fluent-text-caption1" style="opacity:.6;">No services</div>';
+      if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+    }
+    function apply(){
+      const term=document.getElementById('svcSearch').value.trim().toLowerCase();
+      svcFiltered = svcData.filter(s=> !term || s.name.toLowerCase().includes(term));
+      render();
+    }
+    function clearSvc(){
+      document.getElementById('svcSearch').value='';
+      apply();
+    }
+    function toggleFav(name){
+      const target=svcData.find(s=>s.name===name);
+      if(target){ target.favorite=!target.favorite; apply(); }
+    }
+    document.addEventListener('input', e=>{ if(e.target.id==='svcSearch') apply(); });
+    initPageWithMockData(function(data){
+      svcData = (data.serviceCards||[]).map(c=>Object.assign({},c));
+      svcFiltered = svcData.slice();
+      render();
+    });
+  </script>
+</body>
+</html>

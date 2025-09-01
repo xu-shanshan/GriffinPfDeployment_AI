@@ -1,0 +1,80 @@
+<!-- filepath: c:\src\gitXxtq\GriffinPfDeployment_AI\.github\prototype_20250901120000\pages\ve-management.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VE Management | Prototype</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="../shared/styles/common.css">
+  <link rel="stylesheet" href="ve-management.css">
+</head>
+<body>
+  <div id="app-sidebar"></div>
+  <div id="app-header"></div>
+  <div class="main-content" id="mainContent">
+    <div class="web-container" style="padding-top:32px;padding-bottom:48px;">
+      <div class="fluent-card" style="margin-bottom:24px;">
+        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+          <input id="searchBox" class="fluent-input" placeholder="Search VE..." style="flex:1;min-width:220px;">
+          <select id="typeFilter" class="fluent-select"><option value="">All Types</option><option value="B Type">B Type</option><option value="B2 Type">B2 Type</option></select>
+          <button class="fluent-button" onclick="clearFilters()">Clear</button>
+        </div>
+      </div>
+      <div class="grid-auto" id="veGrid" aria-label="Virtual environments"></div>
+    </div>
+  </div>
+  <script src="../shared/js/mockData.js"></script>
+  <script src="../shared/js/utils.js"></script>
+  <script src="../shared/js/layout.js"></script>
+  <script>
+    injectSidebar({ active:'ve' });
+    injectHeader({ title:'VE Management', subtitle:'Manage virtual environments', user:{ name:'Alice Admin'} });
+
+    function veCard(v){
+      return `<div class="fluent-card fluent-ve-card" data-name="${v.name}">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <strong style="color:var(--colorNeutralForeground1);">${v.name}</strong>
+          <span class="fluent-badge">${v.baseType}</span>
+        </div>
+        <div class="fluent-text-caption1" style="margin-bottom:8px;">${v.griffinServices} services</div>
+        <div class="fluent-text-caption1" style="color:${v.status==='attention'?'#d13438':(v.status==='deploying'?'#ca5010':'#107c10')}">${v.status}</div>
+      </div>`;
+    }
+    let baseData=[], filtered=[];
+    function render(){
+      const host=document.getElementById('veGrid');
+      host.innerHTML = filtered.map(veCard).join('') || '<div class="fluent-text-caption1" style="opacity:.6;">No VEs</div>';
+      if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+    }
+    function apply(){
+      const term=document.getElementById('searchBox').value.trim().toLowerCase();
+      const t=document.getElementById('typeFilter').value;
+      filtered = baseData.filter(v=>{
+        const matchT = !t || v.baseType===t;
+        const matchTerm = !term || v.name.toLowerCase().includes(term);
+        return matchT && matchTerm;
+      });
+      render();
+    }
+    function clearFilters(){
+      document.getElementById('searchBox').value='';
+      document.getElementById('typeFilter').value='';
+      apply();
+    }
+    document.addEventListener('input', e=>{
+      if(e.target.id==='searchBox') apply();
+    });
+    document.addEventListener('change', e=>{
+      if(e.target.id==='typeFilter') apply();
+    });
+
+    initPageWithMockData(function(data){
+      baseData = (data.veDetails||[]).slice();
+      filtered = baseData.slice();
+      render();
+    });
+  </script>
+</body>
+</html>

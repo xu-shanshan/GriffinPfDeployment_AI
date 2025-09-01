@@ -1,0 +1,3 @@
+/* Services Management page */
+.service-card { transition:box-shadow .15s ease, transform .15s ease; }
+.service-card:hover { box-shadow:var(--shadow4); transform:translateY(-2px); }

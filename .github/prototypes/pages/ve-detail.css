@@ -1,0 +1,3 @@
+/* VE Detail page scoped additions */
+.ve-services-table td, .ve-services-table th { vertical-align: middle; }
+.star-toggle.active svg { fill:#faa06b; stroke:#faa06b; }

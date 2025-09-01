@@ -1,0 +1,4 @@
+/* Service-in-VE page */
+.pipeline-card.default-pipeline { border:1px solid var(--colorBrandForeground1); }
+#configEditor.config-invalid { border-color:#d13438; }
+#configEditor.config-valid { border-color:#107c10; }

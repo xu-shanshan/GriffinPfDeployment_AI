@@ -1,0 +1,4 @@
+/* VE Management page overrides */
+.ve-card { transition:box-shadow .15s ease, transform .15s ease; }
+.ve-card:hover { box-shadow:var(--shadow4); transform:translateY(-2px); }
+.ve-card .health .status-dot { width:8px; height:8px; background:#107c10; border-radius:50%; }

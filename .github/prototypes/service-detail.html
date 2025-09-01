@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/css/common.css">
     <link rel="stylesheet" href="./shared/css/layout.css">
-    <link rel="stylesheet" href="./shared/css/service-detail.css">
+    <link rel="stylesheet" href="./pages/service-detail.css">
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>
@@ -361,15 +361,15 @@
             document.getElementById('pipelineManagementModal').classList.add('hidden');
         }
 
-        // Create view-only pipeline card (without default setting functionality)
+        // REPLACED broken createViewOnlyPipelineCard + malformed markup & listeners
         function createViewOnlyPipelineCard(pipelineId, config) {
             const card = document.createElement('div');
             card.className = 'fluent-card p-4 cursor-default';
 
             const colorClasses = {
-                'blue': 'bg-blue-100 text-blue-700',
-                'purple': 'bg-purple-100 text-purple-700',
-                'green': 'bg-green-100 text-green-700'
+                blue: 'bg-blue-100 text-blue-700',
+                purple: 'bg-purple-100 text-purple-700',
+                green: 'bg-green-100 text-green-700'
             };
 
             card.innerHTML = `
@@ -386,57 +386,55 @@
                     <span class="px-2 py-1 ${colorClasses[config.color] || 'bg-gray-100 text-gray-700'} text-xs rounded">${config.type}</span>
                 </div>
                 <p class="text-xs text-gray-600 mb-3">${config.description}</p>
+                <div class="space-y-2 text-sm">
                     <div class="flex justify-between">
                         <span class="text-gray-600">Latest Build:</span>
                         <span class="font-mono text-gray-900">${config.latestBuild}</span>
-                    </div>pan class="font-mono text-gray-900">${config.latestBuild}</span>
+                    </div>
                     <div class="bg-gray-50 rounded p-2">
                         <div class="flex items-center justify-between">
                             <p class="font-mono text-xs text-gray-700 break-all flex-1 mr-2">${config.dropUrl}</p>
                             <button onclick="copyDropUrl('${config.dropUrl}')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
-                                <i data-feather="copy" class="w-3 h-3"></i>')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
-                            </button>ta-feather="copy" class="w-3 h-3"></i>
-                        </div>button>
-                    </div>div>
-                </div>div>
+                                <i data-feather="copy" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
                 <div class="mt-3 pt-3 border-t border-gray-100 text-center">
                     <span class="text-xs text-gray-500">Pipeline Status: Active</span>
-                </div>pan class="text-xs text-gray-500">Pipeline Status: Active</span>
-            `;  </div>
+                </div>
             `;
             return card;
-        }   return card;
         }
-        // Close modal when clicking outside
-        document.addEventListener('click', function(event) {
+
+        // Clean modal close handlers
+        document.addEventListener('click', function (event) {
             const modal = document.getElementById('pipelineManagementModal');
-            if (event.target === modal) {mentById('pipelineManagementModal');
+            if (event.target === modal) {
                 closePipelineManagementModal();
-            }   closePipelineManagementModal();
-        }); }
+            }
         });
-        // Close modal with Escape key
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {n', function(event) {
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
                 const modal = document.getElementById('pipelineManagementModal');
-                if (!modal.classList.contains('hidden')) {elineManagementModal');
-                    closePipelineManagementModal();en')) {
-                }   closePipelineManagementModal();
-            }   }
-        }); }
+                if (modal && !modal.classList.contains('hidden')) {
+                    closePipelineManagementModal();
+                }
+            }
         });
-        // Shared sidebar context
+
+        // FIX favorites context block
         window.SIDEBAR_ACTIVE = 'services';
-        window.SIDEBAR_FAVORITES = [vices';
+        window.SIDEBAR_FAVORITES = [
             { name:'SovBase', type:'ve' },
             { name:'ModelBSov', type:'ve' },
             { name:'OwaMailB2-SOV', type:'ve' }
-        ];  { name:'OwaMailB2-SOV', type:'ve' }
+        ];
     </script>
     <script src="./shared/js/sidebar.js"></script>
-    <script>src="./shared/sidebar.js"></script>
+    <script src="./shared/js/header.js"></script>
+    <script>
         if (window.refreshFeatherIcons) window.refreshFeatherIcons();
-    </script>indow.refreshFeatherIcons) window.refreshFeatherIcons();
-</body>cript>
-</html>
+    </script>
+</body>
 </html>

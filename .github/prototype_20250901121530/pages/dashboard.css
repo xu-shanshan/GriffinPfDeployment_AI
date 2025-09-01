@@ -50,10 +50,35 @@
 }
 .fluent-dashboard-favorite-card:hover { box-shadow:0 4px 14px rgba(0,0,0,.14); }
 .fluent-dashboard-favorite-card-header {
-  background:linear-gradient(90deg,var(--colorNeutralBackground1),var(--colorNeutralBackground2));
-  padding:16px 22px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:nowrap;
+  padding:10px 10px;
 }
-.fluent-dashboard-favorite-card-title { display:flex; align-items:center; gap:10px; }
+.fluent-dashboard-favorite-card-title {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex:1 1 auto;
+  min-width:0;              /* allow text ellipsis */
+}
+.fluent-dashboard-favorite-card-title h2 {
+  margin:0;
+  font-size:16px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%;
+}
+.fluent-dashboard-favorite-card-header .fluent-button {
+  white-space:nowrap;
+  flex-shrink:0;
+  align-self:center;
+  font-size:12px; 
+  padding:4px 10px;
+}
 .fluent-dashboard-favorite-card-content { padding:10px 10px 6px; }
 .fluent-dashboard-favorite-card-footer {
   background:var(--colorNeutralBackground1);

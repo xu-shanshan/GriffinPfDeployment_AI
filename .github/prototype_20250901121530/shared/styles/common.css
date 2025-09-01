@@ -218,16 +218,6 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--colorBrandForegr
 }
 .fluent-trend-chip i { width:14px; height:14px; }
 
-/* Featured stat variant */
-.fluent-dashboard-stat-card--featured {
-  grid-column:span 2;
-  display:flex;
-  flex-direction:column;
-}
-@media (max-width:900px){
-  .fluent-dashboard-stat-card--featured { grid-column:span 1; }
-}
-
 /* Favorite card accent edge */
 .fluent-favorite-accent {
   position:relative;

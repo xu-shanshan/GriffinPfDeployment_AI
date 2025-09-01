@@ -76,7 +76,7 @@
   }
 
   function injectHeader(opts){
-    var host = document.getElementById('fluent-app-header'); if(!host) return;
+    var host = document.getElementById('app-header'); if(!host) return;
     opts = opts||{};
     host.innerHTML = `
       <header class="fluent-header-bar" role="banner">

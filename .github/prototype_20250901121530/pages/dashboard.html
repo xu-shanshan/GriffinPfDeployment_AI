@@ -69,7 +69,6 @@
       host.innerHTML = stats.map(function(s,i){
         var badgeId = 'statBadge'+i;
         var cls = 'fluent-dashboard-stat-card fluent-surface-card fluent-shadow-hover fluent-tilt-hover fluent-stat-accent-'+s.accent;
-        if(i===0) cls += ' fluent-dashboard-stat-card--featured';
         return `<article class="${cls}" tabindex="0" aria-label="${s.label}" aria-describedby="${badgeId}">
           <div class="fluent-dashboard-stat-top">
             <div class="fluent-dashboard-stat-icon"><i data-feather="${s.icon}" aria-hidden="true"></i></div>

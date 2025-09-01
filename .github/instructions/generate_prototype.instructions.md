@@ -1,5 +1,5 @@
 ---
-mode: edit
+applyTo: '**'
 ---
 
 You are acting as a senior full-stack/architecture assistant. 

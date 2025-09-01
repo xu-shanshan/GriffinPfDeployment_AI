@@ -8,22 +8,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="./shared/css/common.css">
     <link rel="stylesheet" href="./shared/css/layout.css">
-    <style>
-        /* ...removed global token + sidebar duplication... */
-        /* Keep only page-specific styles */
-        .pipeline-card { transition:all .1s cubic-bezier(.33,0,.67,1); }
-        .pipeline-card:hover { box-shadow:var(--shadow4); }
-        .pipeline-card.default-pipeline { border-color: var(--colorBrandForeground1); background:#e3f2fd; }
-        .config-actions { opacity:0; transition:opacity .2s; }
-        .table-row:hover .config-actions { opacity:1; }
-        .search-highlight { background:rgba(59,130,246,.1); border:2px solid #3B82F6; }
-        .loading-overlay { position:fixed; inset:0; backdrop-filter:blur(3px); display:flex; align-items:center; justify-content:center; z-index:60; }
-        .loading-overlay.hidden { display:none; }
-        .star-toggle svg.feather-star { stroke:currentColor; }
-        .star-toggle.active svg.feather-star { fill:currentColor; }
-        /* Horizontal scroll prevention */
-        body, .main-content, .fluent-card { max-width:100%; overflow-x:hidden; }
-    </style>
+    <link rel="stylesheet" href="./shared/css/service-detail.css">
 </head>
 <body>
     <a href="#mainContent" class="visually-hidden" aria-label="Skip to main content">Skip to main content</a>

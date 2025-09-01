@@ -45,11 +45,14 @@ You are acting as a senior full-stack/architecture assistant.
 - Name root folder as `.github/prototype_YYYYMMDDHHMMSS/`. 
 ### Shared Assets
 - `/shared/` contains all common assets: 
-  - Layout components → `/shared/layout/`  (HTML fragments, <div> or <template>)
+  - Centralize header + sidebar into a new shared JS file (layout.js)
+  - using template strings (no fetch, no duplication, works over file://).
+  - Each page keeps only placeholder divs (#app-sidebar, #app-header) and calls injectSidebar / injectHeader after loading layout.js.
   - Styles → `/shared/styles/`  (common.css, theme.css)
-  - TypeScript/JS utilities → `/shared/js/`  (utils.js, mockData.js)
+  - TypeScript/JS utilities → `/shared/js/`  (mockData.js, layout.js)
 - All JS runs in global scope.
 - Mock data can be accessed directly in each page.
+- CSS class names: `fluent-<functional_name>`.
 
 ### HTML Prototype Pages
 - Each page is a **standalone HTML file** in `/pages/`.  
@@ -61,12 +64,11 @@ You are acting as a senior full-stack/architecture assistant.
 ### Output structure example 
 .github/prototype_YYYYMMDDHHMMSS/
 ├── shared/
-│   ├── layout/
-│   │   ├── header.html
-│   │   └── sidebar.html
 │   ├── styles/
 │   │   └── common.css
+│   │   └── layout.css
 │   └── js/
+│       ├── layout.js
 │       └── mockData.js
 └── pages/
   ├── page1.html

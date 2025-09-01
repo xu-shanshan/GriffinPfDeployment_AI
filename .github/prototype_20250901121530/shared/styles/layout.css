@@ -34,6 +34,8 @@
   font-weight:500;
   transition:background .12s,color .12s;
   text-decoration:none;
+  position:relative;
+  overflow:hidden;
 }
 .fluent-sidebar-nav-item:hover {
   background:var(--colorNeutralBackground3);
@@ -44,11 +46,68 @@
   color:var(--colorBrandForeground1);
   font-weight:600;
 }
+.fluent-sidebar-nav-item.active::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:4px;
+  background:var(--accent-blue);
+  border-radius:0 2px 2px 0;
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent-blue),transparent 70%);
+}
+.fluent-sidebar-nav-item:hover:not(.active)::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:4px;
+  background:color-mix(in srgb,var(--accent-blue), transparent 60%);
+}
 
 .fluent-user-profile { display:flex; align-items:center; gap:8px; }
 .fluent-user-avatar { width:32px; height:32px; border-radius:50%; background:var(--colorNeutralBackground3); display:flex; align-items:center; justify-content:center; }
 
+/* Sidebar collapse toggle */
+.fluent-sidebar-toggle {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:36px;
+  height:36px;
+  margin-right:8px;
+  border:1px solid var(--colorNeutralStroke2);
+  background:var(--colorNeutralBackground3);
+  border-radius:8px;
+  cursor:pointer;
+  transition:.18s;
+}
+.fluent-sidebar-toggle:hover { background:var(--colorNeutralBackground2); }
+.fluent-sidebar-toggle:focus-visible { outline:2px solid var(--colorBrandForeground1); outline-offset:2px; }
+body.sidebar-collapsed .fluent-sidebar-toggle { transform:rotate(180deg); }
+
+/* Collapsed mini mode */
+body.sidebar-collapsed .fluent-sidebar-root {
+  width:64px;
+  transition:width .22s ease;
+}
+body.sidebar-collapsed {
+  --sidebar-width:64px;
+}
+
+/* Strengthen active indicator (reuse accent vars from common.css) */
+.fluent-sidebar-nav-item.active::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:4px;
+  background:var(--accent-blue);
+  border-radius:0 2px 2px 0;
+}
+
 @media (max-width:960px){
+  /* On mobile, collapsing hides sidebar and frees full width */
+  body.sidebar-collapsed {
+    --sidebar-width:0px;
+  }
   .fluent-sidebar-root { position:fixed; transform:translateX(0); }
   body.sidebar-collapsed .fluent-sidebar-root { transform:translateX(-100%); transition:transform .2s; }
 }

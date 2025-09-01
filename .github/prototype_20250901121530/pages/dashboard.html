@@ -57,26 +57,30 @@
       var totalVEs = (md.allVEs || md.allVes || []).length;
       var totalSvcs = (md.allServices || []).length;
       return [
-        { icon:'database', label:'Total VEs', value: totalVEs, badge: totalVEs+' loaded', badgeClass:'success' },
-        { icon:'layers', label:'Services', value: totalSvcs, badge:'Across '+ totalVEs +' VEs', badgeClass:'info' },
-        { icon:'upload-cloud', label:'Recent Deployments', value:23, badge:'Last 24h (mock)', badgeClass:'neutral' }
+        { icon:'database', label:'Total VEs', value: totalVEs, badge: totalVEs+' loaded', badgeClass:'success', accent:'blue', trend:'+4%' },
+        { icon:'layers', label:'Services', value: totalSvcs, badge:'Across '+ totalVEs+' VEs', badgeClass:'info', accent:'green', trend:'+2%' },
+        { icon:'upload-cloud', label:'Recent Deployments', value:23, badge:'Last 24h (mock)', badgeClass:'neutral', accent:'orange', trend:'~' }
       ];
     }
 
     function renderStats(){
       var host = document.getElementById('fluent-dashboard-stats');
       var stats = buildStatsModel();
-      host.innerHTML = stats.map(function(s){
-        return `<article class="fluent-dashboard-stat-card" tabindex="0" aria-label="${s.label} ${s.value}">
+      host.innerHTML = stats.map(function(s,i){
+        var badgeId = 'statBadge'+i;
+        var cls = 'fluent-dashboard-stat-card fluent-surface-card fluent-shadow-hover fluent-tilt-hover fluent-stat-accent-'+s.accent;
+        if(i===0) cls += ' fluent-dashboard-stat-card--featured';
+        return `<article class="${cls}" tabindex="0" aria-label="${s.label}" aria-describedby="${badgeId}">
           <div class="fluent-dashboard-stat-top">
             <div class="fluent-dashboard-stat-icon"><i data-feather="${s.icon}" aria-hidden="true"></i></div>
             <div class="fluent-dashboard-stat-meta">
-              <div class="fluent-dashboard-stat-number">${s.value}</div>
+              <div class="fluent-number-strong fluent-dashboard-stat-number">${s.value}</div>
               <div class="fluent-text-caption1">${s.label}</div>
             </div>
           </div>
           <div class="fluent-dashboard-stat-bottom">
-            <span class="fluent-badge fluent-badge-${s.badgeClass}">${s.badge}</span>
+            <span id="${badgeId}" class="fluent-badge fluent-badge-${s.badgeClass}">${s.badge}</span>
+            <span class="fluent-trend-chip"><i data-feather="trending-up"></i>${s.trend}</span>
           </div>
         </article>`;
       }).join('');
@@ -115,9 +119,10 @@
       var footerEl = document.getElementById(footerId);
       listEl.innerHTML = t.visible.map(function(e){ return favRow(e,type); }).join('');
       if(t.overflow){
-        listEl.innerHTML += `<div class="fluent-dashboard-favorite-row fluent-dashboard-favorite-overflow" aria-label="Hidden ${t.overflow} more">
+        listEl.innerHTML += `<button type="button" class="fluent-dashboard-favorite-row fluent-dashboard-favorite-overflow fluent-glow-focus"
+          aria-label="Show ${t.overflow} more ${type==='ve'?'virtual environments':'services'}">
           … +${t.overflow} more
-        </div>`;
+        </button>`;
       }
       footerEl.textContent = (fullList||[]).length + ' total • showing ' + t.visible.length + (t.overflow?(' +' + t.overflow + ' hidden'):'');
       return t;

@@ -19,6 +19,14 @@
   --gap-sm:12px;
   --gap-md:20px;
   --gap-lg:32px;
+  --accent-blue:#0f6cbd;
+  --accent-green:#107c10;
+  --accent-orange:#ca5010;
+  --accent-purple:#5c2d91;
+  --accent-border-alpha:12%;
+  --stat-gradient-angle:135deg;
+  --focus-ring-color: var(--colorBrandForeground1);
+  --focus-ring: 0 0 0 2px var(--focus-ring-color);
 }
 
 * { box-sizing:border-box; }
@@ -73,11 +81,14 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--colorBrandForegr
 .fluent-button-primary:hover { background:var(--colorBrandBackgroundHover); }
 
 .fluent-main-shell {
-  margin-left:256px;
+  margin-left: var(--sidebar-width,256px);
   min-height:100vh;
+  transition: margin-left .25s cubic-bezier(.33,0,.2,1);
 }
 @media (max-width:960px){
   .fluent-main-shell { margin-left:0; }
+  /* Ensure collapsed state completely frees horizontal space on narrow viewports */
+  body.sidebar-collapsed { --sidebar-width:0px; }
 }
 
 /* Icon utility (needed by injected markup) */
@@ -125,3 +136,137 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--colorBrandForegr
   transition:.15s;
 }
 .fluent-surface-card:hover { box-shadow:0 2px 6px rgba(0,0,0,.15); }
+
+/* Interactive utilities */
+.fluent-tilt-hover { transition:transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s; }
+.fluent-tilt-hover:hover { transform:translateY(-4px) rotateX(3deg); }
+@media (prefers-reduced-motion:reduce){
+  .fluent-tilt-hover,
+  .fluent-tilt-hover:hover { transform:none !important; }
+}
+.fluent-glow-focus:focus-visible { box-shadow:0 0 0 2px rgba(15,108,189,.55),0 0 0 4px rgba(15,108,189,.28); outline:none; }
+
+/* Accent palettes (used by stat & favorite cards) */
+.fluent-stat-accent-blue    { --_accent:var(--accent-blue); }
+.fluent-stat-accent-green   { --_accent:var(--accent-green); }
+.fluent-stat-accent-orange  { --_accent:var(--accent-orange); }
+.fluent-stat-accent-purple  { --_accent:var(--accent-purple); }
+
+.fluent-stat-accent-blue,
+.fluent-stat-accent-green,
+.fluent-stat-accent-orange,
+.fluent-stat-accent-purple {
+  position:relative;
+  background:
+    linear-gradient(var(--stat-gradient-angle),rgba(0,0,0,0) 55%,rgba(0,0,0,.04)),
+    linear-gradient(90deg,var(--colorNeutralBackground1),var(--colorNeutralBackground2));
+  border:1px solid color-mix(in srgb,var(--_accent),transparent 70%);
+}
+.fluent-stat-accent-blue::before,
+.fluent-stat-accent-green::before,
+.fluent-stat-accent-orange::before,
+.fluent-stat-accent-purple::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 85% 15%,color-mix(in srgb,var(--_accent),transparent 80%),transparent 60%),
+    linear-gradient(120deg,color-mix(in srgb,var(--_accent),transparent 92%),transparent);
+  mix-blend-mode:multiply;
+  pointer-events:none;
+  border-radius:inherit;
+}
+.fluent-stat-accent-blue::after,
+.fluent-stat-accent-green::after,
+.fluent-stat-accent-orange::after,
+.fluent-stat-accent-purple::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:linear-gradient(100deg,rgba(255,255,255,0) 30%,rgba(255,255,255,.55) 45%,rgba(255,255,255,0) 60%);
+  opacity:0;
+  transform:translateX(-20%);
+  transition:opacity .6s, transform .8s;
+}
+.fluent-stat-accent-blue:hover::after,
+.fluent-stat-accent-green:hover::after,
+.fluent-stat-accent-orange:hover::after,
+.fluent-stat-accent-purple:hover::after {
+  opacity:.4;
+  transform:translateX(0);
+}
+@media (prefers-reduced-motion:reduce){
+  .fluent-stat-accent-blue::after,
+  .fluent-stat-accent-green::after,
+  .fluent-stat-accent-orange::after,
+  .fluent-stat-accent-purple::after { display:none; }
+}
+
+/* Micro trend chip */
+.fluent-trend-chip {
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  padding:2px 6px 2px 4px;
+  background:rgba(0,0,0,.04);
+  border-radius:12px;
+  font-size:11px;
+  line-height:14px;
+  font-weight:500;
+  letter-spacing:.25px;
+}
+.fluent-trend-chip i { width:14px; height:14px; }
+
+/* Featured stat variant */
+.fluent-dashboard-stat-card--featured {
+  grid-column:span 2;
+  display:flex;
+  flex-direction:column;
+}
+@media (max-width:900px){
+  .fluent-dashboard-stat-card--featured { grid-column:span 1; }
+}
+
+/* Favorite card accent edge */
+.fluent-favorite-accent {
+  position:relative;
+  background:linear-gradient(90deg,var(--colorNeutralBackground1),var(--colorNeutralBackground2));
+}
+.fluent-favorite-accent::before {
+  content:'';
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:4px;
+  background:var(--_accent,var(--accent-blue));
+  border-radius:4px 0 0 4px;
+}
+
+/* Subtle separator utility */
+.fluent-divider-h {
+  height:1px;
+  background:var(--colorNeutralStroke2);
+  border:0;
+  margin:8px 0;
+}
+
+/* Numeric tone */
+.fluent-number-strong { font-size:32px; font-weight:600; letter-spacing:-.5px; }
+
+/* Unified focus utility */
+.fluent-focus-ring:focus-visible,
+.fluent-button:focus-visible,
+.fluent-sidebar-nav-item:focus-visible {
+  outline:none;
+  box-shadow:var(--focus-ring);
+  border-radius:6px;
+}
+
+/* Truncate utility (shared for nav labels / future) */
+.fluent-truncate {
+  display:inline-block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}

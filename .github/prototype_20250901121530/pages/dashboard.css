@@ -9,50 +9,62 @@
 
 /* Stat cards */
 .fluent-dashboard-stat-card {
+  position:relative;
   background:var(--colorNeutralBackground1);
   border:1px solid var(--colorNeutralStroke2);
   border-radius:var(--borderRadiusLarge);
-  padding:16px 18px 14px;
+  padding:20px 20px 18px;
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
+  gap:18px;
+  isolation:isolate;
   min-height:140px;
   box-shadow:var(--shadow2);
   transition:.18s;
 }
 .fluent-dashboard-stat-card:hover { box-shadow:0 4px 10px rgba(0,0,0,.12); transform:translateY(-2px); }
-.fluent-dashboard-stat-top { display:flex; justify-content:space-between; align-items:center; gap:12px; }
-.fluent-dashboard-stat-icon i { width:32px; height:32px; }
-.fluent-dashboard-stat-number { font-size:32px; font-weight:600; }
-.fluent-dashboard-stat-bottom { margin-top:12px; }
+.fluent-dashboard-stat-top { display:flex; justify-content:space-between; align-items:flex-start; }
+.fluent-dashboard-stat-icon {
+  width:54px; height:54px;
+  display:flex; align-items:center; justify-content:center;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--_accent,#0f6cbd) 0%, color-mix(in srgb,var(--_accent,#0f6cbd),#ffffff 70%) 110%);
+  box-shadow:0 4px 10px -2px color-mix(in srgb,var(--_accent,#0f6cbd),transparent 70%);
+  color:#fff;
+}
+.fluent-dashboard-stat-icon i { width:30px; height:30px; stroke-width:1.5; }
+.fluent-dashboard-stat-meta { text-align:right; }
+
+/* Bottom flex */
+.fluent-dashboard-stat-bottom {
+  margin-top:auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
 
 /* Favorite cards */
 .fluent-dashboard-favorite-card {
-  display:flex;
-  flex-direction:column;
-  min-height:260px;
-  position:relative;
+  background:var(--colorNeutralBackground1);
+  border:1px solid var(--colorNeutralStroke2);
+  border-radius:var(--borderRadiusLarge);
+  box-shadow:var(--shadow2);
+  transition:box-shadow .25s, transform .25s;
+  overflow:hidden;
 }
+.fluent-dashboard-favorite-card:hover { box-shadow:0 4px 14px rgba(0,0,0,.14); }
 .fluent-dashboard-favorite-card-header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:16px 20px 12px;
-  border-bottom:1px solid var(--colorNeutralStroke2);
   background:linear-gradient(90deg,var(--colorNeutralBackground1),var(--colorNeutralBackground2));
+  padding:16px 22px 14px;
 }
 .fluent-dashboard-favorite-card-title { display:flex; align-items:center; gap:10px; }
-.fluent-dashboard-favorite-card-content {
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-  padding:12px 12px 4px;
-  flex:1;
-}
+.fluent-dashboard-favorite-card-content { padding:10px 10px 6px; }
 .fluent-dashboard-favorite-card-footer {
-  padding:8px 16px 14px;
-  border-top:1px solid var(--colorNeutralStroke2);
   background:var(--colorNeutralBackground1);
+  border-top:1px solid var(--colorNeutralStroke2);
+  padding:10px 16px 14px;
 }
 
 /* Favorite rows */
@@ -67,18 +79,54 @@
   cursor:pointer;
   transition:.15s;
 }
-.fluent-dashboard-favorite-row:hover { background:var(--colorNeutralBackground3); }
+.fluent-dashboard-favorite-row:hover {
+  border-color:var(--colorNeutralStroke2);
+  background:linear-gradient(90deg,var(--colorNeutralBackground1),var(--colorNeutralBackground3));
+}
 .fluent-dashboard-favorite-row:focus-visible { outline:2px solid var(--colorBrandForeground1); outline-offset:2px; }
 .fluent-dashboard-favorite-overflow {
   font-weight:600;
+  letter-spacing:.5px;
   justify-content:center;
   background:var(--colorNeutralBackground3);
+  border:1px dashed var(--colorNeutralStroke2);
 }
-.fluent-dashboard-favorite-overflow:hover { background:var(--colorNeutralBackground2); }
+.fluent-dashboard-favorite-overflow:hover {
+  background:var(--colorNeutralBackground2);
+}
 .fluent-dashboard-favorite-main { display:flex; flex-direction:column; gap:4px; }
 .fluent-dashboard-favorite-name { font-weight:600; }
 .fluent-dashboard-favorite-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
 .fluent-dashboard-favorite-updated { min-width:56px; text-align:right; }
+
+/* Micro transitions */
+.fluent-dashboard-favorite-row,
+.fluent-dashboard-favorite-card { transition:background .25s, border-color .25s, box-shadow .25s; }
+
+@media (prefers-reduced-motion:reduce){
+  .fluent-dashboard-favorite-row,
+  .fluent-dashboard-favorite-card { transition:none; }
+}
+
+/* Responsive tweak for large featured stat */
+@media (min-width:1180px){
+  .fluent-grid-stats { grid-auto-rows:1fr; }
+}
+
+/* Accent edge for favorites (reuse _accent variable if set on container) */
+.fluent-dashboard-favorite-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; bottom:0;
+  width:4px;
+  background:var(--_accent,var(--accent-blue));
+  border-radius:4px 0 0 4px;
+}
+
+/* Optional accent modifiers */
+.fluent-fav-accent-green { --_accent:var(--accent-green); }
+.fluent-fav-accent-orange { --_accent:var(--accent-orange); }
+.fluent-fav-accent-purple { --_accent:var(--accent-purple); }
 
 /* Responsive */
 @media (max-width:960px){

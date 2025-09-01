@@ -2,11 +2,21 @@
   var ACTIVE = (window.APP_ACTIVE_PAGE||'').toLowerCase();
   function icon(name){ return `<i data-feather="${name}" class="fluent-icon" aria-hidden="true"></i>`; }
 
+  function navLink(href,label,key,ico){
+    var active = ACTIVE===key;
+    return `<a href="${href}" class="fluent-sidebar-nav-item ${active?'active':''}" ${active?'aria-current="page"':''}>
+      ${icon(ico||'circle')}<span class="fluent-truncate">${label}</span>
+    </a>`;
+  }
+
   function injectSidebar(){
     var host = document.getElementById('app-sidebar'); if(!host) return;
     host.innerHTML = `
       <aside class="fluent-sidebar-root" role="navigation" aria-label="Primary">
         <div class="fluent-sidebar-header">
+          <button type="button" id="fluentSidebarToggle" class="fluent-sidebar-toggle" aria-label="Toggle sidebar" aria-pressed="false">
+            ${icon('chevron-left')}
+          </button>
           <div class="fluent-brand-icon">${icon('layers')}</div>
           <div>
             <div style="font-weight:600;">Griffin PF AI</div>
@@ -15,16 +25,26 @@
         </div>
         <nav class="fluent-sidebar-section" aria-label="Main navigation">
           <div class="fluent-sidebar-section-title">MAIN NAVIGATION</div>
-          <a href="dashboard.html" class="fluent-sidebar-nav-item ${ACTIVE==='dashboard'?'active':''}">${icon('home')}<span>Dashboard</span></a>
-          <a href="#" class="fluent-sidebar-nav-item" aria-disabled="true">${icon('server')}<span>VE Management</span></a>
-          <a href="#" class="fluent-sidebar-nav-item" aria-disabled="true">${icon('layers')}<span>Services</span></a>
+          ${navLink('dashboard.html','Dashboard','dashboard','home')}
+          ${navLink('#','VE Management','ve','server')}
+          ${navLink('#','Services','services','layers')}
         </nav>
         <div class="fluent-sidebar-section" aria-label="Quick access favorites">
           <div class="fluent-sidebar-section-title">QUICK ACCESS</div>
           <div id="fluent-sidebar-favorites" class="fluent-text-caption1" style="padding:0 16px;opacity:.6;">(empty)</div>
         </div>
       </aside>`;
+    bindSidebarToggle();
     if(window.feather) feather.replace();
+  }
+
+  function bindSidebarToggle(){
+    var btn = document.getElementById('fluentSidebarToggle');
+    if(!btn) return;
+    btn.addEventListener('click', function(){
+      var collapsed = document.body.classList.toggle('sidebar-collapsed');
+      btn.setAttribute('aria-pressed', collapsed?'true':'false');
+    });
   }
 
   function buildFavLink(item){
@@ -33,7 +53,7 @@
       : `ve-detail.html?ve=${encodeURIComponent(item.name)}`;
     var ic = item.type==='service'?'package':'server';
     return `<a href="${href}" class="fluent-sidebar-nav-item" data-fav-type="${item.type}">
-      ${icon(ic)}<span>${item.name}</span>
+      ${icon(ic)}<span class="fluent-truncate">${item.name}</span>
     </a>`;
   }
 
@@ -74,7 +94,21 @@
     if(window.feather) feather.replace();
   }
 
+  // Optional helper to change active nav dynamically
+  function setActiveNav(key){
+    ACTIVE = (key||'').toLowerCase();
+    var navHost = document.querySelector('.fluent-sidebar-root nav');
+    if(!navHost) return;
+    navHost.querySelectorAll('.fluent-sidebar-nav-item').forEach(function(a){
+      var text = a.textContent.trim().toLowerCase();
+      var match = text.indexOf(ACTIVE) > -1 || a.getAttribute('href')?.toLowerCase().indexOf(ACTIVE) > -1;
+      a.classList.toggle('active', match);
+      if(match) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current');
+    });
+  }
+
   window.injectSidebar = injectSidebar;
   window.injectHeader = injectHeader;
   window.syncSidebarFavorites = syncSidebarFavorites;
+  window.setActiveNav = setActiveNav;
 })();

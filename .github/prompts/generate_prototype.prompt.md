@@ -54,7 +54,7 @@ Before moving to a full React implementation, these prototypes must serve as des
 for example:
    .github/prototype_YYYYMMDDHHMMSS/
       ├── shared/
-      │   ├── fluent-ui.css
+      │   ├── common.css
       │   ├── mock-data.js
       │   └── Layout/
       │   └── component/

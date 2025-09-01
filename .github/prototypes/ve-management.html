@@ -52,429 +52,367 @@
         </div>
     </main>
     <script src="./shared/js/header.js"></script>
-    <script src="./shared/js/mock-backend-data.js"></script>
-    <script src="./shared/js/mock-frontend-data.js"></script>
+    <script src="./shared/js/mockData.js"></script>
+    <script src="./shared/js/pageInit.js"></script>
     <script>
-      // Use Auth user if available (optional; safe fallback)
-      const userCtx = (window.Auth && Auth.getUser && Auth.getUser()) || { name:'John Doe' };
-      initHeader({
-        title:'Virtual Environment Management',
-        subtitle:'Manage and monitor all virtual environments',
-        user:userCtx
+      window.SIDEBAR_ACTIVE = 've';
+      window.SIDEBAR_FAVORITES = (function(){
+        try {
+          const favs = (window.MockData && window.MockData.favorites && window.MockData.favorites.VEs) || [];
+          return favs.slice(0,3).map(n=>({ name:n, type:'ve' }));
+        } catch(_) { return [{ name:'SovBase', type:'ve' }]; }
+      })();
+    </script>
+    <script src="./shared/js/sidebar.js"></script>
+    <!-- Added explicit header initialization (was missing) -->
+    <script>
+      (function(){
+        const userCtx = (window.Auth && Auth.getUser && Auth.getUser()) || { name:'John Doe', icon:'user' };
+        initHeader({
+          title:'Virtual Environment Management',
+          subtitle:'Manage and monitor all virtual environments',
+          user:userCtx
+        });
+      })();
+    </script>
+    <script>
+      /* Simplified: rely on precomputed MockData.veDetails */
+      let veDataset = [];
+      let pageSize = 6;
+      let currentPage = 1;
+      let currentFiltered = [];
+      const MIN_CARD_WIDTH = 220;
+      const MAX_CARD_WIDTH = 320;
+      // Removed: scopeMap, buildVeModel(), ensureDataIfEmpty()
+
+      function initVePageWithData(data){
+        veDataset = (data && data.veDetails) ? data.veDetails.slice() : [];
+        console.info('[ve-management:init] dataset size:', veDataset.length);
+        currentFiltered = veDataset.slice();
+        whenGridReady(()=>initializeInteractions());
+      }
+
+      // Startup simplified
+      (function start(){
+        whenGridReady(()=>showSkeleton(6));
+        if(window.initPageWithMockData){
+          initPageWithMockData(initVePageWithData, { requireDetails:true });
+        } else {
+          initVePageWithData(window.MockData||{});
+        }
+      })();
+
+      window.addEventListener('MockDataReady', () => {
+        if(!veDataset.length){
+          initVePageWithData(window.MockData||{});
+        }
       });
     </script>
     <script>
-        // Harden veServicesMap fallback
-        const veServicesMap = (window.mockeVeServicesMap && typeof window.mockeVeServicesMap === 'object') ? window.mockeVeServicesMap : {};
-        const { dataset: veDataset } = buildVeDetails();
+      /* ===== Deferred init via initPageWithMockData (replaces previous immediate bootstrap) ===== */
+      let veDataset = [];
+      let pageSize = 6;
+      let currentPage = 1;
+      let currentFiltered = [];
+      const MIN_CARD_WIDTH = 220;
+      const MAX_CARD_WIDTH = 320;
 
-        /* ===== Pagination State (no scrolling) ===== */
-        let pageSize = 6; // initial
-        let currentPage = 1;
-        let currentFiltered = [...veDataset];
-        /* Card sizing constraints */
-        const MIN_CARD_WIDTH = 220;
-        const MAX_CARD_WIDTH = 320;
-        const TARGET_CARD_WIDTH = 260; // adjusted midpoint for denser layout
-
-       /**
-        * Compute optimal card width so that an integer column count fits within container
-        * without going below MIN or above MAX; picks widest width <= MAX while staying >= MIN.
-        */
-       function updateCardWidth() {
-           const grid = document.getElementById('veCardsGrid');
-           if (!grid) return;
-           const containerWidth = grid.clientWidth;
-           if (containerWidth === 0) return;
-           // Try possible column counts from 6 down to 1 and pick first satisfying width constraints
-           let chosenWidth = MIN_CARD_WIDTH;
-           for (let cols = 6; cols >= 1; cols--) {
-               const gap = parseFloat(getComputedStyle(grid).gap) || 0;
-               const availableForCards = containerWidth - (cols - 1) * gap;
-               const w = Math.floor(availableForCards / cols);
-               if (w >= MIN_CARD_WIDTH && w <= MAX_CARD_WIDTH) {
-                   chosenWidth = w;
-                   break;
-               }
-               // If none within bounds, allow closest above MIN but cap at MAX
-               if (cols === 1 && w > MIN_CARD_WIDTH) chosenWidth = Math.min(w, MAX_CARD_WIDTH);
-           }
-           document.documentElement.style.setProperty('--ve-card-min', chosenWidth + 'px');
-           return chosenWidth;
-       }
-
-        function badgeClass(baseType) {
-            return baseType === 'B2 Type' ? 'fluent-badge-success' : 'fluent-badge-neutral';
+      // --- NEW: lightweight skeleton / empty helpers ---
+      function showSkeleton(count=6){
+        const grid = document.getElementById('veCardsGrid');
+        if(!grid) return;
+        grid.innerHTML = '';
+        for(let i=0;i<count;i++){
+          const sk = document.createElement('div');
+          sk.className='fluent-card p-4 ve-card skeleton';
+          sk.innerHTML = `<div class="animate-pulse">
+              <div style="height:18px;width:60%;background:#eee;border-radius:4px;margin-bottom:8px;"></div>
+              <div style="height:12px;width:40%;background:#f0f0f0;border-radius:4px;margin-bottom:16px;"></div>
+              <div style="display:flex;gap:12px;">
+                <div style="flex:1;height:48px;background:#f5f5f5;border-radius:6px;"></div>
+                <div style="flex:1;height:48px;background:#f5f5f5;border-radius:6px;"></div>
+              </div>
+            </div>`;
+          grid.appendChild(sk);
         }
+      }
+      function showEmptyMessage(){
+        const grid = document.getElementById('veCardsGrid');
+        if(!grid) return;
+        grid.innerHTML = `<div class="fluent-card p-8 text-center" style="grid-column:1/-1;">
+            <h3 class="fluent-text-title2" style="margin:0 0 8px;">No Virtual Environments</h3>
+            <p class="fluent-text-body1" style="margin:0;">Mock data not loaded. Check mockData.js initialization.</p>
+          </div>`;
+        const pag = document.getElementById('pagination');
+        if(pag) pag.innerHTML = '';
+        const sum = document.getElementById('vePaginationSummary');
+        if(sum) sum.textContent = '0 items';
+      }
 
-        function statusFooter(v) {
-            if (v.status === 'deploying') {
-                return `<div class="flex items-center text-warning">
-                            <i data-feather="clock" class="fluent-icon mr-2" aria-hidden="true"></i>
-                            <span class="fluent-text-body1">Deploying</span>
-                        </div>
-                        <div class="flex items-center text-accent">
-                            <span class="fluent-text-body1 font-medium mr-1">View</span>
-                            <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                        </div>`;
-            }
-            if (v.status === 'attention') {
-                return `<div class="flex items-center" style="color:#d13438;">
-                            <i data-feather="alert-circle" class="fluent-icon mr-2" aria-hidden="true"></i>
-                            <span class="fluent-text-body1">Needs attention</span>
-                        </div>
-                        <div class="flex items-center" style="color:#d13438;">
-                            <span class="fluent-text-body1 font-medium mr-1">Check</span>
-                            <i data-feather="chevron-right" class="fluent-icon" aria-hidden="true"></i>
-                        </div>`;
-            }
-            /* normal */
-            return `<div class="health">
-                        <span class="status-dot" aria-hidden="true"></span>
-                        <span class="fluent-text-body1">Healthy</span>
-                    </div>
-                    <div class="flex items-center text-accent">
-                        <span class="fluent-text-body1 font-medium mr-1">Open</span>
-                        <i data-feather="chevron-right" class="fluent-icon icon-muted" aria-hidden="true"></i>
-                    </div>`;
+      /* === Layout / render helpers (unchanged logic) === */
+      function updateCardWidth(){
+        const grid = document.getElementById('veCardsGrid');
+        if(!grid) return;
+        const w = grid.clientWidth; if(!w) return;
+        let chosen = MIN_CARD_WIDTH;
+        for(let cols=6; cols>=1; cols--){
+          const gap = parseFloat(getComputedStyle(grid).gap)||0;
+          const avail = w - (cols-1)*gap;
+          const cw = Math.floor(avail/cols);
+          if(cw>=MIN_CARD_WIDTH && cw<=MAX_CARD_WIDTH){ chosen=cw; break; }
+          if(cols===1 && cw>MIN_CARD_WIDTH) chosen = Math.min(cw, MAX_CARD_WIDTH);
         }
-
-        function renderVEs(list = currentFiltered) {
-            const wrap = document.getElementById('veCardsGrid');
-            if (!wrap) return;
-            wrap.innerHTML = '';
-            const total = list.length;
-            const totalPages = Math.max(1, Math.ceil(total / pageSize));
-            if (currentPage > totalPages) currentPage = totalPages;
-            const start = (currentPage - 1) * pageSize;
-            const end = start + pageSize;
-            const pageItems = list.slice(start, end);
-            pageItems.forEach(v => {
-                const specialLayout = ['GraphConnectorsB2-SOV','FlowControlB2-SOV'].includes(v.name);
-                const card = document.createElement('div');
-                card.className = `fluent-card p-4 cursor-pointer ve-card status-${v.status}`;
-                card.onclick = () => window.location.href = `ve-detail.html?ve=${encodeURIComponent(v.name)}`;
-                card.innerHTML = `
-                    <button type="button"
-                            aria-label="Favorite ${v.name}"
-                            onclick="event.stopPropagation();toggleStar(this,'${v.name}')"
-                            class="star-toggle ve-fav-btn ${v.favorite ? 'active':''}">
-                        <i data-feather="star"></i>
-                    </button>
-                    <div class="mb-2">
-                        <div class="ve-name-block">
-                            <div class="ve-name-line">
-                                <h3 class="fluent-text-title2 m-0">${v.name}</h3>
-                            </div>
-                            <div class="mt-1">
-                                <span class="fluent-badge ${badgeClass(v.baseType)}">${v.baseType}</span>
-                            </div>
-                        </div>
-                    </div>
-                    ${specialLayout ? specialMetrics(v) : normalMetrics(v)}
-                    <div class="flex items-center justify-between pt-3 divider-top card-footer">
-                        ${statusFooter(v)}
-                    </div>`;
-                wrap.appendChild(card);
-            });
-            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
-            renderPagination(total, totalPages, start, Math.min(end, total));
-            // After first real render ensure dynamic sizing is correct
-            if (!renderVEs._sized) {
-                renderVEs._sized = true;
-                requestAnimationFrame(recalculatePageSize);
-            } else {
-               // Adjust for potential overflow caused by mixed card heights
-               requestAnimationFrame(adjustForOverflow);
-            }
+        document.documentElement.style.setProperty('--ve-card-min', chosen+'px');
+      }
+      function badgeClass(bt){ return bt==='B2 Type' ? 'fluent-badge-success':'fluent-badge-neutral'; }
+      function statusFooter(v){
+        if(v.status==='deploying') return `<div class="flex items-center text-warning"><i data-feather="clock" class="fluent-icon mr-2"></i><span class="fluent-text-body1">Deploying</span></div><div class="flex items-center text-accent"><span class="fluent-text-body1 font-medium mr-1">View</span><i data-feather="chevron-right" class="fluent-icon"></i></div>`;
+        if(v.status==='attention') return `<div class="flex items-center" style="color:#d13438;"><i data-feather="alert-circle" class="fluent-icon mr-2"></i><span class="fluent-text-body1">Needs attention</span></div><div class="flex items-center" style="color:#d13438;"><span class="fluent-text-body1 font-medium mr-1">Check</span><i data-feather="chevron-right" class="fluent-icon"></i></div>`;
+        return `<div class="health"><span class="status-dot"></span><span class="fluent-text-body1">Healthy</span></div><div class="flex items-center text-accent"><span class="fluent-text-body1 font-medium mr-1">Open</span><i data-feather="chevron-right" class="fluent-icon icon-muted"></i></div>`;
+      }
+      function normalMetrics(v){
+        const svcCount = (typeof v.griffinServices==='number'?v.griffinServices:(veServicesMap[v.name]||[]).length)||0;
+        return `<div class="metrics-wrap"><div class="metrics-inner mb-4"><h4 class="text-xs font-medium text-muted">Service Number</h4><div class="flex justify-center gap-4 mt-2"><div class="text-center"><div class="text-xl font-semibold text-fg-strong">${v.deployments}</div><div class="fluent-text-caption1">In PFGold</div></div><div class="text-center"><div class="text-xl font-semibold text-accent">${svcCount}</div><div class="fluent-text-caption1">In Dragon</div></div></div></div></div>`;
+      }
+      function specialMetrics(v){
+        const svcCount = (typeof v.griffinServices==='number'?v.griffinServices:(veServicesMap[v.name]||[]).length)||0;
+        return `<div class="mb-4 text-center"><h4 class="text-xs font-medium text-muted mb-2">Service Number</h4><div class="flex justify-center gap-4"><div class="text-center"><div class="text-xl font-semibold ${v.status==='attention'?'text-red-600':(v.status==='deploying'?'text-warning':'text-fg-strong')}">${v.deployments}</div><div class="fluent-text-caption1">Deployment</div></div><div class="text-center"><div class="text-xl font-semibold text-accent">${svcCount}</div><div class="fluent-text-caption1">Service Number</div></div></div></div>`;
+      }
+      function paginationButton(label, disabled, onClick, ariaLabel){
+        const b=document.createElement('button');
+        b.type='button'; b.className='fluent-button fluent-button-subtle px-3 py-2 text-sm';
+        b.textContent=label; b.disabled=disabled;
+        if(ariaLabel) b.setAttribute('aria-label', ariaLabel);
+        b.onclick=()=>{ if(!disabled) onClick(); };
+        return b;
+      }
+      function renderPagination(total,totalPages,startIdx,endIdx){
+        const summary=document.getElementById('vePaginationSummary');
+        if(summary) summary.textContent = total===0 ? 'No virtual environments' : `Showing ${startIdx+1}-${endIdx} of ${total} (Page ${currentPage}/${totalPages})`;
+        const nav=document.getElementById('pagination');
+        if(!nav) return;
+        nav.innerHTML='';
+        nav.appendChild(paginationButton('Prev', currentPage===1, ()=>setPage(currentPage-1),'Previous page'));
+        const maxShow=5;
+        let sp=Math.max(1,currentPage-Math.floor(maxShow/2));
+        let ep=sp+maxShow-1;
+        if(ep>totalPages){ ep=totalPages; sp=Math.max(1, ep-maxShow+1); }
+        for(let p=sp;p<=ep;p++){
+          const btn=paginationButton(String(p), false, ()=>setPage(p), 'Page '+p);
+          if(p===currentPage) btn.classList.add('active');
+          nav.appendChild(btn);
         }
-        /* Dynamically set pageSize so cards exactly (or nearly) fill available vertical space without scrolling */
-        function recalculatePageSize() {
-            const grid = document.getElementById('veCardsGrid');
-            if (!grid) return;
-            // Ensure card width updated before sizing rows/columns
-            updateCardWidth();
-            const firstCard = grid.querySelector('.fluent-card');
-            if (!firstCard) return;
-            const container = document.querySelector('.content-area');
-            if (!container) return;
-            const gridStyles = getComputedStyle(grid);
-            const gap = parseFloat(gridStyles.gap) || 0;
-            const cardRect = firstCard.getBoundingClientRect();
-            const cardWidth = cardRect.width;
-            const cardHeight = cardRect.height;
-            if (cardWidth === 0 || cardHeight === 0) return;
-            const gridWidth = grid.clientWidth;
-            const columns = Math.max(1, Math.floor((gridWidth + gap) / (Math.max(cardWidth, MIN_CARD_WIDTH) + gap)));
-            const availableH = grid.getBoundingClientRect().height || (container.clientHeight - 120);
-            const MIN_ROWS = 2;
-            let rows = Math.max(MIN_ROWS, Math.floor((availableH + gap) / (cardHeight + gap)));
-            let computedPageSize = Math.max(1, Math.min(currentFiltered.length, columns * rows));
-            if (computedPageSize !== pageSize) {
-                pageSize = computedPageSize;
-                currentPage = 1;
-                renderVEs();
-                return;
-            }
-            requestAnimationFrame(adjustForOverflow);
-        }
-       // Re-check after rendering all cards; handle mixed heights
-       function adjustForOverflow() {
-           const grid = document.getElementById('veCardsGrid');
-           if (!grid) return;
-           updateCardWidth(); // keep width synced if container changed
-           const cards = Array.from(grid.querySelectorAll('.fluent-card'));
-           if (!cards.length) return;
-           const gridStyles = getComputedStyle(grid);
-           const gap = parseFloat(gridStyles.gap) || 0;
-           const maxCardHeight = Math.max(...cards.map(c => c.getBoundingClientRect().height));
-           if (maxCardHeight === 0) return;
-           const gridWidth = grid.clientWidth;
-           const sampleWidth = cards[0].getBoundingClientRect().width;
-           const columns = Math.max(1, Math.floor((gridWidth + gap) / (Math.max(sampleWidth, MIN_CARD_WIDTH) + gap)));
-           const availableH = grid.clientHeight;
-           const MIN_ROWS = 2;
-           let rows = Math.max(MIN_ROWS, Math.floor((availableH + gap) / (maxCardHeight + gap)));
-           if (rows < MIN_ROWS) rows = MIN_ROWS;
-           let needed = columns * rows;
-           if (needed < 1) needed = 1;
-           // If overflow occurs, shrink by whole rows until fits or single row remains
-           let safety = 10;
-           while (safety-- > 0 && grid.scrollHeight > grid.clientHeight && needed > columns) {
-               needed -= columns;
-               if (needed < columns) needed = columns;
-               pageSize = needed;
-               currentPage = 1;
-               renderVEs();
-               return; // re-render will re-run adjustment
-           }
-           // If we can fit more (extra vertical slack) and still have remaining data, try to grow rows by one
-           if (grid.scrollHeight + maxCardHeight + gap <= grid.clientHeight && (currentFiltered.length > pageSize)) {
-               const expanded = Math.min(currentFiltered.length, pageSize + columns);
-               if (expanded !== pageSize) {
-                   pageSize = expanded;
-                   currentPage = 1;
-                   renderVEs();
-               }
-           }
-       }
-        const debounce = (fn, d=120) => {
-            let t; return (...a) => { clearTimeout(t); t=setTimeout(()=>fn(...a), d); };
-        };
-        window.addEventListener('resize', debounce(() => {
-            renderVEs._sized = false;
-            updateCardWidth();
-            recalculatePageSize();
-        },150));
+        nav.appendChild(paginationButton('Next', currentPage===totalPages, ()=>setPage(currentPage+1),'Next page'));
+      }
+      function setPage(p){ currentPage=Math.max(1,p); renderVEs(); }
 
-        /* ===== Responsive Font Scaling ===== */
-        function updateVEFontScale() {
-            const w = window.innerWidth || 1280;
-            // scale between 0.85 (narrow) and 1.15 (very wide)
-            const scale = Math.min(1.15, Math.max(0.85, w / 1400));
-            document.documentElement.style.setProperty('--ve-font-scale', scale.toFixed(3));
-        }
-        updateVEFontScale();
-        window.addEventListener('resize', debounce(() => {
-            updateVEFontScale();
-            // existing resize logic
-            renderVEs._sized = false;
-            updateCardWidth();
-            recalculatePageSize();
-        },150));
-
-        function normalMetrics(v) {
-            const svcCount = (typeof v.griffinServices === 'number' ? v.griffinServices : (veServicesMap[v.name]||[]).length) || 0;
-            return `<div class="metrics-wrap">
-                        <div class="metrics-inner mb-4">
-                            <h4 class="text-xs font-medium text-muted">Service Number</h4>
-                            <div class="flex justify-center gap-4 mt-2">
-                                <div class="text-center">
-                                    <div class="text-xl font-semibold text-fg-strong">${v.deployments}</div>
-                                    <div class="fluent-text-caption1">In PFGold</div>
-                                </div>
-                                <div class="text-center">
-                                    <div class="text-xl font-semibold text-accent">${svcCount}</div>
-                                    <div class="fluent-text-caption1">In Dragon</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-        }
-
-        function specialMetrics(v) {
-            const svcCount = (typeof v.griffinServices === 'number' ? v.griffinServices : (veServicesMap[v.name]||[]).length) || 0;
-            return `<div class="mb-4 text-center">
-                        <h4 class="text-xs font-medium text-muted mb-2">Service Number</h4>
-                        <div class="flex justify-center gap-4">
-                            <div class="text-center">
-                                <div class="text-xl font-semibold ${v.status==='attention'?'text-red-600': (v.status==='deploying'?'text-warning':'text-fg-strong')}">${v.deployments}</div>
-                                <div class="fluent-text-caption1">Deployment</div>
-                            </div>
-                            <div class="text-center">
-                                <div class="text-xl font-semibold text-accent">${svcCount}</div>
-                                <div class="fluent-text-caption1">Service Number</div>
-                            </div>
-                        </div>
-                    </div>`;
-        }
-
-        function renderPagination(total, totalPages, startIdx, endIdx) {
-           const summary = document.getElementById('vePaginationSummary');
-           if (summary) {
-               summary.textContent = total === 0
-                 ? 'No virtual environments'
-                 : `Showing ${startIdx + 1}-${endIdx} of ${total} (Page ${currentPage}/${totalPages})`;
-           }
-           const nav = document.getElementById('pagination');
-           if (!nav) return;
-           nav.innerHTML = '';
-           // Prev
-           nav.appendChild(paginationButton('Prev', currentPage === 1, () => setPage(currentPage - 1), 'Previous page'));
-           // Page numbers (compact: show up to 5)
-           const maxShow = 5;
-           let startPage = Math.max(1, currentPage - Math.floor(maxShow / 2));
-           let endPage = startPage + maxShow - 1;
-           if (endPage > totalPages) { endPage = totalPages; startPage = Math.max(1, endPage - maxShow + 1); }
-           for (let p = startPage; p <= endPage; p++) {
-               const btn = paginationButton(p.toString(), false, () => setPage(p), `Page ${p}`);
-               if (p === currentPage) btn.classList.add('active');
-               nav.appendChild(btn);
-           }
-           // Next
-           nav.appendChild(paginationButton('Next', currentPage === totalPages, () => setPage(currentPage + 1), 'Next page'));
-       }
-
-       function paginationButton(label, disabled, onClick, ariaLabel) {
-           const b = document.createElement('button');
-           b.type = 'button';
-           b.className = 'fluent-button fluent-button-subtle px-3 py-2 text-sm';
-           b.textContent = label;
-           b.disabled = disabled;
-           if (ariaLabel) b.setAttribute('aria-label', ariaLabel);
-           b.onclick = () => { if (!disabled) onClick(); };
-           return b;
-       }
-
-       function setPage(p) {
-           currentPage = p;
-           renderVEs();
-       }
-
-        // NEW: build filter options dynamically
-        function populateFilterOptions() {
-            const typeSel = document.getElementById('typeFilter');
-            const groupSel = document.getElementById('groupFilter');
-            if (!typeSel || !groupSel) return;
-
-            const types = Array.from(new Set(veDataset.map(v => v.type))).sort();
-            const groups = Array.from(
-                new Set(
-                    veDataset.flatMap(v => Array.isArray(v.group) ? v.group : [v.group])
-                )
-            ).sort();
-
-            // Helper to build option nodes
-            function fillSelect(sel, allLabel, values) {
-                sel.innerHTML = '';
-                const optAll = document.createElement('option');
-                optAll.value = '';
-                optAll.textContent = allLabel;
-                sel.appendChild(optAll);
-                values.forEach(val => {
-                    const o = document.createElement('option');
-                    o.value = val;
-                    o.textContent = val;
-                    sel.appendChild(o);
-                });
-            }
-
-            fillSelect(typeSel, 'All Types', types);
-            fillSelect(groupSel, 'All Groups', groups);
-        }
-
-        /* ===== SEARCH & FILTER FUNCTIONS (updated to use ids) ===== */
-        function performSearch() {
-            const si = document.getElementById('searchInput');
-            if (!si) return;
-            const term = si.value.trim().toLowerCase();
-            const typeFilterVal = (document.getElementById('typeFilter')?.value || '').trim();
-            const groupFilterVal = (document.getElementById('groupFilter')?.value || '').trim();
-
-            let filtered = veDataset.filter(v => {
-                const matchesType = !typeFilterVal || v.type === typeFilterVal;
-                const vGroups = Array.isArray(v.group) ? v.group : [v.group];
-                const matchesGroup = !groupFilterVal || vGroups.includes(groupFilterVal);
-                return matchesType && matchesGroup;
-            });
-
-            if (term) {
-                filtered = filtered.filter(v => {
-                    const nameMatch = v.name.toLowerCase().includes(term);
-                    const svcMatch = (veServicesMap[v.name] || []).some(s => s.toLowerCase().includes(term));
-                    return nameMatch || svcMatch;
-                });
-            }
-
-            currentFiltered = filtered;
-            currentPage = 1;
-            renderVEs(currentFiltered);
-            updateSearchSummary(term, filtered, veServicesMap);
-        }
-
-        function clearSearch() {
-            const si = document.getElementById('searchInput');
-            if (si) si.value = '';
-            document.getElementById('typeFilter').selectedIndex = 0;
-            document.getElementById('groupFilter').selectedIndex = 0;
-            currentFiltered = [...veDataset];
-            currentPage = 1;
-            renderVEs(currentFiltered);
-            updateSearchSummary('', currentFiltered, veServicesMap);
-            const liveEl = document.getElementById('searchLive');
-            if (liveEl) liveEl.textContent = 'Search cleared. Showing all virtual environments.';
-        }
-
-        function applyFilters() {
-            performSearch();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            currentFiltered = [...veDataset];
-            updateCardWidth();
-            renderVEs(currentFiltered);
-            if (window.refreshFeatherIcons) window.refreshFeatherIcons();
-            // One more delayed recalculation for fonts async / icon replacement shifts
-            setTimeout(() => { updateCardWidth(); recalculatePageSize(); }, 300);
-            setTimeout(adjustForOverflow, 450);
-            // Replace direct inline oninput with debounced listener + IME composition handling
-            let debouncedPerformSearch;
-            const si = document.getElementById('searchInput');
-            if (si) {
-                debouncedPerformSearch = debounce(() => performSearch(), 160);
-                si.addEventListener('compositionstart', () => { si._composing = true; });
-                si.addEventListener('compositionend', () => { si._composing = false; performSearch(); });
-                si.addEventListener('input', () => {
-                    if (si._composing) return;
-                    debouncedPerformSearch();
-                });
-            }
-            populateFilterOptions();
-            document.getElementById('typeFilter')?.addEventListener('change', applyFilters);
-            document.getElementById('groupFilter')?.addEventListener('change', applyFilters);
+      function renderVEs(list=currentFiltered){
+        const wrap=document.getElementById('veCardsGrid');
+        if(!wrap) return;
+        wrap.innerHTML='';
+        const total=list.length;
+        const totalPages=Math.max(1, Math.ceil(total/pageSize));
+        if(currentPage>totalPages) currentPage=totalPages;
+        const start=(currentPage-1)*pageSize;
+        const end=Math.min(start+pageSize,total);
+        list.slice(start,end).forEach(v=>{
+          const special=['GraphConnectorsB2-SOV','FlowControlB2-SOV'].includes(v.name);
+          const card=document.createElement('div');
+          card.className=`fluent-card p-4 cursor-pointer ve-card status-${v.status}`;
+          card.onclick=()=>location.href=`ve-detail.html?ve=${encodeURIComponent(v.name)}`;
+          card.innerHTML=`
+            <button type="button" aria-label="Favorite ${v.name}" onclick="event.stopPropagation();toggleStar(this,'${v.name}')" class="star-toggle ve-fav-btn ${v.favorite?'active':''}">
+              <i data-feather="star"></i>
+            </button>
+            <div class="mb-2">
+              <div class="ve-name-block">
+                <div class="ve-name-line"><h3 class="fluent-text-title2 m-0">${v.name}</h3></div>
+                <div class="mt-1"><span class="fluent-badge ${badgeClass(v.baseType)}">${v.baseType}</span></div>
+              </div>
+            </div>
+            ${special?specialMetrics(v):normalMetrics(v)}
+            <div class="flex items-center justify-between pt-3 divider-top card-footer">
+              ${statusFooter(v)}
+            </div>`;
+          wrap.appendChild(card);
         });
-    </script>
-    <script>
-        window.SIDEBAR_ACTIVE = 've';
-        window.SIDEBAR_FAVORITES = [
-            { name:'SovBase', type:'ve' },
-            { name:'ModelBSov', type:'ve' },
-            { name:'OwaMailB2-SOV', type:'ve' }
-        ];
-    </script>
-    <script src="./shared/js/sidebar.js"></script>
-    <script>
-        if (window.refreshFeatherIcons) window.refreshFeatherIcons();
+        if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+        renderPagination(total,totalPages,start,end);
+        if(!renderVEs._sized){
+          renderVEs._sized=true;
+          requestAnimationFrame(recalculatePageSize);
+        } else {
+          requestAnimationFrame(adjustForOverflow);
+        }
+      }
+
+      function recalculatePageSize(){
+        const grid=document.getElementById('veCardsGrid'); if(!grid) return;
+        updateCardWidth();
+        const first=grid.querySelector('.fluent-card'); if(!first) return;
+        const gap=parseFloat(getComputedStyle(grid).gap)||0;
+        const cardW=first.getBoundingClientRect().width;
+        const cardH=first.getBoundingClientRect().height;
+        if(!cardW||!cardH) return;
+        const gridW=grid.clientWidth;
+        const cols=Math.max(1, Math.floor((gridW+gap)/(Math.max(cardW,MIN_CARD_WIDTH)+gap)));
+        const containerH=grid.getBoundingClientRect().height || (document.querySelector('.content-area')?.clientHeight - 120);
+        const MIN_ROWS=2;
+        const rows=Math.max(MIN_ROWS, Math.floor((containerH+gap)/(cardH+gap)));
+        const computed=Math.max(1, Math.min(currentFiltered.length, cols*rows));
+        if(computed!==pageSize){
+          pageSize=computed; currentPage=1; renderVEs(); return;
+        }
+        requestAnimationFrame(adjustForOverflow);
+      }
+      function adjustForOverflow(){
+        const grid=document.getElementById('veCardsGrid'); if(!grid) return;
+        updateCardWidth();
+        const cards=[...grid.querySelectorAll('.fluent-card')];
+        if(!cards.length) return;
+        const gap=parseFloat(getComputedStyle(grid).gap)||0;
+        const maxH=Math.max(...cards.map(c=>c.getBoundingClientRect().height));
+        if(!maxH) return;
+        const gridW=grid.clientWidth;
+        const sampleW=cards[0].getBoundingClientRect().width;
+        const cols=Math.max(1, Math.floor((gridW+gap)/(Math.max(sampleW,MIN_CARD_WIDTH)+gap)));
+        let needed=cols*Math.max(2, Math.floor((grid.clientHeight+gap)/(maxH+gap)));
+        if(needed<1) needed=1;
+        let safety=8;
+        while(safety-- && grid.scrollHeight>grid.clientHeight && needed>cols){
+          needed-=cols;
+          if(needed<cols) needed=cols;
+          pageSize=needed; currentPage=1; renderVEs(); return;
+        }
+      }
+
+      function populateFilterOptions(){
+        const typeSel=document.getElementById('typeFilter');
+        const groupSel=document.getElementById('groupFilter');
+        if(!typeSel||!groupSel) return;
+        function fill(sel,label,vals){
+          sel.innerHTML='';
+          const opt=document.createElement('option'); opt.value=''; opt.textContent=label; sel.appendChild(opt);
+          vals.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); });
+        }
+        fill(typeSel,'All Types', Array.from(new Set(veDataset.map(v=>v.type))).sort());
+        fill(groupSel,'All Groups', Array.from(new Set(veDataset.flatMap(v=>Array.isArray(v.group)?v.group:[v.group]))).sort());
+      }
+
+      function updateSearchSummary(term, filtered, map){
+        const wrap=document.getElementById('searchSummary');
+        const textEl=document.getElementById('searchSummaryText');
+        if(!wrap||!textEl) return;
+        if(!term){ wrap.classList.add('hidden'); textEl.textContent=''; return; }
+        let svcHits=0;
+        filtered.forEach(v=> (map[v.name]||[]).forEach(s=>{ if(s.toLowerCase().includes(term)) svcHits++; }));
+        textEl.textContent=`“${term}” matched ${filtered.length} VEs and ${svcHits} services`;
+        wrap.classList.remove('hidden');
+        const live=document.getElementById('searchLive');
+        if(live) live.textContent=`${filtered.length} virtual environments and ${svcHits} services match ${term}`;
+      }
+
+      function performSearch(){
+        const term=(document.getElementById('searchInput')?.value||'').trim().toLowerCase();
+        const typeVal=(document.getElementById('typeFilter')?.value||'').trim();
+        const groupVal=(document.getElementById('groupFilter')?.value||'').trim();
+        let filtered=veDataset.filter(v=>{
+          const matchesType=!typeVal||v.type===typeVal;
+          const gArr=Array.isArray(v.group)?v.group:[v.group];
+          const matchesGroup=!groupVal||gArr.includes(groupVal);
+          return matchesType && matchesGroup;
+        });
+        if(term){
+          filtered=filtered.filter(v=>{
+            const nameMatch=v.name.toLowerCase().includes(term);
+            const svcMatch=(veServicesMap[v.name]||[]).some(s=>s.toLowerCase().includes(term));
+            return nameMatch||svcMatch;
+          });
+        }
+        currentFiltered=filtered; currentPage=1; renderVEs(); updateSearchSummary(term, filtered, veServicesMap);
+      }
+
+      function clearSearch(){
+        const si=document.getElementById('searchInput'); if(si) si.value='';
+        const tf=document.getElementById('typeFilter'); if(tf) tf.selectedIndex=0;
+        const gf=document.getElementById('groupFilter'); if(gf) gf.selectedIndex=0;
+        currentFiltered=veDataset.slice(); currentPage=1; renderVEs(); updateSearchSummary('', currentFiltered, veServicesMap);
+      }
+      function toggleStar(btn, veName){
+        if(!btn) return;
+        btn.classList.toggle('active');
+        const item=veDataset.find(v=>v.name===veName);
+        if(item) item.favorite = btn.classList.contains('active');
+      }
+      window.clearSearch=clearSearch;
+      window.toggleStar=toggleStar;
+
+      const debounce=(fn,d=120)=>{ let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),d); }; };
+      function updateVEFontScale(){
+        const w=window.innerWidth||1280;
+        const scale=Math.min(1.15, Math.max(0.85, w/1400));
+        document.documentElement.style.setProperty('--ve-font-scale', scale.toFixed(3));
+      }
+
+      // --- ADDED utility to wait for grid presence before first render ---
+      function whenGridReady(cb){
+        const attempt = ()=> {
+          if(document.getElementById('veCardsGrid')) { cb(); }
+          else setTimeout(attempt,40);
+        };
+        attempt();
+      }
+
+      function initializeInteractions(){
+        updateVEFontScale();
+        updateCardWidth();
+        populateFilterOptions();
+        currentFiltered=veDataset.slice();
+        if(!veDataset.length){
+          showEmptyMessage();
+        } else {
+          renderVEs();
+        }
+        if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+        const si=document.getElementById('searchInput');
+        if(si){
+          const debounced=debounce(()=>performSearch(),160);
+          si.addEventListener('compositionstart', ()=>{ si._composing=true; });
+          si.addEventListener('compositionend', ()=>{ si._composing=false; performSearch(); });
+          si.addEventListener('input', ()=>{ if(!si._composing) debounced(); });
+        }
+        document.getElementById('typeFilter')?.addEventListener('change', performSearch);
+        document.getElementById('groupFilter')?.addEventListener('change', performSearch);
+        window.addEventListener('resize', debounce(()=>{
+          updateVEFontScale();
+          renderVEs._sized=false;
+          updateCardWidth();
+          recalculatePageSize();
+        },150));
+      }
+
+      function initVePageWithData(data){
+        veDataset = (data && data.veDetails) ? data.veDetails.slice() : [];
+        console.info('[ve-management:init] dataset size:', veDataset.length);
+        currentFiltered = veDataset.slice();
+        whenGridReady(()=>initializeInteractions());
+      }
+
+      // Startup simplified
+      (function start(){
+        whenGridReady(()=>showSkeleton(6));
+        if(window.initPageWithMockData){
+          initPageWithMockData(initVePageWithData, { requireDetails:true });
+        } else {
+          initVePageWithData(window.MockData||{});
+        }
+      })();
+
+      window.addEventListener('MockDataReady', () => {
+        if(!veDataset.length){
+          initVePageWithData(window.MockData||{});
+        }
+      });
     </script>
 </body>
 </html>

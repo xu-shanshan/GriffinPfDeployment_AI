@@ -62,6 +62,7 @@
 
     <script src="./shared/js/auth-mock.js"></script>
     <script src="./shared/js/mockData.js"></script>
+    <script src="./shared/js/pageInit.js"></script>
     <script>
   function el(tag, cls='', html=''){ const e=document.createElement(tag); if(cls) e.className=cls; if(html) e.innerHTML=html; return e; }
 
@@ -202,40 +203,58 @@
     };
   }
 
-  function initDashboard(){
-    var data = window.MockData || {};
+  // New: isolate model building so we can reuse utility initPageWithMockData
+  function buildDashboardModel(data){
+    data = data || {};
     var veServicesMap = data.veServicesMap || {};
     var veDetails = Array.isArray(data.veDetails) ? data.veDetails : [];
-    var allVEs = (data.allVes && data.allVes.length ? data.allVes : data.allVEs) || (data.allVEs || veDetails.map(function(v){return v.name;})); /* keep prior compatibility */
+    var allVEs = (data.allVes && data.allVes.length ? data.allVes : data.allVEs) ||
+                 (data.allVEs || veDetails.map(function(v){ return v.name; }));
     var unionSet = {};
     (allVEs||[]).forEach(function(n){ unionSet[n]=true; });
     Object.keys(veServicesMap).forEach(function(n){ unionSet[n]=true; });
     allVEs = Object.keys(unionSet);
-    var allServices = (data.allServices && data.allServices.length) ? data.allServices :
-      (function(){ var acc={}; Object.keys(veServicesMap).forEach(function(ve){ (veServicesMap[ve]||[]).forEach(function(s){ acc[s]=true; }); }); return Object.keys(acc); })();
-    var model = { allVEs, veServicesMap, allServices, vesInfo: veDetails, favorites: data.favorites };
+    var allServices = (data.allServices && data.allServices.length)
+      ? data.allServices
+      : (function(){
+          var acc = {};
+          Object.keys(veServicesMap).forEach(function(ve){
+            (veServicesMap[ve]||[]).forEach(function(s){ acc[s]=true; });
+          });
+          return Object.keys(acc);
+        })();
+    return { allVEs, veServicesMap, allServices, vesInfo: veDetails, favorites: data.favorites };
+  }
 
+  // Refactored: takes MockData (already available) rather than constructing inside
+  function initDashboardWithData(data){
+    var model = buildDashboardModel(data);
     const stats = buildStats(model);
     renderStats(stats);
     const { favVEs, favSvcs } = pickFavorites(model);
     renderFavoriteVEs(favVEs);
     renderFavoriteServices(favSvcs);
-
     if(window.setSidebarFavorites){
       window.setSidebarFavorites([
-        ...favVEs.map(v=>({ name: (typeof v==='string'?v:v.name), type:'ve' })),
-        ...favSvcs.map(s=>({ name: (typeof s==='string'?s:s.name), type:'service' }))
+        ...favVEs.map(v=>({ name:(typeof v==='string'?v:v.name), type:'ve' })),
+        ...favSvcs.map(s=>({ name:(typeof s==='string'?s:s.name), type:'service' }))
       ]);
     }
     if(window.refreshFeatherIcons) window.refreshFeatherIcons();
     animateNumbers();
   }
 
-  const debounce=(fn,d=150)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),d);}};
+  const debounce=(fn,d=150)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),d);};};
 
+  // Updated bootstrap: wait for MockData (via helper) then initialize
   document.addEventListener('DOMContentLoaded', () => {
     enableNavigation();
-    initDashboard();
+    if (window.initPageWithMockData){
+      initPageWithMockData(initDashboardWithData, { requireDetails:true });
+    } else {
+      // Fallback if helper not loaded for any reason
+      initDashboardWithData(window.MockData);
+    }
     window.addEventListener('resize', debounce(()=>{},120));
   });
     </script>

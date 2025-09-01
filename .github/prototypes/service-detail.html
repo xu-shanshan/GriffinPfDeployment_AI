@@ -147,292 +147,233 @@
         </div>
     </div>
 
+    <script src="./shared/js/header.js"></script>
+    <script src="./shared/js/mockData.js"></script>
+    <script src="./shared/js/pageInit.js"></script>
     <script>
-        // Error handling
-        function showError(message) {
-            document.getElementById('errorMessage').textContent = message;
-            document.getElementById('errorState').classList.remove('hidden');
-        }
-        
-        function hideError() {
-            document.getElementById('errorState').classList.add('hidden');
-        }
-        
-        function retryLoad() {
-            hideError();
-            initializePage();
-        }
-        
-        // Loading states
-        function showLoading(message = 'Loading...') {
-            document.getElementById('loadingMessage').textContent = message;
-            document.getElementById('loadingOverlay').classList.remove('hidden');
-        }
-        
-        function hideLoading() {
-            document.getElementById('loadingOverlay').classList.add('hidden');
-        }
-        
-        function showTableLoading() {
-            document.getElementById('tableLoadingState').classList.remove('hidden');
-            document.getElementById('tableContainer').style.opacity = '0.5';
-        }
-        
-        function hideTableLoading() {
-            document.getElementById('tableLoadingState').classList.add('hidden');
-            document.getElementById('tableContainer').style.opacity = '1';
-        }
-        
-        // Service data structure with VEs
-        const serviceData = {
-            'OwaMailB2': {
-                name: 'OwaMailB2',
-                description: 'Outlook Web App Mail Backend Service',
-                type: 'Exchange Service',
-                icon: 'mail',
-                iconColor: '#107c10',
-                iconBg: '#dff6dd',
-                latestVersion: 'v2.1.234',
-                activePipelines: 3,
-                ves: [
-                    {
-                        id: 'sovbase',
-                        name: 'SovBase',
-                        type: 'B Type',
-                        status: 'deployed',
-                        version: 'v2.1.234',
-                        lastDeploy: '2 hours ago',
-                        icon: 'server',
-                        iconBg: 'linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%)',
-                        canDeploy: true
-                    },
-                    {
-                        id: 'owamailb2-sov',
-                        name: 'OwaMailB2-SOV',
-                        type: 'B2 Type',
-                        status: 'deployed',
-                        version: 'v2.1.234',
-                        lastDeploy: '1 hour ago',
-                        icon: 'mail',
-                        iconBg: 'linear-gradient(135deg, #107c10 0%, #0b5c0a 100%)',
-                        canDeploy: true
-                    }
-                ]
-            }
-        };
+      // Error handling
+      function showError(message) {
+          document.getElementById('errorMessage').textContent = message;
+          document.getElementById('errorState').classList.remove('hidden');
+      }
+      
+      function hideError() {
+          document.getElementById('errorState').classList.add('hidden');
+      }
+      
+      function retryLoad() {
+          hideError();
+          initializePage();
+      }
+      
+      // Loading states
+      function showLoading(message = 'Loading...') {
+          document.getElementById('loadingMessage').textContent = message;
+          document.getElementById('loadingOverlay').classList.remove('hidden');
+      }
+      
+      function hideLoading() {
+          document.getElementById('loadingOverlay').classList.add('hidden');
+      }
+      
+      function showTableLoading() {
+          document.getElementById('tableLoadingState').classList.remove('hidden');
+          document.getElementById('tableContainer').style.opacity = '0.5';
+      }
+      
+      function hideTableLoading() {
+          document.getElementById('tableLoadingState').classList.add('hidden');
+          document.getElementById('tableContainer').style.opacity = '1';
+      }
+      
+      // --- Dynamic Service Model from MockData ---
+      function getServiceNameFromURL(){
+        const p=new URLSearchParams(location.search);
+        return p.get('service')||'OwaMailB2';
+      }
 
-        // Global state
-        const appState = {
-            currentService: null
-        };
+      const serviceDetailState = { model:null };
 
-        // Initialize page
-        function initializePage() {
-            try {
-                const serviceName = getServiceFromURL();
-                const svc = serviceData[serviceName];
-                
-                if (!svc) {
-                    showError(`Service "${serviceName}" not found. Please check the URL and try again.`);
-                    return;
-                }
-                
-                appState.currentService = svc;
-                
-                updateServiceHeaderMetrics(svc);
-                initializePipelines();
-                updateDefaultPipelineDisplay();
-                
-                if (window.refreshFeatherIcons) window.refreshFeatherIcons();
-            } catch (e) {
-                console.error(e);
-                showError('Initialization failed.');
-            }
+      function populateHeader(model){
+        document.getElementById('serviceName').textContent = model.name;
+        document.getElementById('serviceTitle').textContent = model.name;
+        document.getElementById('serviceDescription').textContent = model.description;
+        document.getElementById('serviceType').textContent = model.type;
+        document.getElementById('totalVEs').textContent = model.totalCount;
+        document.getElementById('deployedVEs').textContent = model.deployedCount;
+        document.getElementById('activePipelines').textContent = model.pipelines.length;
+        const favBtn = document.getElementById('favoriteBtn');
+        if(favBtn){
+          favBtn.classList.toggle('active', model.favorite);
+          if(model.favorite) favBtn.setAttribute('aria-pressed','true'); else favBtn.setAttribute('aria-pressed','false');
         }
-
-        function updateServiceHeaderMetrics(service) {
-            document.getElementById('serviceName').textContent = serviceNameFromURL();
-            document.getElementById('serviceTitle').textContent = serviceNameFromURL();
-            document.getElementById('serviceDescription').textContent = 'Outlook Web App Mail Backend Service';
-            document.getElementById('serviceType').textContent = 'Exchange Service';
-            document.getElementById('totalVEs').textContent = service.PipelineId ? 2 : 0;
-            document.getElementById('deployedVEs').textContent = service.PipelineId ? 2 : 0;
-            document.getElementById('activePipelines').textContent = 3;
-        }
-
-        // Helpers
-        function serviceNameFromURL() {
-            const p = new URLSearchParams(location.search);
-            return p.get('service') || 'OwaMailB2';
-        }
-        function getServiceFromURL() { return serviceNameFromURL(); }
-
-        // Pipeline management initialization
-        function initializePipelines() {
-            const serviceName = appState.currentService.name;
-            const pipelineIds = [1418, 33874, 31234]; // Example pipeline IDs
-            
-            const container = document.getElementById('modalPipelineCardsContainer');
-            container.innerHTML = ''; // Clear existing cards
-            
-            pipelineIds.forEach(id => {
-                const config = pipelineConfigs[id];
-                if (config) {
-                    const card = createPipelineCard(config);
-                    container.appendChild(card);
-                }
-            });
-        }
-
-        function createPipelineCard(config) {
-            const card = document.createElement('div');
-            card.className = 'fluent-card p-4 cursor-pointer';
-
-            card.innerHTML = `
-                <div class="flex items-start justify-between mb-3">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
-                            <i data-feather="${config.icon}" class="w-3 h-3 text-gray-600"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-gray-900">${config.name}</h4>
-                            <p class="text-xs text-gray-500">ID: ${config.id}</p>
-                        </div>
-                    </div>
-                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">${config.type}</span>
-                </div>
-                <p class="text-xs text-gray-600 mb-3">${config.description}</p>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Latest Build:</span>
-                        <span class="font-mono text-gray-900">${config.latestBuild}</span>
-                    </div>
-                    <div class="bg-gray-50 rounded p-2">
-                        <div class="flex items-center justify-between">
-                            <p class="font-mono text-xs text-gray-700 break-all flex-1 mr-2">${config.dropUrl}</p>
-                            <button onclick="copyDropUrl('${config.dropUrl}')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
-                                <i data-feather="copy" class="w-3 h-3"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-gray-100 text-center">
-                    <span class="text-xs text-gray-500">Pipeline Status: Active</span>
-                </div>
-            `;
-
-            return card;
-        }
-
-        // Copy drop URL functionality
-        function copyDropUrl(url) {
-            navigator.clipboard.writeText(url).then(() => {
-                showNotification('URL Copied', 'Drop URL has been copied to clipboard');
-            }, (err) => {
-                console.error('Copy failed', err);
-                showNotification('Copy Failed', 'Unable to copy URL to clipboard');
-            });
-        }
-
-        // Show Pipeline Management Modal
-        function showPipelineManagementModal() {
-            document.getElementById('modalServiceName').textContent = appState.currentService.name;
-            
-            const container = document.getElementById('modalPipelineCardsContainer');
-            container.innerHTML = '';
-            
-            // Get all pipeline IDs for this service
-            const pipelineIds = [1418, 33874, 31234]; // From the service data
-            
-            pipelineIds.forEach(pipelineId => {
-                const config = pipelineConfigs[pipelineId];
-                if (config) {
-                    const card = createViewOnlyPipelineCard(pipelineId, config);
-                    container.appendChild(card);
-                }
-            });
-            
-            document.getElementById('pipelineManagementModal').classList.remove('hidden');
-            if (window.refreshFeatherIcons) window.refreshFeatherIcons(); // replaced
-        }
-
-        // Close Pipeline Management Modal
-        function closePipelineManagementModal() {
-            document.getElementById('pipelineManagementModal').classList.add('hidden');
-        }
-
-        // REPLACED broken createViewOnlyPipelineCard + malformed markup & listeners
-        function createViewOnlyPipelineCard(pipelineId, config) {
-            const card = document.createElement('div');
-            card.className = 'fluent-card p-4 cursor-default';
-
-            const colorClasses = {
-                blue: 'bg-blue-100 text-blue-700',
-                purple: 'bg-purple-100 text-purple-700',
-                green: 'bg-green-100 text-green-700'
-            };
-
-            card.innerHTML = `
-                <div class="flex items-start justify-between mb-3">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
-                            <i data-feather="${config.icon}" class="w-3 h-3 text-gray-600"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-medium text-gray-900">${config.name}</h4>
-                            <p class="text-xs text-gray-500">ID: ${pipelineId}</p>
-                        </div>
-                    </div>
-                    <span class="px-2 py-1 ${colorClasses[config.color] || 'bg-gray-100 text-gray-700'} text-xs rounded">${config.type}</span>
-                </div>
-                <p class="text-xs text-gray-600 mb-3">${config.description}</p>
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Latest Build:</span>
-                        <span class="font-mono text-gray-900">${config.latestBuild}</span>
-                    </div>
-                    <div class="bg-gray-50 rounded p-2">
-                        <div class="flex items-center justify-between">
-                            <p class="font-mono text-xs text-gray-700 break-all flex-1 mr-2">${config.dropUrl}</p>
-                            <button onclick="copyDropUrl('${config.dropUrl}')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
-                                <i data-feather="copy" class="w-3 h-3"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-3 pt-3 border-t border-gray-100 text-center">
-                    <span class="text-xs text-gray-500">Pipeline Status: Active</span>
-                </div>
-            `;
-            return card;
-        }
-
-        // Clean modal close handlers
-        document.addEventListener('click', function (event) {
-            const modal = document.getElementById('pipelineManagementModal');
-            if (event.target === modal) {
-                closePipelineManagementModal();
-            }
+      }
+      function buildPipelineCards(model){
+        const container = document.getElementById('modalPipelineCardsContainer');
+        if(!container) return;
+        container.innerHTML='';
+        model.pipelines.forEach(cfg=>{
+          container.appendChild(createViewOnlyPipelineCard(cfg.id, {
+            name: cfg.type + ' Pipeline',
+            id: cfg.id,
+            type: cfg.type,
+            icon: cfg.icon,
+            color: cfg.color,
+            latestBuild: cfg.latestBuild,
+            dropUrl: cfg.dropUrl,
+            description: cfg.description
+          }));
         });
-        document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') {
-                const modal = document.getElementById('pipelineManagementModal');
-                if (modal && !modal.classList.contains('hidden')) {
-                    closePipelineManagementModal();
-                }
-            }
-        });
+      }
 
-        // FIX favorites context block
-        window.SIDEBAR_ACTIVE = 'services';
-        window.SIDEBAR_FAVORITES = [
-            { name:'SovBase', type:'ve' },
-            { name:'ModelBSov', type:'ve' },
-            { name:'OwaMailB2-SOV', type:'ve' }
-        ];
+      function showPipelineManagementModal(){
+        if(!serviceDetailState.model) return;
+        document.getElementById('modalServiceName').textContent = serviceDetailState.model.name;
+        buildPipelineCards(serviceDetailState.model);
+        document.getElementById('pipelineManagementModal').classList.remove('hidden');
+        if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+      }
+      window.showPipelineManagementModal = showPipelineManagementModal;
+
+      function toggleFavorite(){
+        if(!serviceDetailState.model) return;
+        const btn=document.getElementById('favoriteBtn');
+        const now = btn.classList.toggle('active');
+        serviceDetailState.model.favorite = now;
+        if(now){
+          if(window.addToSidebarFavorites) window.addToSidebarFavorites({ name: serviceDetailState.model.name, type:'service' });
+        } else {
+          if(window.removeFromSidebarFavorites) window.removeFromSidebarFavorites(serviceDetailState.model.name,'service');
+        }
+        if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+      }
+      window.toggleFavorite = toggleFavorite;
+
+      function initializeServiceDetail(data){
+        const svcName = getServiceNameFromURL();
+        const models = (data && data.serviceModels) || {};
+        let model = models[svcName];
+        if(!model){
+          showError('Service "'+svcName+'" not found in mock data.');
+          return;
+        }
+        serviceDetailState.model = model;
+        ensureSidebarFavorites(data);
+        populateHeader(model);
+        buildPipelineCards(model);
+        if(window.refreshFeatherIcons) window.refreshFeatherIcons();
+      }
+
+      function ensureSidebarFavorites(data){
+        if(!Array.isArray(window.SIDEBAR_FAVORITES) || !window.SIDEBAR_FAVORITES.length){
+          const vFav = (data.favorites && (data.favorites.VEs || [])) || [];
+          window.SIDEBAR_FAVORITES = vFav.slice(0,3).map(n=>({ name:n, type:'ve'}));
+        }
+      }
+
+      // Copy URL helper (unchanged)
+      function copyDropUrl(url) {
+          navigator.clipboard.writeText(url).then(() => {
+              showNotification('URL Copied', 'Drop URL has been copied to clipboard');
+          }, (err) => {
+              console.error('Copy failed', err);
+              showNotification('Copy Failed', 'Unable to copy URL to clipboard');
+          });
+      }
+
+      // Close Pipeline Management Modal
+      function closePipelineManagementModal() {
+          document.getElementById('pipelineManagementModal').classList.add('hidden');
+      }
+
+      // REPLACED broken createViewOnlyPipelineCard + malformed markup & listeners
+      function createViewOnlyPipelineCard(pipelineId, config) {
+          const card = document.createElement('div');
+          card.className = 'fluent-card p-4 cursor-default';
+
+          const colorClasses = {
+              blue: 'bg-blue-100 text-blue-700',
+              purple: 'bg-purple-100 text-purple-700',
+              green: 'bg-green-100 text-green-700'
+          };
+
+          card.innerHTML = `
+              <div class="flex items-start justify-between mb-3">
+                  <div class="flex items-center space-x-2">
+                      <div class="w-6 h-6 bg-gray-100 rounded flex items-center justify-center">
+                          <i data-feather="${config.icon}" class="w-3 h-3 text-gray-600"></i>
+                      </div>
+                      <div>
+                          <h4 class="font-medium text-gray-900">${config.name}</h4>
+                          <p class="text-xs text-gray-500">ID: ${pipelineId}</p>
+                      </div>
+                  </div>
+                  <span class="px-2 py-1 ${colorClasses[config.color] || 'bg-gray-100 text-gray-700'} text-xs rounded">${config.type}</span>
+              </div>
+              <p class="text-xs text-gray-600 mb-3">${config.description}</p>
+              <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                      <span class="text-gray-600">Latest Build:</span>
+                      <span class="font-mono text-gray-900">${config.latestBuild}</span>
+                  </div>
+                  <div class="bg-gray-50 rounded p-2">
+                      <div class="flex items-center justify-between">
+                          <p class="font-mono text-xs text-gray-700 break-all flex-1 mr-2">${config.dropUrl}</p>
+                          <button onclick="copyDropUrl('${config.dropUrl}')" class="px-2 py-1 bg-gray-200 hover:bg-gray-300 rounded text-xs transition-colors" title="Copy URL">
+                              <i data-feather="copy" class="w-3 h-3"></i>
+                          </button>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-3 pt-3 border-t border-gray-100 text-center">
+                  <span class="text-xs text-gray-500">Pipeline Status: Active</span>
+              </div>
+          `;
+          return card;
+      }
+
+      // Clean modal close handlers
+      document.addEventListener('click', function (event) {
+          const modal = document.getElementById('pipelineManagementModal');
+          if (event.target === modal) {
+              closePipelineManagementModal();
+          }
+      });
+      document.addEventListener('keydown', function (event) {
+          if (event.key === 'Escape') {
+              const modal = document.getElementById('pipelineManagementModal');
+              if (modal && !modal.classList.contains('hidden')) {
+                  closePipelineManagementModal();
+              }
+          }
+      });
+
+      // Bootstrap
+      (function start(){
+        if(window.initPageWithMockData){
+          initPageWithMockData(initializeServiceDetail, { requireDetails:true });
+        } else {
+          initializeServiceDetail(window.MockData||{});
+        }
+      })();
+
+      // Re-init if dataset was late
+      window.addEventListener('MockDataReady', function(){
+        if(!serviceDetailState.model){
+          initializeServiceDetail(window.MockData||{});
+        }
+      });
+    </script>
+    <script>
+      // Sidebar context (active + seed favorites) - keep after dynamic init script
+      window.SIDEBAR_ACTIVE = 'services';
+      window.SIDEBAR_FAVORITES = window.SIDEBAR_FAVORITES || [
+        { name:'SovBase', type:'ve' },
+        { name:'ModelBSov', type:'ve' },
+        { name:'OwaMailB2-SOV', type:'ve' }
+      ];
     </script>
     <script src="./shared/js/sidebar.js"></script>
-    <script src="./shared/js/header.js"></script>
     <script>
         if (window.refreshFeatherIcons) window.refreshFeatherIcons();
     </script>

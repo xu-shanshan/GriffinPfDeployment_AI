@@ -228,6 +228,82 @@ if (!veDetails.length) {
   console.info('[mockData] Fallback veDetails size:', veDetails.length);
 }
 
+// ---- Service aggregation (for pages; moved from page scripts) ----
+function aggregateServiceStatusFromVeStatuses(arr){
+  if(arr.some(s=>'attention'===s)) return { status:'Config Issue', statusClass:'warning' };
+  if(arr.some(s=>'deploying'===s)) return { status:'Deploying', statusClass:'warning' };
+  if(arr.some(s=>'normal'===s)) return { status:'Active', statusClass:'success' };
+  return { status:'Not Deployed', statusClass:'neutral' };
+}
+function derivePipelines(info){
+  if(!info) return [{
+    id:0,type:'Placeholder',icon:'package',color:'purple',
+    latestBuild:'n/a',dropUrl:'N/A',description:'No pipeline metadata in mock data'
+  }];
+  const list=[];
+  if(info.MainlineBuildPipelineId) list.push({
+    id:info.MainlineBuildPipelineId,type:'Mainline',icon:'git-branch',color:'blue',
+    latestBuild:info.BuildVersion||info.BuildVersionPreview||'—',
+    dropUrl:info.BuildPathPattern||'N/A',description:'Mainline build artifacts'
+  });
+  if(info.IncrementalBuildPipelineId) list.push({
+    id:info.IncrementalBuildPipelineId,type:'Incremental',icon:'trending-up',color:'green',
+    latestBuild:info.BuildVersion||'—',
+    dropUrl:info.BuildPathPattern||'N/A',description:'Incremental build artifacts'
+  });
+  return list.length?list:derivePipelines(null);
+}
+// Build service cards + detailed models
+var favoriteServiceNames = new Set(
+  [].concat(mockFavorites.Services||[], (mockFavorites.favoriteServices||[]).map(function(f){return f.name;}))
+);
+var serviceCards = [];
+var serviceModels = {};
+(function buildServices(){
+  var statusByVe = {};
+  veDetails.forEach(function(v){ statusByVe[v.name]=v.status; });
+  allServices.forEach(function(svc){
+    // Collect VEs containing this service
+    var veList = Object.keys(veServicesMap||{}).filter(function(ve){
+      return (veServicesMap[ve]||[]).indexOf(svc)>-1;
+    });
+    var veStatuses = veList.map(function(ve){ return statusByVe[ve]||'inactive'; });
+    var agg = aggregateServiceStatusFromVeStatuses(veStatuses);
+    var info = servicesInfo[svc] || {};
+    var version = info.BuildVersion || info.MainlineBuildVersion || null;
+    var card = {
+      name:svc,
+      instances:veList.length,
+      deployed:veList.length,
+      version:version,
+      status:agg.status,
+      statusClass:agg.statusClass,
+      favorite:favoriteServiceNames.has(svc),
+      veList:veList
+    };
+    serviceCards.push(card);
+    serviceModels[svc] = {
+      name:svc,
+      description: info.Description || info.ServiceName || (svc + ' service'),
+      type: info.ServiceType || 'Service',
+      version: version,
+      veList: veList,
+      deployedCount: veList.length,
+      totalCount: veList.length,
+      status: agg.status,
+      statusClass: agg.statusClass,
+      pipelines: derivePipelines(info),
+      favorite: card.favorite
+    };
+  });
+  // Favorite-first ordering for cards
+  serviceCards.sort(function(a,b){
+    if(a.favorite&&!b.favorite) return -1;
+    if(!a.favorite&&b.favorite) return 1;
+    return a.name.localeCompare(b.name);
+  });
+})();
+
 // Replace MockData object (keep previous properties, add allVEs alias)
 window.MockData = {
   users: mockUsers,
@@ -239,7 +315,9 @@ window.MockData = {
   allVes: allVes,
   allVEs: allVes,
   allServices: allServices,
-  veDetails: veDetails
+  veDetails: veDetails,
+  serviceCards: serviceCards,
+  serviceModels: serviceModels
 };
 // Dispatch ready event (pages can listen if needed)
 try { window.dispatchEvent(new Event('MockDataReady')); } catch(_){}

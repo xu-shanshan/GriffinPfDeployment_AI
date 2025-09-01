@@ -14,18 +14,149 @@
   <div id="app-sidebar"></div>
   <main id="mainContent" class="fluent-main-shell" role="main" aria-labelledby="pageTitle">
     <div id="fluent-app-header"></div>
-    <div class="fluent-web-container" id="dashboardContent" style="padding:32px 0;">
-      <div class="fluent-text-caption1" style="opacity:.6;">(Dashboard content to be added)</div>
-    </div>
+
+    <section class="fluent-web-container fluent-dashboard-section" aria-label="Dashboard overview">
+      <!-- Stats -->
+      <div id="fluent-dashboard-stats" class="fluent-grid-stats"></div>
+
+      <!-- Favorites -->
+      <div class="fluent-grid-favorites" aria-label="Favorites">
+        <article class="fluent-dashboard-favorite-card fluent-surface-card" id="fluent-dashboard-fav-ves">
+          <header class="fluent-dashboard-favorite-card-header">
+            <div class="fluent-dashboard-favorite-card-title">
+              <i data-feather="star" aria-hidden="true"></i>
+              <h2 class="fluent-text-title2">Favorite VEs</h2>
+            </div>
+            <button class="fluent-button fluent-button-subtle" disabled>View All</button>
+          </header>
+          <div class="fluent-dashboard-favorite-card-content" id="fluent-fav-ves-list"></div>
+          <footer class="fluent-dashboard-favorite-card-footer fluent-text-caption1" id="fluent-fav-ves-footer"></footer>
+        </article>
+
+        <article class="fluent-dashboard-favorite-card fluent-surface-card" id="fluent-dashboard-fav-services">
+          <header class="fluent-dashboard-favorite-card-header">
+            <div class="fluent-dashboard-favorite-card-title">
+              <i data-feather="heart" aria-hidden="true"></i>
+              <h2 class="fluent-text-title2">Favorite Services</h2>
+            </div>
+            <button class="fluent-button fluent-button-subtle" disabled>View All</button>
+          </header>
+          <div class="fluent-dashboard-favorite-card-content" id="fluent-fav-services-list"></div>
+          <footer class="fluent-dashboard-favorite-card-footer fluent-text-caption1" id="fluent-fav-services-footer"></footer>
+        </article>
+      </div>
+    </section>
   </main>
+
   <script>window.APP_ACTIVE_PAGE='dashboard';</script>
   <script src="../shared/js/mockData.js"></script>
   <script src="../shared/js/layout.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function(){
+    function buildStatsModel(){
+      var md = window.MockData || {};
+      var totalVEs = (md.allVEs || md.allVes || []).length;
+      var totalSvcs = (md.allServices || []).length;
+      return [
+        { icon:'database', label:'Total VEs', value: totalVEs, badge: totalVEs+' loaded', badgeClass:'success' },
+        { icon:'layers', label:'Services', value: totalSvcs, badge:'Across '+ totalVEs +' VEs', badgeClass:'info' },
+        { icon:'upload-cloud', label:'Recent Deployments', value:23, badge:'Last 24h (mock)', badgeClass:'neutral' }
+      ];
+    }
+
+    function renderStats(){
+      var host = document.getElementById('fluent-dashboard-stats');
+      var stats = buildStatsModel();
+      host.innerHTML = stats.map(function(s){
+        return `<article class="fluent-dashboard-stat-card" tabindex="0" aria-label="${s.label} ${s.value}">
+          <div class="fluent-dashboard-stat-top">
+            <div class="fluent-dashboard-stat-icon"><i data-feather="${s.icon}" aria-hidden="true"></i></div>
+            <div class="fluent-dashboard-stat-meta">
+              <div class="fluent-dashboard-stat-number">${s.value}</div>
+              <div class="fluent-text-caption1">${s.label}</div>
+            </div>
+          </div>
+          <div class="fluent-dashboard-stat-bottom">
+            <span class="fluent-badge fluent-badge-${s.badgeClass}">${s.badge}</span>
+          </div>
+        </article>`;
+      }).join('');
+    }
+
+    function truncate(list, visible){
+      if(!Array.isArray(list)) return { visible:[], overflow:0 };
+      if(list.length <= visible) return { visible:list.slice(), overflow:0 };
+      return { visible:list.slice(0,visible), overflow:list.length-visible };
+    }
+
+    function favRow(entry, type){
+      var name = entry.name || entry;
+      var meta = (type==='ve')
+        ? ((entry.services!=null?entry.services:'—') + ' services')
+        : ((entry.instances!=null?entry.instances:'—') + ' instance'+(entry.instances===1?'':'s'));
+      var badge = entry.status
+        ? `<span class="fluent-badge fluent-badge-${entry.statusClass||'neutral'}">${entry.status}</span>`
+        : (entry.type ? `<span class="fluent-badge fluent-badge-neutral">${entry.type}</span>` : '');
+      return `<div class="fluent-dashboard-favorite-row" role="button" tabindex="0" aria-label="${type} ${name}">
+        <div class="fluent-dashboard-favorite-main">
+          <div class="fluent-dashboard-favorite-name">${name}</div>
+          <div class="fluent-dashboard-favorite-meta">
+            <span class="fluent-text-caption1">${meta}</span>
+            ${badge}
+          </div>
+        </div>
+        <div class="fluent-dashboard-favorite-updated fluent-text-caption1">${entry.updated||'—'}</div>
+      </div>`;
+    }
+
+    function renderFavoriteBlock(fullList, type, listId, footerId){
+      var VISIBLE = 3;
+      var t = truncate(fullList||[], VISIBLE);
+      var listEl = document.getElementById(listId);
+      var footerEl = document.getElementById(footerId);
+      listEl.innerHTML = t.visible.map(function(e){ return favRow(e,type); }).join('');
+      if(t.overflow){
+        listEl.innerHTML += `<div class="fluent-dashboard-favorite-row fluent-dashboard-favorite-overflow" aria-label="Hidden ${t.overflow} more">
+          … +${t.overflow} more
+        </div>`;
+      }
+      footerEl.textContent = (fullList||[]).length + ' total • showing ' + t.visible.length + (t.overflow?(' +' + t.overflow + ' hidden'):'');
+      return t;
+    }
+
+    function syncSidebar(vesSubset, svcSubset){
+      if(window.syncSidebarFavorites){
+        syncSidebarFavorites(vesSubset, svcSubset);
+      }
+    }
+
+    function renderDashboard(){
       injectSidebar();
-      injectHeader({ title:'Dashboard', subtitle:'Virtual Environment Overview (Empty Scaffold)' });
-    });
+      injectHeader({ title:'Dashboard', subtitle:'Virtual Environment Overview' });
+      renderStats();
+      var fav = (window.MockData && MockData.favorites) || { favoriteVEs:[], favoriteServices:[] };
+      var veT = renderFavoriteBlock(fav.favoriteVEs, 've', 'fluent-fav-ves-list', 'fluent-fav-ves-footer');
+      var svcT = renderFavoriteBlock(fav.favoriteServices, 'service', 'fluent-fav-services-list', 'fluent-fav-services-footer');
+      syncSidebar(veT.visible, svcT.visible);
+      if(window.feather) feather.replace();
+      animateNumbers();
+    }
+
+    function animateNumbers(){
+      document.querySelectorAll('.fluent-dashboard-stat-number').forEach(function(el){
+        var target = +el.textContent;
+        el.textContent = '0';
+        var start = performance.now(), dur = 700;
+        function step(now){
+            var p = Math.min(1,(now-start)/dur);
+            el.textContent = Math.round(target*p);
+            if(p<1) requestAnimationFrame(step);
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    window.addEventListener('MockDataReady', renderDashboard);
+    if(window.MockData) renderDashboard();
   </script>
 </body>
 </html>

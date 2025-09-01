@@ -1,1 +1,86 @@
-.fluent-dashboard-placeholder { opacity:.6; font-style:italic; }
+/* Dashboard page specific (fluent-dashboard-*) */
+
+.fluent-dashboard-section {
+  padding:32px 0 48px;
+  display:flex;
+  flex-direction:column;
+  gap:48px;
+}
+
+/* Stat cards */
+.fluent-dashboard-stat-card {
+  background:var(--colorNeutralBackground1);
+  border:1px solid var(--colorNeutralStroke2);
+  border-radius:var(--borderRadiusLarge);
+  padding:16px 18px 14px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:140px;
+  box-shadow:var(--shadow2);
+  transition:.18s;
+}
+.fluent-dashboard-stat-card:hover { box-shadow:0 4px 10px rgba(0,0,0,.12); transform:translateY(-2px); }
+.fluent-dashboard-stat-top { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.fluent-dashboard-stat-icon i { width:32px; height:32px; }
+.fluent-dashboard-stat-number { font-size:32px; font-weight:600; }
+.fluent-dashboard-stat-bottom { margin-top:12px; }
+
+/* Favorite cards */
+.fluent-dashboard-favorite-card {
+  display:flex;
+  flex-direction:column;
+  min-height:260px;
+  position:relative;
+}
+.fluent-dashboard-favorite-card-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px 20px 12px;
+  border-bottom:1px solid var(--colorNeutralStroke2);
+  background:linear-gradient(90deg,var(--colorNeutralBackground1),var(--colorNeutralBackground2));
+}
+.fluent-dashboard-favorite-card-title { display:flex; align-items:center; gap:10px; }
+.fluent-dashboard-favorite-card-content {
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  padding:12px 12px 4px;
+  flex:1;
+}
+.fluent-dashboard-favorite-card-footer {
+  padding:8px 16px 14px;
+  border-top:1px solid var(--colorNeutralStroke2);
+  background:var(--colorNeutralBackground1);
+}
+
+/* Favorite rows */
+.fluent-dashboard-favorite-row {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:var(--borderRadiusSmall);
+  background:var(--colorNeutralBackground1);
+  cursor:pointer;
+  transition:.15s;
+}
+.fluent-dashboard-favorite-row:hover { background:var(--colorNeutralBackground3); }
+.fluent-dashboard-favorite-row:focus-visible { outline:2px solid var(--colorBrandForeground1); outline-offset:2px; }
+.fluent-dashboard-favorite-overflow {
+  font-weight:600;
+  justify-content:center;
+  background:var(--colorNeutralBackground3);
+}
+.fluent-dashboard-favorite-overflow:hover { background:var(--colorNeutralBackground2); }
+.fluent-dashboard-favorite-main { display:flex; flex-direction:column; gap:4px; }
+.fluent-dashboard-favorite-name { font-weight:600; }
+.fluent-dashboard-favorite-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.fluent-dashboard-favorite-updated { min-width:56px; text-align:right; }
+
+/* Responsive */
+@media (max-width:960px){
+  .fluent-grid-favorites { grid-template-columns:1fr; }
+}

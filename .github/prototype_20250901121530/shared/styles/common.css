@@ -16,6 +16,9 @@
   --fluent-app-header-height:64px;
   --page-max-width:1440px;
   --page-gutter:32px;
+  --gap-sm:12px;
+  --gap-md:20px;
+  --gap-lg:32px;
 }
 
 * { box-sizing:border-box; }
@@ -84,5 +87,41 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--colorBrandForegr
   stroke-width:1.8;
 }
 
-/* Remove old non‑prefixed classes from usage (definitions kept only if needed elsewhere) */
-/* .web-container, .main-shell, .visually-hidden no longer used in markup */
+/* Badges (shared) */
+.fluent-badge {
+  display:inline-block;
+  padding:2px 8px;
+  border-radius:12px;
+  font-size:12px;
+  line-height:16px;
+  font-weight:500;
+  background:var(--colorNeutralBackground3);
+  color:var(--colorNeutralForeground2);
+  white-space:nowrap;
+}
+.fluent-badge-success { background:#dff6dd; color:#107c10; }
+.fluent-badge-info { background:#e3f2fd; color:var(--colorBrandForeground1); }
+.fluent-badge-neutral { background:var(--colorNeutralBackground3); color:var(--colorNeutralForeground2); }
+
+/* Grid utilities */
+.fluent-grid-stats {
+  display:grid;
+  gap:var(--gap-md);
+  grid-template-columns:repeat(auto-fill,minmax(clamp(180px,22vw,260px),1fr));
+}
+.fluent-grid-favorites {
+  display:grid;
+  gap:var(--gap-lg);
+  grid-template-columns:repeat(auto-fill,minmax(clamp(320px,45%,520px),1fr));
+  align-items:start;
+}
+
+/* Card surface helpers (dashboard uses) */
+.fluent-surface-card {
+  background:var(--colorNeutralBackground1);
+  border:1px solid var(--colorNeutralStroke2);
+  border-radius:var(--borderRadiusLarge);
+  box-shadow:var(--shadow2);
+  transition:.15s;
+}
+.fluent-surface-card:hover { box-shadow:0 2px 6px rgba(0,0,0,.15); }

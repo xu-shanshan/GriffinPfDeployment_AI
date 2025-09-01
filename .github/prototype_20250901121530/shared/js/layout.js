@@ -19,11 +19,39 @@
           <a href="#" class="fluent-sidebar-nav-item" aria-disabled="true">${icon('server')}<span>VE Management</span></a>
           <a href="#" class="fluent-sidebar-nav-item" aria-disabled="true">${icon('layers')}<span>Services</span></a>
         </nav>
-        <div class="fluent-sidebar-section">
+        <div class="fluent-sidebar-section" aria-label="Quick access favorites">
           <div class="fluent-sidebar-section-title">QUICK ACCESS</div>
-          <div id="sidebarFavorites" class="fluent-text-caption1" style="padding:0 16px;">(empty)</div>
+          <div id="fluent-sidebar-favorites" class="fluent-text-caption1" style="padding:0 16px;opacity:.6;">(empty)</div>
         </div>
       </aside>`;
+    if(window.feather) feather.replace();
+  }
+
+  function buildFavLink(item){
+    var href = item.type==='service'
+      ? `service-detail.html?service=${encodeURIComponent(item.name)}`
+      : `ve-detail.html?ve=${encodeURIComponent(item.name)}`;
+    var ic = item.type==='service'?'package':'server';
+    return `<a href="${href}" class="fluent-sidebar-nav-item" data-fav-type="${item.type}">
+      ${icon(ic)}<span>${item.name}</span>
+    </a>`;
+  }
+
+  function syncSidebarFavorites(veList, svcList){
+    var el = document.getElementById('fluent-sidebar-favorites');
+    if(!el) return;
+    var combined = []
+      .concat((veList||[]).map(function(v){ return { name:(v.name||v), type:'ve'}; }))
+      .concat((svcList||[]).map(function(s){ return { name:(s.name||s), type:'service'}; }));
+    var MAX = 6;
+    combined = combined.slice(0, MAX);
+    if(!combined.length){
+      el.style.opacity='.6';
+      el.innerHTML='(empty)';
+      return;
+    }
+    el.style.opacity='1';
+    el.innerHTML = combined.map(buildFavLink).join('');
     if(window.feather) feather.replace();
   }
 
@@ -48,4 +76,5 @@
 
   window.injectSidebar = injectSidebar;
   window.injectHeader = injectHeader;
+  window.syncSidebarFavorites = syncSidebarFavorites;
 })();

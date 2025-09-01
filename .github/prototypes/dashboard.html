@@ -61,20 +61,10 @@
     </main>
 
     <script src="./shared/js/auth-mock.js"></script>
-    <script src="./shared/js/mock-backend-data.js"></script>
-    <script src="./shared/js/mock-frontend-data.js"></script>
+    <script src="./shared/js/mockData.js"></script>
     <script>
-  // Reworked: removed network fetch; data comes from shared/mock-data.js
   function el(tag, cls='', html=''){ const e=document.createElement(tag); if(cls) e.className=cls; if(html) e.innerHTML=html; return e; }
 
-  function deriveModel(data){
-    if(!data) return null;
-    const veGroups = Object.values(data.ExpectedVEs||{});
-    const allVEs = [...new Set(veGroups.flat())];
-    const expectedServices = data.ExpectedServices || {};
-    const allServices = [...new Set(Object.values(expectedServices).flat())];
-    return { allVEs, expectedServices, allServices };
-  }
 
   function buildStats(model){
     if(!model){
@@ -217,32 +207,18 @@
   }
 
   function initDashboard(){
-    const data = window.MockReleaseMapping || null;
-    let model = deriveModel(data);
+    var data = window.MockData || {};
 
-    // NEW: Reconcile with buildVeDetails() (source used by ve-management)
-    if (typeof buildVeDetails === 'function') {
-      try {
-        const veDetailsData = buildVeDetails().dataset || [];
-        if (veDetailsData.length) {
-          const unifiedVeNames = Array.from(new Set(veDetailsData.map(v => v.name)));
-          // If model missing or counts differ, adopt unified list to keep dashboard consistent
-          if (!model || unifiedVeNames.length !== (model.allVEs?.length || 0)) {
-            model = model || {};
-            model.allVEs = unifiedVeNames;
-            // Preserve existing expectedServices; if absent, create minimal map from veDetails services if available
-            if (!model.expectedServices) model.expectedServices = {};
-          }
-        }
-      } catch(e) {
-        console.warn('[dashboard] buildVeDetails reconciliation failed', e);
-      }
-    }
-
+    var veServicesMap = data.veServicesMap || {};
+    var veDetails = Array.isArray(data.veDetails) ? data.veDetails : [];
+    var allVEs = data.allVEs && data.allVEs.length ? data.allVEs : veDetails.map(function(v){return v.name;});
+    var allServices = data.allServices && data.allServices.length ? data.allServices : (function(){ var acc={}; Object.keys(veServicesMap).forEach(function(ve){ (veServicesMap[ve]||[]).forEach(function(s){ acc[s]=true; }); }); return Object.keys(acc); })();
+  
+    var model =  { allVEs, veServicesMap, allServices, vesInfo: veDetails };
+    
     const stats = buildStats(model);
     renderStats(stats);
-
-    const { favVEs, favSvcs } = pickFavorites(model);
+    const { favVEs, favSvcs } = pickFavorites(model.MockFavorites);
     renderFavoriteVEs(favVEs);
     renderFavoriteServices(favSvcs);
 

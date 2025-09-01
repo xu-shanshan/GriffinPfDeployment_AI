@@ -5480,5 +5480,5 @@ window.MockData = {
   allVes: allVes,
   allServices: allServices,
   
-  veDetails: veDetails
+  veDetails: vesInfo(),
 };

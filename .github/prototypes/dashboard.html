@@ -186,20 +186,16 @@
   }
 
   function pickFavorites(model){
-    // Prefer rich metadata arrays if present
-    const richVE = window.MockFavorites?.favoriteVEs;
-    const richSvc = window.MockFavorites?.favoriteServices;
+    const fav = (model && model.favorites) || (window.MockData && window.MockData.favorites) || {};
+    const richVE = fav.favoriteVEs;
+    const richSvc = fav.favoriteServices;
     if (Array.isArray(richVE) && richVE.length && Array.isArray(richSvc) && richSvc.length) {
-      return {
-        favVEs: richVE.slice(0,3),
-        favSvcs: richSvc.slice(0,3)
-      };
+      return { favVEs: richVE.slice(0,3), favSvcs: richSvc.slice(0,3) };
     }
-    // Fallback to name-only arrays
     const allVEs = model?.allVEs || [];
     const allServices = model?.allServices || [];
-    const namesVE = (window.MockFavorites?.VEs || []).filter(v=>allVEs.includes(v)).slice(0,3);
-    const namesSvc = (window.MockFavorites?.Services || []).filter(s=>allServices.includes(s)).slice(0,3);
+    const namesVE = (fav.VEs || []).filter(v=>allVEs.includes(v)).slice(0,3);
+    const namesSvc = (fav.Services || []).filter(s=>allServices.includes(s)).slice(0,3);
     return {
       favVEs: namesVE.length ? namesVE : allVEs.slice(0,3),
       favSvcs: namesSvc.length ? namesSvc : allServices.slice(0,3)
@@ -208,17 +204,20 @@
 
   function initDashboard(){
     var data = window.MockData || {};
-
     var veServicesMap = data.veServicesMap || {};
     var veDetails = Array.isArray(data.veDetails) ? data.veDetails : [];
-    var allVEs = data.allVEs && data.allVEs.length ? data.allVEs : veDetails.map(function(v){return v.name;});
-    var allServices = data.allServices && data.allServices.length ? data.allServices : (function(){ var acc={}; Object.keys(veServicesMap).forEach(function(ve){ (veServicesMap[ve]||[]).forEach(function(s){ acc[s]=true; }); }); return Object.keys(acc); })();
-  
-    var model =  { allVEs, veServicesMap, allServices, vesInfo: veDetails };
-    
+    var allVEs = (data.allVes && data.allVes.length ? data.allVes : data.allVEs) || (data.allVEs || veDetails.map(function(v){return v.name;})); /* keep prior compatibility */
+    var unionSet = {};
+    (allVEs||[]).forEach(function(n){ unionSet[n]=true; });
+    Object.keys(veServicesMap).forEach(function(n){ unionSet[n]=true; });
+    allVEs = Object.keys(unionSet);
+    var allServices = (data.allServices && data.allServices.length) ? data.allServices :
+      (function(){ var acc={}; Object.keys(veServicesMap).forEach(function(ve){ (veServicesMap[ve]||[]).forEach(function(s){ acc[s]=true; }); }); return Object.keys(acc); })();
+    var model = { allVEs, veServicesMap, allServices, vesInfo: veDetails, favorites: data.favorites };
+
     const stats = buildStats(model);
     renderStats(stats);
-    const { favVEs, favSvcs } = pickFavorites(model.MockFavorites);
+    const { favVEs, favSvcs } = pickFavorites(model);
     renderFavoriteVEs(favVEs);
     renderFavoriteServices(favSvcs);
 

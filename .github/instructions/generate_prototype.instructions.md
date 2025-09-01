@@ -1,5 +1,5 @@
 ---
-mode: edit
+applyTo: '**'
 ---
 
 You are acting as a senior full-stack/architecture assistant. 
@@ -62,18 +62,15 @@ You are acting as a senior full-stack/architecture assistant.
 .github/prototype_YYYYMMDDHHMMSS/
 ├── shared/
 │   ├── layout/
-│   │   └── header.html
+│   │   ├── header.html
+│   │   └── sidebar.html
 │   ├── styles/
-│   │   ├── common.css
-│   │   └── theme.css
+│   │   └── common.css
 │   └── js/
-│       ├── utils.js
 │       └── mockData.js
 ├── pages/
-│   ├── dashboard.html
-│   ├── dashboard.css
-│   ├── settings.html
-│   └── settings.css
+│   ├── page1.html
+│   └── page1.css
 └── README.md
 
 #### Notes

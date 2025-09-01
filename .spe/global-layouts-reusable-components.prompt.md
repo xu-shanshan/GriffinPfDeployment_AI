@@ -51,7 +51,7 @@ Workflow (ALL prototypes in /prototypes):
    - Collections: readonly arrays with explicit interface exports.
    - Callbacks: on<Action> signature returning void or Promise<void>.
 6. Animation:
-   - KPI numeric rise uses requestAnimationFrame; guard with prefers-reduced-motion media query if needed later.
+   - KPI numeric rise uses requestAnimationFrame;
 7. Regeneration Rule:
    - If prototype HTML updates, regenerate only impacted components/pages; avoid touching unrelated files.
 8. Output Format:

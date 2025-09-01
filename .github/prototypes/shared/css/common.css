@@ -418,25 +418,6 @@ body * { box-sizing:border-box; }
     box-sizing:border-box;
     max-width:100%;
 }
-@media (max-width: 900px) {
-  .favorites-grid-wrap {
-     grid-template-columns: repeat(auto-fill, minmax(clamp(260px, 48vw, 440px), 1fr));
-  }
-  .services-grid {
-     grid-template-columns: repeat(auto-fill, minmax(clamp(180px, 42vw, 280px), 1fr));
-  }
-}
-@media (max-width: 600px) {
-  .stats-grid {
-     grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 48vw, 240px), 1fr));
-  }
-  .favorites-grid-wrap {
-     grid-template-columns: 1fr;
-  }
-  .services-grid {
-     grid-template-columns: repeat(auto-fill, minmax(clamp(160px, 80vw, 260px), 1fr));
-  }
-}
 /* Generic auto grid utility if needed elsewhere */
 .auto-grid {
     display:grid;

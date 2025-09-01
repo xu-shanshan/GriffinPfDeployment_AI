@@ -9,7 +9,23 @@ var releaseMapping = {
     "ModelBSov": [
       "ActionsAssistants",
       "ActionsB2NetCore"
-    ]
+    ],
+    /* Added minimal placeholder service arrays so VE cards show activity */
+    "OwaMailB2-SOV":[ "OwaMailB2Core" ],
+    "GraphConnectorsB2-SOV":[ "GraphConnectorsCore" ],
+    "FlowControlB2-SOV":[ "FlowCore" ],
+    "TBA1-SOV":[ "TBAService" ],
+    "EBA1-SOV":[ "EBAService" ],
+    "M365Coral1B2-SOV":[ "CoralCore" ],
+    "FastV2B2-SOV":[ "FastCore" ],
+    "MessagesIngestionServiceB2-SOV":[ "MsgIngest" ],
+    "ConnectorsB2-SOV":[ "ConnectorsCore" ],
+    "VSOB2-SOV":[ "VSOCore" ],
+    "ProtocolsB2-SOV":[ "ProtocolsCore" ],
+    "ContentEnrichmentServiceB2-SOV":[ "ContentEnrich" ],
+    "GraphAnalyticsB2-SOV":[ "GraphAnalyticsCore" ],
+    "TodoB2-SOV":[ "TodoCore" ],
+    "MicroSvcB2-SOV":[ "MicroSvcCore" ]
     // ...existing code (other services can be added here)...
   },
   "ExpectedVEs": {
@@ -20,7 +36,7 @@ var releaseMapping = {
       "TBA1-SOV","OwaMailB2-SOV","EBA1-SOV","M365Coral1B2-SOV","FastV2B2-SOV",
       "MessagesIngestionServiceB2-SOV","ConnectorsB2-SOV","VSOB2-SOV","ProtocolsB2-SOV",
       "ContentEnrichmentServiceB2-SOV","GraphAnalyticsB2-SOV","TodoB2-SOV","MicroSvcB2-SOV",
-      "GraphConnectorsB2-SOV","FlowControlB2-SOV"
+      "GraphConnectorsB2-SOV","FlowControlB2-SOV" /* restored FlowControlB2-SOV */
     ]
     // ...existing code...
   },
@@ -187,6 +203,32 @@ function buildVeDetailsArray(){
 
 var veDetails = buildVeDetailsArray();
 
+// Fallback safeguard: rebuild once more if somehow empty (e.g., earlier script error)
+if (!veDetails.length) {
+  console.warn('[mockData] veDetails empty after first build – attempting fallback rebuild from releaseMapping lists.');
+  veDetails = Array.from(new Set([ // union of all VE names from ExpectedVEs
+    ...allVes,
+    ...flatArrays(deploymentScopeVesMap || {})
+  ])).map(function(veName){
+    var svcArr = listServicesByVeName(veName);
+    var veType = veName.indexOf('B2')>-1 ? 'B2 Type':'B Type';
+    var scopes = (veToScopesMap[veName]||[]).filter(function(x,i,a){return a.indexOf(x)===i;});
+    return {
+      name:veName,
+      type:veType+' VE',
+      baseType:veType,
+      group:scopes,
+      scopeList:scopes,
+      deployments:svcArr.length,
+      griffinServices:svcArr.length,
+      status: svcArr.length ? 'normal':'inactive',
+      favorite:false
+    };
+  });
+  console.info('[mockData] Fallback veDetails size:', veDetails.length);
+}
+
+// Replace MockData object (keep previous properties, add allVEs alias)
 window.MockData = {
   users: mockUsers,
   roles: mockRoles,
@@ -195,9 +237,12 @@ window.MockData = {
   veServicesMap: veServicesMap,
   servicesInfo: servicesInfo,
   allVes: allVes,
+  allVEs: allVes,
   allServices: allServices,
   veDetails: veDetails
 };
+// Dispatch ready event (pages can listen if needed)
+try { window.dispatchEvent(new Event('MockDataReady')); } catch(_){}
 
 // (Optional) simple list helpers (kept for potential reuse)
 window.listServicesByVeName = listServicesByVeName;

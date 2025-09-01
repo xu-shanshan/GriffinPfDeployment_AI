@@ -1,7 +1,3 @@
-/* Relocated to ./css/layout.css */
-@import "./css/layout.css";
-/* (Keep stub temporarily for backward compatibility) */
-
 :root {
   --sidebar-width:256px;
 }

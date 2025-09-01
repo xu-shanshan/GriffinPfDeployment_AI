@@ -757,12 +757,6 @@ table {
     margin-top:4px;
 }
 
-/* Removed layout-specific styles (migrated to layout.css):
-   .main-content, .sidebar*, .top-bar, .sidebar-root, header alignment blocks */
-
-/* Relocated to ./css/common.css */
-@import "./css/common.css";
-/* (Keep stub temporarily for backward compatibility) */
 
 
 

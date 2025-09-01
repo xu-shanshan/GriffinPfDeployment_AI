@@ -52,6 +52,7 @@ You are acting as a senior full-stack/architecture assistant.
   - TypeScript/JS utilities → `/shared/js/`  (mockData.js, layout.js)
 - All JS runs in global scope.
 - Mock data can be accessed directly in each page.
+- CSS class names: `fluent-<functional_name>`.
 
 ### HTML Prototype Pages
 - Each page is a **standalone HTML file** in `/pages/`.  

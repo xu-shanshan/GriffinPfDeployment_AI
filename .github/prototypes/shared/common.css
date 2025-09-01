@@ -124,6 +124,7 @@
     font-weight: 600;
 }
 
+/* Layout Variables */
 :root {
     /* design tokens (added if absent) */
     --colorNeutralForeground1:#242424;
@@ -170,17 +171,76 @@ html,body {
 body * { box-sizing:border-box; }
 
 
+
+
+/* Main Content */
+.main-content {
+    margin-left: 256px;
+    min-height: 100vh;
+}
+
 /* Optional guard: any direct child causing accidental wide overflow gets clipped */
 .main-content, .fluent-card, .fluent-card * {
     max-width: 100%;
     box-sizing: border-box;
 }
 
-
-
-
-
 /* Sidebar */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 256px;
+    height: 100vh;
+    background: var(--colorNeutralBackground1);
+    border-right: 1px solid var(--colorNeutralStroke2);
+    box-shadow: var(--shadow2);
+    /* removed overflow-y to prevent independent scroll; body now controls vertical scrolling */
+    z-index: 1000;
+}
+.sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+.sidebar-section {
+    padding: 16px 0;
+    border-bottom: 1px solid var(--colorNeutralStroke2);
+}
+.sidebar-section-title {
+    padding: 0 16px 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--colorNeutralForeground3);
+}
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 2px 8px;
+    border-radius: var(--borderRadiusSmall);
+    text-decoration: none;
+    color: var(--colorNeutralForeground2);
+    font-weight: 500;
+    transition: all 0.1s ease;
+}
+.sidebar-nav-item:hover {
+    background: var(--colorNeutralBackground3);
+    color: var(--colorNeutralForeground1);
+}
+.sidebar-nav-item.active {
+    background: #e3f2fd;
+    color: var(--colorBrandForeground1);
+    font-weight: 600;
+}
+/* Optional tighter favorite link padding inside groups */
+#sidebarFavoritesList .sidebar-nav-item {
+    padding:6px 20px;
+    margin:0;
+}
+
+
 .brand-icon {
     width: 2rem;
     height: 2rem;
@@ -684,55 +744,7 @@ table {
     table-layout: auto;
 }
 
-/* Sidebar */
-.sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 256px;
-    height: 100vh;
-    background: var(--colorNeutralBackground1);
-    border-right: 1px solid var(--colorNeutralStroke2);
-    box-shadow: var(--shadow2);
-    /* removed overflow-y to prevent independent scroll; body now controls vertical scrolling */
-    z-index: 1000;
-}
-.sidebar-header {
-    padding: 16px;
-    border-bottom: 1px solid var(--colorNeutralStroke2);
-}
-.sidebar-section {
-    padding: 16px 0;
-    border-bottom: 1px solid var(--colorNeutralStroke2);
-}
-.sidebar-section-title {
-    padding: 0 16px 8px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--colorNeutralForeground3);
-}
-.sidebar-nav-item {
-    display: flex;
-    align-items: center;
-    padding: 8px 16px;
-    margin: 2px 8px;
-    border-radius: var(--borderRadiusSmall);
-    text-decoration: none;
-    color: var(--colorNeutralForeground2);
-    font-weight: 500;
-    transition: all 0.1s ease;
-}
-.sidebar-nav-item:hover {
-    background: var(--colorNeutralBackground3);
-    color: var(--colorNeutralForeground1);
-}
-.sidebar-nav-item.active {
-    background: #e3f2fd;
-    color: var(--colorBrandForeground1);
-    font-weight: 600;
-}
+
 
 /* Quick Access subgroup heading (added) */
 .quick-access-group-title {
@@ -745,17 +757,7 @@ table {
     margin-top:4px;
 }
 
-/* Optional tighter favorite link padding inside groups */
-#sidebarFavoritesList .sidebar-nav-item {
-    padding:6px 20px;
-    margin:0;
-}
 
-/* Main Content */
-.main-content {
-    margin-left: 256px;
-    min-height: 100vh;
-}
 
 
 

@@ -5406,11 +5406,11 @@ var allServices = Array.from(new Set([
   ...Object.values(veServicesMap || {}).flat()
 ]));
 
-var veToScopes = {};
+var veToScopesMap = {};
 Object.keys(deploymentScopeVesMap).forEach(function(scope){
     (deploymentScopeVesMap[scope]||[]).forEach(function(ve){
-      if(!veToScopes[ve]) veToScopes[ve]=[];
-      veToScopes[ve].push(scope);
+      if(!veToScopesMap[ve]) veToScopesMap[ve]=[];
+      veToScopesMap[ve].push(scope);
     });
   });
 
@@ -5445,29 +5445,26 @@ function listVesByDeploymentScope(deploymentScope) {
   return Array.isArray(deploymentScopeVesMap[deploymentScope]) ? deploymentScopeVesMap[deploymentScope].slice() : [];
 };
 
-function buildVeDetails(){
-  var favoritesRich = mockFavorites.favoriteVEs || [];
-  var favoriteNames = {};
-  favoritesRich.forEach(function(f){ favoriteNames[f.name]=true; });
-  (mockFavorites.VEs||[]).forEach(function(n){ favoriteNames[n]=true; });
+var vesInfo = function(){
+  var veInfo = [];
 
-  var veDetails = [];
   Object.keys(veServicesMap).forEach(function(veName){
-    var svcArr = veServicesMap[veName]||[];
     var veType = veName.indexOf('B2')>-1 ? 'B2 Type' : 'B Type';
-    var scopes = veToScopes[veName] ? veToScopes[veName].filter(function(x,i,a){return a.indexOf(x)===i;}) : [];
-    veDetails.push({
+    var scopeList = veToScopesMap[veName] ? veToScopesMap[veName].filter(function(x,i,a){return a.indexOf(x)===i;}) : [];
+    var svcArr = veServicesMap[veName]||[];
+    
+    vesInfo.push({
       name: veName,
       type: veType + ' VE',
       baseType: veType,
-      group: scopes,
+      scopeList: scopeList,
       deployments: svcArr.length,
       griffinServices: svcArr.length,
       status: svcArr.length ? (veName.indexOf('GraphConnectors')>-1 ? 'attention':'normal') : 'inactive',
-      favorite: !!favoriteNames[veName]
+      favorite: mockFavorites.VEs.includes(veName)
     });
   });
-  return veDetails ;
+  return vesInfo;
 }
 
 
@@ -5483,5 +5480,5 @@ window.MockData = {
   allVes: allVes,
   allServices: allServices,
   
-  buildVeDetails: buildVeDetails
+  veDetails: veDetails
 };

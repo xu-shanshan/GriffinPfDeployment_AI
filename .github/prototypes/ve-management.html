@@ -12,57 +12,63 @@
       body, .main-content, #veCardsGrid { max-width:100%; overflow-x:hidden; }
       /* VE Management scroll fix: local safeguard (primary logic in common.css) */
       /* Pagination mode: fix page height, disable vertical scrolling (content changes via page nav) */
-      html, body, .main-content { height:100vh; overflow-y:hidden; }
-      .content-area { display:flex; flex-direction:column; height:calc(100vh - var(--app-header-height)); }
+      html, body, .main-content { height:100vh; }
+      .content-area {
+        display:flex;
+        flex-direction:column;
+        height:calc(100vh - var(--app-header-height));
+        overflow-y:auto; /* allow scrolling to reach end if cards grow */
+        padding-bottom:72px; /* space so last row not hidden behind sticky bar */
+      }
       #veCardsGrid { flex:1 1 auto; overflow:hidden; }
-      .pagination-bar { flex-shrink:0; }
+      .pagination-bar {
+        position:sticky;
+        bottom:0;
+        left:0;
+        right:0;
+        background:var(--colorNeutralBackground1);
+        border-top:1px solid var(--colorNeutralStroke2);
+        padding:8px 0;
+        z-index:10;
+        box-shadow:0 -2px 4px rgba(0,0,0,0.04);
+      }
       .pagination-bar button[disabled] { opacity:.5; cursor:not-allowed; }
       .pagination-pages button.active { background:#0f6cbd; color:#fff; }
-      .ve-card { display:flex; flex-direction:column; height:100%; position:relative; }
-      .ve-card .card-footer { margin-top:auto; }
-       /* Center normal metrics block vertically & horizontally */
-       .ve-card .metrics-wrap {
-         flex:1 1 auto;
-         display:flex;
-         align-items:center;
-         justify-content:center;
-       }
-       .ve-card .metrics-wrap .metrics-inner {
-         text-align:center;
-         width:100%;
-       }
-      .ve-name-line { display:flex; align-items:center; gap:8px; }
-      /* Favorite star: enforce true top-right placement */
-      .ve-fav-btn {
-         position: absolute !important;
-         top: 8px;
-         right: 8px;
-         z-index: 2;
-         display: inline-flex;
-         align-items: center;
-         justify-content: center;
-         width: 28px;
-         height: 28px;
-         padding: 0;
-         border: none;
-         background: rgba(255,255,255,0.6);
-         -webkit-backdrop-filter: blur(2px); /* Safari support */
-         backdrop-filter: blur(2px);
-         border-radius: 6px;
-         cursor: pointer;
-         transition: background .15s ease, transform .15s ease;
+      .ve-card { 
+        /* removed fixed full-height to allow adaptive growth */
+        /* height:100%; */
+        font-size: calc(14px * var(--ve-font-scale,1));
+        line-height: 1.35;
       }
-      .ve-fav-btn:hover { background: rgba(255,255,255,0.9); transform: scale(1.05); }
-      .ve-fav-btn.active { background: #fff7e0; }
-      .ve-fav-btn i svg { width:16px; height:16px; }
-
-      /* Compact VE card adjustments */
-      .ve-card { padding:1rem !important; }
-      .ve-card h3.fluent-text-title2 { font-size:18px; line-height:24px; }
-      .ve-card .metrics-inner h4 { margin-bottom:4px !important; }
-      .ve-card .metrics-inner .text-xl { font-size:1.125rem; } /* was ~1.25rem */
-      .ve-card .metrics-wrap { align-items:flex-start; }
-      .ve-card .card-footer { padding-top:.5rem !important; }
+      .ve-card h3.fluent-text-title2 {
+        /* adaptive title size */
+        font-size: clamp(16px, calc(1.1rem * var(--ve-font-scale,1)), 22px);
+        line-height: 1.25;
+      }
+      /* Remove enforced vertical centering so content defines height */
+      .ve-card .metrics-wrap {
+        display:block;
+        flex:unset;
+        align-items:initial;
+        justify-content:initial;
+        padding-top:.25rem;
+      }
+      .ve-card .metrics-wrap .metrics-inner {
+        text-align:left;
+        width:100%;
+      }
+      /* Allow grid to accommodate natural card heights */
+      #veCardsGrid {
+        overflow: visible; /* was hidden */
+      }
+      /* Fine‑tune metric number sizing responsive */
+      .ve-card .text-xl {
+        font-size: clamp(1rem, calc(1rem * var(--ve-font-scale,1) + .2vw), 1.35rem) !important;
+      }
+      /* Slightly tighter footer when content taller */
+      .ve-card .card-footer {
+        padding-top:.4rem !important;
+      }
 
       /* Status styling */
       .ve-card.status-deploying { border:1px solid #ca5010; }
@@ -82,6 +88,8 @@
         gap:6px;
         color:#107c10;
       }
+      /* Adjust summary text wrapping on narrow widths */
+      #vePaginationSummary { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     </style>
 </head>
 <body>
@@ -336,6 +344,22 @@
             let t; return (...a) => { clearTimeout(t); t=setTimeout(()=>fn(...a), d); };
         };
         window.addEventListener('resize', debounce(() => {
+            renderVEs._sized = false;
+            updateCardWidth();
+            recalculatePageSize();
+        },150));
+
+        /* ===== Responsive Font Scaling ===== */
+        function updateVEFontScale() {
+            const w = window.innerWidth || 1280;
+            // scale between 0.85 (narrow) and 1.15 (very wide)
+            const scale = Math.min(1.15, Math.max(0.85, w / 1400));
+            document.documentElement.style.setProperty('--ve-font-scale', scale.toFixed(3));
+        }
+        updateVEFontScale();
+        window.addEventListener('resize', debounce(() => {
+            updateVEFontScale();
+            // existing resize logic
             renderVEs._sized = false;
             updateCardWidth();
             recalculatePageSize();

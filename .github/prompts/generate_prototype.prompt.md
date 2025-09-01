@@ -2,63 +2,82 @@
 mode: edit
 ---
 
-# Context
+You are acting as a senior full-stack/architecture assistant. 
 
-You are a senior frontend expert with expertise in React, TypeScript, Fluent UI v9, and axios/fetch.
-Your task is to create static HTML prototypes to validate:
+## Goal
+- Quickly generate **pure HTML prototype pages** as a design validation tool before moving to a full framework implementation (e.g., React, Vue, Angular) for requirements validation and interaction design.
+- Each page should be **standalone and directly openable in a browser**, no build tools or module system required.
+- All mock data is centralized in `shared/js/mockData.js`.
+- Layout and styles should reuse shared resources.
 
-- UX/UI design
-  - The design should resemble the future Fluent UI v9 implementation as closely as possible.
-- Interaction logic
-- Page layout
+## **Constraints & Guidelines:**  
+### 1. Domain Modeling
+- Analyze business requirements to determine **entities and relationships**.  
+- Identify the **pages/screens needed** and their responsibilities.  
+- Define roles, permissions, and security policies (for display purposes, can be mocked).
+- Map user roles to page access and action permissions.
 
-Before moving to a full React implementation, these prototypes must serve as design validation tools.
+### 2. Backend Mock & Transition
+- Avoid modules, async/await, or centralized API adapters—pages must be standalone.
+- Use shared JS objects to simulate data (shared/js/mockData.js). Example:
+   ```js
+   // shared/js/mockData.js
+   const mockUsers = [
+   { id: 1, name: "Alice", role: "Admin" },
+   { id: 2, name: "Bob", role: "User" }
+   ];
+   ```
+- Pages import mock data via <script> tags. Example:
+   ```html
+   <script src="shared/js/mockData.js"></script>
+   ```
 
-# Roles
+### 3. Frontend Guidelines
+- you are a Interaction Designer, Ensure smooth user flows, natural interactions, and frictionless task completion.  
+- you are a Visual Designer, Define look & feel, visual hierarchy, and user experience principles.  
+- Layout should be intuitive and resemble future implementation frameworks (e.g., Fluent UI v9).  
+- Visual design must be user-friendly and accessible.  
+- Interaction logic should be **consistent across pages**.  
 
-- Interaction Designer – Ensure smooth user flows, natural interactions, and frictionless task completion.
-- Visual Designer – Define look & feel, visual hierarchy, and user experience principles.
 
-## Goals
+### 4. Code Output Requirements
+### Root Folder
+- Name root folder as `.github/prototype_YYYYMMDDHHMMSS/`. 
+### Shared Assets
+- `/shared/` contains all common assets: 
+  - Layout components → `/shared/layout/`  (HTML fragments, <div> or <template>)
+  - Styles → `/shared/styles/`  (common.css, theme.css)
+  - TypeScript/JS utilities → `/shared/js/`  (utils.js, mockData.js)
+- All JS runs in global scope.
+- Mock data can be accessed directly in each page.
 
-- Interaction model is consistent
-- Layout is intuitive
-- Visual design is user-friendly
+### HTML Prototype Pages
+- Each page is a **standalone HTML file** in `/pages/`.  
+- File names should **clearly reflect page functionality**.  
+- Each page must have its **own CSS file**, named `<page_name>.css`.  
+- Page-specific CSS class names: `<page_name>-<functional_name>`.  
+- Pages import shared assets via <link> or <script> tags.
 
-# Task Requirements：
-
-## Implementation Rules  
-
-1. **Phased Generation Order (strict)**  
-   1. Shared Foundation (folder structure + shared assets)  
-   2. Page Implementations (HTML prototypes importing shared assets)  
-
-2. **Shared Assets First**  
-   - All common CSS/JS/components must be placed in `/shared/`.  
-   - Pages must **import** shared assets — no duplication.  
-   - Only minimal page-specific script allowed.  
-
-3. **Reusable Components**    
-
-4. HTML prototype pages (after above):
-   - No duplicated code, imports required from ./../shared/
-   - Each page must be openable in a browser directly
-   - File names must reflect their function clearly
-
-## Shared Foundation
-
-### Root Folder  
+### Output structure example 
 .github/prototype_YYYYMMDDHHMMSS/
+├── shared/
+│   ├── layout/
+│   │   └── header.html
+│   ├── styles/
+│   │   ├── common.css
+│   │   └── theme.css
+│   └── js/
+│       ├── utils.js
+│       └── mockData.js
+├── pages/
+│   ├── dashboard.html
+│   ├── dashboard.css
+│   ├── settings.html
+│   └── settings.css
+└── README.md
 
-### Output structure
-for example:
-   .github/prototype_YYYYMMDDHHMMSS/
-      ├── shared/
-      │   ├── common.css
-      │   ├── mock-data.js
-      │   └── Layout/
-      │   └── component/
-      └── pages/
-         ├── dashboard.html
-         ├── project-list.html
-         └── project-detail.html
+#### Notes
+- All JS code runs in the global scope.
+- All mock data can be accessed directly in pages.
+- Pages can be directly opened in a browser; no build tools are required.
+- README.md can provide a brief explanation of the folder structure and page usage.

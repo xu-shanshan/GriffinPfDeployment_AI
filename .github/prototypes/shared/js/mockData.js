@@ -1,5 +1,4 @@
-// Backend-shape mock: mirrors future /api/ve + related expansion (ReleaseMapping.json surrogate)
-window.MockReleaseMapping = {
+var releaseMapping = {
   "CloudBuildRoot": "https://cloudbuild.microsoft.com",
   "ExpectedServices": {
     "MARS": [
@@ -5392,80 +5391,97 @@ window.MockReleaseMapping = {
   }
 };
 
-// ===== Helper Utilities (VE ↔ Services) =====
+var deploymentScopeVesMap = releaseMapping.ExpectedVEs;
+var veServicesMap = releaseMapping.ExpectedServices;
+var servicesInfo = releaseMapping.Services;
 
-/**
- * Returns all VE names (flattened + deduped):
- *
- * [
- *   "SovBase","ModelBSov",
- *   "TBA1-SOV","OwaMailB2-SOV","EBA1-SOV","M365Coral1B2-SOV","FastV2B2-SOV",
- *   "MessagesIngestionServiceB2-SOV","ConnectorsB2-SOV","VSOB2-SOV","ProtocolsB2-SOV",
- *   "ContentEnrichmentServiceB2-SOV","GraphAnalyticsB2-SOV","TodoB2-SOV",
- *   "MicroSvcB2-SOV","GraphConnectorsB2-SOV","FlowControlB2-SOV"
- * ]
- */
+var allVes = Array.from(new Set([
+  ...Object.keys(veServicesMap || {}),
+  ...deploymentScopeVesMap.flat()
+]));
 
-window.listAllVEs = function listAllVEs() {
-  const rm = window.MockReleaseMapping || {};
-  const fromExpectedServices = Object.keys(rm.ExpectedServices || {});
-  const fromGroups = Object.values(rm.ExpectedVEs || {}).flat();
-  return Array.from(new Set([...fromExpectedServices, ...fromGroups]));
 
+var allServices = Array.from(new Set([
+  ...Object.keys(servicesInfo || {}),
+  ...Object.values(veServicesMap || {}).flat()
+]));
+
+var veToScopes = {};
+Object.keys(deploymentScopeVesMap).forEach(function(scope){
+    (deploymentScopeVesMap[scope]||[]).forEach(function(ve){
+      if(!veToScopes[ve]) veToScopes[ve]=[];
+      veToScopes[ve].push(scope);
+    });
+  });
+
+var mockRoles = [
+  { name:'Admin', permissions:['ve.read','ve.write','service.read','service.deploy'] },
+  { name:'Operator', permissions:['ve.read','service.read','service.deploy'] },
+  { name:'Viewer', permissions:['ve.read','service.read'] }
+];
+
+var mockFavorites = {
+  VEs: ['SovBase','ModelBSov','OwaMailB2-SOV'],
+  Services: ['OwaMailB2','GraphConnectors','FlowControl'],
+  favoriteVEs: [
+    { name:'SovBase', services:67, type:'B Type', typeClass:'neutral', updated:'2 hours ago' },
+    { name:'ModelBSov', services:65, type:'B Type', typeClass:'neutral', updated:'4 hours ago' },
+    { name:'OwaMailB2-SOV', services:1, type:'B2 Type', typeClass:'success', updated:'2 minutes ago' }
+  ],
+  favoriteServices: [
+    { name:'OwaMailB2', instances:2, status:'Active', statusClass:'success', updated:'1 hour ago' },
+    { name:'Exchange', instances:2, status:'Active', statusClass:'success', updated:'3 hours ago' },
+    { name:'GraphConnectors', instances:2, status:'Not Deployed', statusClass:'neutral', updated:'6 hours ago' }
+  ]
 };
 
-/*
- * Returns de-duplicated list of all services across all VEs
-[
-  "ActionsAssistants","ActionsB2NetCore","AHCoreB2","ApplicationHost","ClearData",
-  "ComplianceAuthServerV2","CompliancePolicyNetCore","ContentEnhancementService",
-  "ControllerService","DirectoryReplication","DNPublisher","DocParserServiceNetCore",
-  "ESS","FlowControl","GraphAnalytics","GraphConnectors","GriffinDataBus",
-  // ... many more ...
-]
-*/
-window.listAllServices = function listAllServices() {
-//   const map = (window.MockReleaseMapping && window.MockReleaseMapping.ExpectedServices) || {};
-//   const all = Object.values(map).flat();
-//   return Array.from(new Set(all));
-
-  const svcMap = (window.MockReleaseMapping && window.MockReleaseMapping.Services) || {};
-  return Object.keys(svcMap);
-};
-
-
-window.VeServicesMap = function VeServicesMap() {
-  return (window.MockReleaseMapping && window.MockReleaseMapping.ExpectedServices) || {};
-};
-
-/*
- * Returns array of services for a given VE (empty array if unknown)
-
-Returns all services for the VE "SovBase":
-[
-  "ProcessorsB2NetCore","WebhookB2NetCore","ActionsB2NetCore","ActionsAssistants",
-  // ... many more ...
-]
- */
-window.getVeServices = function getVeServices(veName) {
+function listServicesByVeName(veName) {
   if (!veName) return [];
-  const map = (window.MockReleaseMapping && window.MockReleaseMapping.ExpectedServices) || {};
-  return Array.isArray(map[veName]) ? map[veName].slice() : [];
+  return Array.isArray(veServicesMap[veName]) ? veServicesMap[veName].slice() : [];
 };
 
-window.deploymentScopesMap = function deploymentScopesMap() {
-  return window.MockReleaseMapping?.ExpectedVEs || {};
-};
-
-window.getDeploymentScopeVEs = function getDeploymentScopeVEs(deploymentScope) {
+function listVesByDeploymentScope(deploymentScope) {
   if (!deploymentScope) return [];
-  const map = (window.MockReleaseMapping && window.MockReleaseMapping.ExpectedVEs) || {};
-  return Array.isArray(map[deploymentScope]) ? map[deploymentScope].slice() : [];
+  return Array.isArray(deploymentScopeVesMap[deploymentScope]) ? deploymentScopeVesMap[deploymentScope].slice() : [];
 };
 
-// Simulate future API contract shapes
-window.apiMock = {
-  getVEs: () => Promise.resolve(window.listAllVEs()),
-  getServicesForVE: (ve) => Promise.resolve(window.getVeServices(ve)),
-  getAllServices: () => Promise.resolve(window.listAllServices())
+function buildVeDetails(){
+  var favoritesRich = mockFavorites.favoriteVEs || [];
+  var favoriteNames = {};
+  favoritesRich.forEach(function(f){ favoriteNames[f.name]=true; });
+  (mockFavorites.VEs||[]).forEach(function(n){ favoriteNames[n]=true; });
+
+  var veDetails = [];
+  Object.keys(veServicesMap).forEach(function(veName){
+    var svcArr = veServicesMap[veName]||[];
+    var veType = veName.indexOf('B2')>-1 ? 'B2 Type' : 'B Type';
+    var scopes = veToScopes[veName] ? veToScopes[veName].filter(function(x,i,a){return a.indexOf(x)===i;}) : [];
+    veDetails.push({
+      name: veName,
+      type: veType + ' VE',
+      baseType: veType,
+      group: scopes,
+      deployments: svcArr.length,
+      griffinServices: svcArr.length,
+      status: svcArr.length ? (veName.indexOf('GraphConnectors')>-1 ? 'attention':'normal') : 'inactive',
+      favorite: !!favoriteNames[veName]
+    });
+  });
+  return veDetails ;
+}
+
+
+window.MockData = {
+  users: mockUsers,
+  roles: mockRoles,
+  favorites: mockFavorites,
+
+  deploymentScopeVesMap: deploymentScopeVesMap,
+  veServicesMap: veServicesMap,
+  servicesInfo: servicesInfo,
+
+  allVes: allVes,
+  allServices: allServices,
+  
+  buildVeDetails: buildVeDetails
 };

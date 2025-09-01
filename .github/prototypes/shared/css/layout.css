@@ -74,6 +74,76 @@
   margin-top:4px;
 }
 
+/* ADDED: quick access group container & title (sidebar favorites) */
+.quick-access-group { padding-top:4px; }
+.quick-access-group + .quick-access-group { margin-top:4px; }
+.quick-access-group-title {
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:.5px;
+  text-transform:uppercase;
+  padding:4px 24px 4px;
+  color:var(--colorNeutralForeground3);
+  opacity:.85;
+}
+
+/* ADDED: favorite icon coloring */
+.sidebar-root .favorite-icon,
+.sidebar-root .sidebar-nav-item svg.feather-star {
+  color:#faa06b;
+  stroke:#faa06b;
+}
+.sidebar-root .sidebar-nav-item.active .favorite-icon {
+  filter:brightness(0.9);
+}
+
+/* ADDED: compact favorite links spacing */
+#sidebarFavoritesList .sidebar-nav-item {
+  padding:6px 20px;
+  margin:0;
+  font-size:13px;
+  line-height:18px;
+}
+#sidebarFavoritesList .sidebar-nav-item + .sidebar-nav-item {
+  margin-top:2px;
+}
+
+/* ADDED: keyboard focus visibility */
+.sidebar-nav-item:focus-visible {
+  outline:2px solid var(--colorBrandForeground1);
+  outline-offset:2px;
+}
+
+/* ADDED: optional scroll support if sidebar content exceeds viewport */
+.sidebar-root {
+  overflow-y:auto;
+  scrollbar-width:thin;
+}
+.sidebar-root::-webkit-scrollbar {
+  width:8px;
+}
+.sidebar-root::-webkit-scrollbar-track {
+  background:var(--colorNeutralBackground1);
+}
+.sidebar-root::-webkit-scrollbar-thumb {
+  background:var(--colorNeutralBackground3);
+  border-radius:4px;
+}
+
+/* ADDED: ensure links inherit color & remove underline */
+.sidebar-root a.sidebar-nav-item {
+  text-decoration:none;
+  color:var(--colorNeutralForeground2);
+}
+.sidebar-root a.sidebar-nav-item:hover {
+  text-decoration:none;
+}
+
+/* ADDED: star toggle alignment if present inside items */
+.sidebar-root .sidebar-nav-item i.fluent-icon {
+  flex-shrink:0;
+}
+
 /* Main content layout */
 .main-content {
   margin-left:var(--sidebar-width);

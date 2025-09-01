@@ -65,6 +65,7 @@ You are acting as a senior full-stack/architecture assistant.
 ├── shared/
 │   ├── styles/
 │   │   └── common.css
+│   │   └── layout.css
 │   └── js/
 │       ├── layout.js
 │       └── mockData.js

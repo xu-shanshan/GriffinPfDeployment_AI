@@ -1,4 +1,4 @@
-# Griffin PilotFish Management System - Copilot Instructions
+# Griffin SovOps Manager System - Copilot Instructions
 
 **GriffinPfDeployment_AI** is a full-stack **Deployment Management System** with a **React frontend** and an **ASP.NET Core 8 backend**.  
 It delivers enterprise-grade deployment management with:

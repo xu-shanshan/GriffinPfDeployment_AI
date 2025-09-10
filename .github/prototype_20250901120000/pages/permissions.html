@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Permissions</title>
+  <link rel="stylesheet" href="../shared/styles/common.css">
+  <link rel="stylesheet" href="../shared/styles/layout.css">
+  <link rel="stylesheet" href="permissions.css">
+</head>
+<body>
+<div class="fluent-layout">
+  <div id="app-sidebar"></div>
+  <div class="fluent-content">
+    <div id="app-header"></div>
+    <div class="fluent-main">
+      <h1 class="fluent-section-title">Permissions & AllowedToSignClaims</h1>
+      <div class="fluent-card">
+        <h3>Current User</h3>
+        <p><strong id="cu-name"></strong></p>
+        <p>Deploy Permission: <span id="cu-deploy"></span></p>
+      </div>
+      <div class="fluent-divider"></div>
+      <div class="fluent-card">
+        <h3>AllowedToSignClaims (Mock INI)</h3>
+<pre>[AllowedToSignClaims]
+Groups=AME\M365-SovFleet
+Users=alice@corp, oliver@corp
+</pre>
+      </div>
+      <div class="fluent-divider"></div>
+      <h3>Role Matrix</h3>
+      <table class="fluent-table">
+        <thead><tr><th>Role</th><th>Read</th><th>Deploy</th><th>Configure</th></tr></thead>
+        <tbody>
+          <tr><td>Admin</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+          <tr><td>Operator</td><td>Yes</td><td>If in AllowedToSignClaims</td><td>No</td></tr>
+            <tr><td>Viewer</td><td>Yes</td><td>No</td><td>No</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<script src="../shared/js/mockData.js"></script>
+<script src="../shared/js/layout.js"></script>
+<script>
+injectSidebar("permissions.html");
+injectHeader();
+document.getElementById("cu-name").textContent = currentUser.name + " ("+ currentUser.role +")";
+document.getElementById("cu-deploy").textContent = canCurrentUserDeploy()? "Yes" : "No";
+</script>
+</body>
+</html>

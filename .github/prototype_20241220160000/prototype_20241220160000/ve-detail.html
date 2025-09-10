@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SovBase - Virtual Environment Detail | Griffin SovOps Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        
+        /* Fluent UI v9 Design System */
+        :root {
+            --colorNeutralForeground1: #242424;
+            --colorNeutralForeground2: #424242;
+            --colorNeutralForeground3: #616161;
+            --colorNeutralBackground1: #ffffff;
+            --colorNeutralBackground2: #f5f5f5;
+            --colorNeutralBackground3: #f0f0f0;
+            --colorBrandBackground: #0f6cbd;
+            --colorBrandBackgroundHover: #115ea3;
+            --colorBrandForeground1: #0f6cbd;
+            --colorNeutralStroke1: #d1d1d1;
+            --colorNeutralStroke2: #e0e0e0;
+            --borderRadiusSmall: 4px;
+            --borderRadiusMedium: 6px;
+            --borderRadiusLarge: 8px;
+            --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+            --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+        }
+        
+        .fluent-card {
+            background: var(--colorNeutralBackground1);
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusLarge);
+            box-shadow: var(--shadow2);
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+        }
+        
+        .fluent-nav-item {
+            padding: 6px 12px;
+            border-radius: var(--borderRadiusSmall);
+            color: var(--colorNeutralForeground2);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+        }
+        
+        .fluent-nav-item:hover {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-nav-item.selected {
+            background: #e3f2fd;
+            color: var(--colorBrandForeground1);
+            font-weight: 600;
+        }
+        
+        .fluent-button {
+            border-radius: var(--borderRadiusSmall);
+            padding: 5px 12px;
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 20px;
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        
+        .fluent-button-primary {
+            background: var(--colorBrandBackground);
+            color: white;
+        }
+        
+        .fluent-button-primary:hover {
+            background: var(--colorBrandBackgroundHover);
+        }
+        
+        .fluent-button-subtle {
+            background: transparent;
+            color: var(--colorNeutralForeground2);
+            border: 1px solid var(--colorNeutralStroke1);
+        }
+        
+        .fluent-button-subtle:hover {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground1);
+        }
+        
+        /* Keep existing table styles */
+        .config-actions { opacity: 0; transition: opacity 0.2s; }
+        .table-row:hover .config-actions { opacity: 1; }
+        .search-highlight { background: rgba(59, 130, 246, 0.1); border: 2px solid #3B82F6; }
+        
+        .fluent-text-title1 {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 36px;
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-text-title2 {
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 28px;
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-text-body1 {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: var(--colorNeutralForeground2);
+        }
+        
+        .fluent-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            line-height: 16px;
+        }
+        
+        .fluent-badge-neutral {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground2);
+        }
+        
+        .fluent-icon {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body style="background: var(--colorNeutralBackground2); min-h: 100vh;">
+    <!-- Fluent Navigation -->
+    <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; position: sticky; top: 0; z-index: 40;">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
+                            <i data-feather="layers" class="fluent-icon text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Griffin SovOps Manager</h1>
+                            <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <a href="dashboard.html" class="fluent-nav-item">
+                        <i data-feather="home" class="fluent-icon inline mr-2"></i>Dashboard
+                    </a>
+                    <a href="ve-management.html" class="fluent-nav-item selected">
+                        <i data-feather="server" class="fluent-icon inline mr-2"></i>VE Management
+                    </a>
+                    <a href="deployment-history.html" class="fluent-nav-item">
+                        <i data-feather="clock" class="fluent-icon inline mr-2"></i>History
+                    </a>
+                    <div class="h-6 w-px mx-3" style="background: var(--colorNeutralStroke2);"></div>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background: var(--colorNeutralBackground3);">
+                            <i data-feather="user" class="fluent-icon" style="color: var(--colorNeutralForeground3);"></i>
+                        </div>
+                        <a href="login.html" class="fluent-nav-item text-sm">
+                            <i data-feather="log-out" class="w-4 h-4 inline mr-1"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Fluent Breadcrumb -->
+        <nav class="flex items-center space-x-2 text-sm mb-6" style="color: var(--colorNeutralForeground3);">
+            <a href="ve-management.html" class="hover:text-blue-600 transition-colors" style="color: var(--colorBrandForeground1);">VE Management</a>
+            <i data-feather="chevron-right" class="w-4 h-4"></i>
+            <span style="color: var(--colorNeutralForeground1); font-weight: 500;">SovBase</span>
+        </nav>
+
+        <!-- Fluent VE Header -->
+        <div class="fluent-card mb-8">
+            <div class="p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, #0f6cbd 0%, #115ea3 100%);">
+                            <i data-feather="server" class="w-8 h-8 text-white"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-3 mb-1">
+                                <h1 class="fluent-text-title1">SovBase</h1>
+                                <button id="favoriteBtn" onclick="toggleFavorite()" style="color: #faa06b; transition: opacity 0.1s;" class="hover:opacity-80" title="Add to favorites">
+                                    <i data-feather="star" class="w-6 h-6 fill-current"></i>
+                                </button>
+                            </div>
+                            <p class="fluent-text-body1 mt-1">Base sovereign virtual environment for core services</p>
+                            <div class="flex items-center space-x-4 mt-3">
+                                <span class="fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">B Type VE</span>
+                                <span class="text-sm" style="color: var(--colorNeutralForeground3);">Last updated: 2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <button onclick="refreshData()" class="fluent-button fluent-button-subtle" title="Refresh data">
+                            <i data-feather="refresh-cw" class="fluent-icon inline mr-2"></i>Refresh
+                        </button>
+                        <button class="fluent-button fluent-button-primary">
+                            <i data-feather="edit" class="fluent-icon inline mr-2"></i>Edit Config
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Fluent Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <button onclick="filterByConfigSource('dragon')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorBrandForeground1)'; this.style.background='#e3f2fd';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
+                        <p class="text-3xl font-bold mb-2" style="color: var(--colorBrandForeground1);">89</p>
+                        <p class="text-sm" style="color: var(--colorNeutralForeground2);">Dragon GriffinServiceMap.ini</p>
+                        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--colorBrandForeground1);">Click to filter</p>
+                    </button>
+                    <button onclick="filterByConfigSource('pfgold')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='var(--colorNeutralStroke1)'; this.style.background='var(--colorNeutralBackground3)';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
+                        <p class="text-3xl font-bold mb-2" style="color: var(--colorNeutralForeground1);">67</p>
+                        <p class="text-sm" style="color: var(--colorNeutralForeground2);">PFGold deployment.ini</p>
+                        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: var(--colorNeutralForeground2);">Click to filter</p>
+                    </button>
+                    <button onclick="filterByStatus('deployed')" class="text-center p-4 rounded-lg border transition-all group" style="border-color: var(--colorNeutralStroke2); background: var(--colorNeutralBackground2);" onmouseover="this.style.borderColor='#107c10'; this.style.background='#dff6dd';" onmouseout="this.style.borderColor='var(--colorNeutralStroke2)'; this.style.background='var(--colorNeutralBackground2)';">
+                        <p class="text-3xl font-bold mb-2" style="color: #107c10;">62</p>
+                        <p class="text-sm" style="color: var(--colorNeutralForeground2);">Deployed</p>
+                        <p class="text-xs mt-1 opacity-0 group-hover:opacity-100 transition-opacity" style="color: #107c10;">Click to filter</p>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Services Table (keep existing functionality) -->
+        <div class="fluent-card">
+            <!-- Improved Table Header with Bulk Actions -->
+            <div class="p-6" style="border-bottom: 1px solid var(--colorNeutralStroke2);">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between space-y-4 lg:space-y-0">
+                    <div class="flex items-center space-x-4">
+                        <h2 class="fluent-text-title2">Services Management</h2>
+                        <span id="selectedCount" class="hidden fluent-badge" style="background: #e3f2fd; color: var(--colorBrandForeground1);">0 selected</span>
+                    </div>
+                    <div class="flex flex-col md:flex-row items-stretch md:items-center space-y-3 md:space-y-0 md:space-x-3">
+                        <!-- Enhanced Search with Suggestions -->
+                        <div class="relative">
+                            <i data-feather="search" class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            <input type="text" id="searchInput" placeholder="Search services..." 
+                                   class="pl-10 pr-4 py-2 w-64 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   oninput="performSearch()"
+                                   onkeydown="handleSearchKeydown(event)">
+                            <div id="searchSuggestions" class="hidden absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg mt-1 shadow-lg z-10"></div>
+                        </div>
+                        
+                        <!-- Smart Filters (keep existing) -->
+                        <select id="statusFilter" onchange="applyFilters()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Status</option>
+                            <option value="ready">Ready to Deploy</option>
+                            <option value="prepared">Prepared for Deployment</option>
+                            <option value="not-deployed">Not Deployed</option>
+                            <option value="missing-pfgold">Missing in PFGold</option>
+                            <option value="config-error">Configuration Error</option>
+                        </select>
+
+                        <select id="configFilter" onchange="applyFilters()" class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">All Configurations</option>
+                            <option value="both">In Both Files</option>
+                            <option value="dragon-only">Dragon Only</option>
+                            <option value="pfgold-only">PFGold Only</option>
+                        </select>
+
+                        <!-- Bulk Actions -->
+                        <div class="flex space-x-2">
+                            <button id="bulkDeployBtn" onclick="showBulkDeployModal()" 
+                                    class="fluent-button fluent-button-primary disabled:opacity-50 disabled:cursor-not-allowed" 
+                                    disabled>
+                                <i data-feather="upload" class="fluent-icon inline mr-2"></i>Deploy Selected
+                            </button>
+                            <button onclick="clearAllFilters()" class="fluent-button fluent-button-subtle">
+                                Clear Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Table with Better UX (keep all existing table functionality) -->
+            <div class="overflow-x-auto">
+                <table class="min-w-full" id="servicesTable">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-4 text-left w-12">
+                                <input type="checkbox" id="selectAll" onchange="toggleSelectAll()" class="rounded border-gray-300">
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100" onclick="sortTable('name')">
+                                <div class="flex items-center">
+                                    Service Name
+                                    <i data-feather="arrow-up-down" class="w-3 h-3 ml-1 opacity-50"></i>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">Dragon</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider text-center">PFGold</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Current Version</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Default Pipeline</th>
+                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200" id="servicesTableBody">
+                        <!-- Service rows will be dynamically populated -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Enhanced Table Footer with Pagination -->
+            <div class="px-6 py-4 border-t border-gray-100">
+                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-500" id="tableInfo">Showing 1-4 of 4 services</span>
+                        <div id="activeFilters" class="flex items-center space-x-2"></div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <select id="pageSize" onchange="updatePageSize()" class="px-3 py-1 border border-gray-300 rounded text-sm">
+                            <option value="10">10 per page</option>
+                            <option value="25">25 per page</option>
+                            <option value="50">50 per page</option>
+                        </select>
+                        <nav class="flex space-x-1" id="pagination">
+                            <!-- Pagination buttons will be generated -->
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Deploy Modal -->
+    <div id="bulkDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+            <div class="p-6">
+                <div class="flex items-center mb-4">
+                    <i data-feather="upload" class="w-6 h-6 text-blue-600 mr-3"></i>
+                    <h3 class="text-lg font-semibold text-gray-900">Deploy Selected Services</h3>
+                </div>
+                <p class="text-gray-600 mb-4">Are you sure you want to deploy <span id="deployCount" class="font-semibold">0</span> selected service(s)?</p>
+                <div class="bg-blue-50 rounded-lg p-4 mb-4">
+                    <h4 class="text-sm font-medium text-blue-900 mb-2">Selected Services:</h4>
+                    <ul id="deployServicesList" class="text-sm text-blue-800 space-y-1"></ul>
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-gray-100 flex justify-end space-x-3">
+                <button onclick="hideBulkDeployModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">Cancel</button>
+                <button onclick="confirmBulkDeploy()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    <i data-feather="upload" class="w-4 h-4 inline mr-2"></i>Deploy Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced JavaScript -->
+    <script>
+        // Global state management
+        const appState = {
+            services: [
+                {
+                    id: 'owamailb2',
+                    name: 'OwaMailB2',
+                    description: 'Outlook Web App Mail Backend',
+                    status: 'ready',
+                    inDragon: true,
+                    inPFGold: true,
+                    currentVersion: 'v2.1.234',
+                    pipeline: 'ExchangeMailPipeline',
+                    pipelineVersion: 'v3.2.1',
+                    icon: 'mail',
+                    iconColor: 'blue',
+                    readyToDeploy: true
+                },
+                {
+                    id: 'graphconnectors',
+                    name: 'GraphConnectors',
+                    description: 'Graph Connectors Service',
+                    status: 'not-deployed',
+                    inDragon: true,
+                    inPFGold: true,
+                    currentVersion: null,
+                    pipeline: 'GraphConnectorsPipeline',
+                    pipelineVersion: 'v2.8.5',
+                    icon: 'zap',
+                    iconColor: 'orange',
+                    readyToDeploy: false
+                },
+                {
+                    id: 'flowcontrol',
+                    name: 'FlowControl',
+                    description: 'Flow Control Service',
+                    status: 'missing-pfgold',
+                    inDragon: true,
+                    inPFGold: false,
+                    currentVersion: null,
+                    pipeline: 'FlowControlPipeline',
+                    pipelineVersion: 'v1.9.3',
+                    icon: 'activity',
+                    iconColor: 'yellow',
+                    readyToDeploy: false
+                },
+                {
+                    id: 'invalidservice',
+                    name: 'InvalidService',
+                    description: 'Service not in Dragon map',
+                    status: 'config-error',
+                    inDragon: false,
+                    inPFGold: true,
+                    currentVersion: 'v1.0.0',
+                    pipeline: null,
+                    pipelineVersion: null,
+                    icon: 'alert-circle',
+                    iconColor: 'red',
+                    readyToDeploy: false
+                }
+            ],
+            filteredServices: [],
+            selectedServices: new Set(),
+            currentSort: null,
+            currentFilters: {},
+            currentPage: 1,
+            pageSize: 10
+        };
+
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+            initializeServices();
+            updateUI();
+        });
+
+        // Service management functions
+        function initializeServices() {
+            appState.filteredServices = [...appState.services];
+            renderServicesTable();
+        }
+
+        function renderServicesTable() {
+            const tbody = document.getElementById('servicesTableBody');
+            tbody.innerHTML = '';
+
+            appState.filteredServices.forEach(service => {
+                const row = createServiceRow(service);
+                tbody.appendChild(row);
+            });
+
+            updateTableInfo();
+            feather.replace();
+        }
+
+        function createServiceRow(service) {
+            const row = document.createElement('tr');
+            row.className = 'table-row hover:bg-gray-50 transition-colors';
+            row.dataset.serviceId = service.id;
+            
+            const canSelect = service.status === 'ready' || (service.status === 'not-deployed' && service.readyToDeploy);
+            const statusConfig = getStatusConfig(service.status, service.readyToDeploy);
+            
+            row.innerHTML = `
+                <td class="px-6 py-4">
+                    <input type="checkbox" ${canSelect ? '' : 'disabled'} 
+                           onchange="toggleServiceSelection('${service.id}')" 
+                           class="rounded border-gray-300 service-checkbox" data-service-id="${service.id}">
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-${service.iconColor}-100 rounded-lg flex items-center justify-center">
+                            <i data-feather="${service.icon}" class="w-4 h-4 text-${service.iconColor}-600"></i>
+                        </div>
+                        <div>
+                            <a href="service-detail.html?service=${service.id}" 
+                               class="text-gray-900 font-medium hover:text-blue-600 transition-colors">${service.name}</a>
+                            <p class="text-sm text-gray-500">${service.description}</p>
+                        </div>
+                    </div>
+                </td>
+                <td class="px-6 py-4">${statusConfig.badge}</td>
+                <td class="px-6 py-4 text-center">${createConfigStatus(service.inDragon)}</td>
+                <td class="px-6 py-4 text-center">${createConfigStatus(service.inPFGold)}</td>
+                <td class="px-6 py-4 font-mono text-sm ${service.currentVersion ? 'text-gray-900' : 'text-gray-400'}">
+                    ${service.currentVersion || 'null'}
+                </td>
+                <td class="px-6 py-4">
+                    ${service.pipeline ? `
+                        <div class="font-mono text-sm text-gray-900">${service.pipeline}</div>
+                        <div class="text-xs text-gray-500 mt-1">Latest: ${service.pipelineVersion}</div>
+                    ` : '<span class="font-mono text-sm text-gray-400">-</span>'}
+                </td>
+                <td class="px-6 py-4">
+                    <div class="config-actions">${createActionButtons(service)}</div>
+                </td>
+            `;
+
+            return row;
+        }
+
+        function getStatusConfig(status, readyToDeploy = false) {
+            const configs = {
+                'ready': {
+                    badge: '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Ready to Deploy</span>'
+                },
+                'not-deployed': {
+                    badge: readyToDeploy 
+                        ? '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Prepared for Deployment</span>'
+                        : '<span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full">Not Deployed</span>'
+                },
+                'missing-pfgold': {
+                    badge: '<div class="flex items-center space-x-2"><span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Missing in PFGold</span><i data-feather="alert-triangle" class="w-4 h-4 text-yellow-500"></i></div>'
+                },
+                'config-error': {
+                    badge: '<div class="flex items-center space-x-2"><span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Configuration Error</span><i data-feather="x-circle" class="w-4 h-4 text-red-500"></i></div>'
+                }
+            };
+            return configs[status] || configs['not-deployed'];
+        }
+
+        function createConfigStatus(isPresent) {
+            return isPresent 
+                ? '<div class="flex items-center justify-center"><i data-feather="check-circle" class="w-4 h-4 text-green-500"></i></div>'
+                : '<div class="flex items-center justify-center"><i data-feather="x-circle" class="w-4 h-4 text-red-500"></i></div>';
+        }
+
+        function createActionButtons(service) {
+            if (service.status === 'missing-pfgold') {
+                return `
+                    <div class="flex space-x-2">
+                        <button onclick="addToPFGold('${service.id}')" class="px-3 py-1.5 bg-yellow-600 text-white text-sm rounded-lg hover:bg-yellow-700 transition-colors">
+                            Add to PFGold
+                        </button>
+                        <button onclick="removeFromDragon('${service.id}')" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+                            Remove from Dragon
+                        </button>
+                    </div>
+                `;
+            } else if (service.status === 'config-error') {
+                return `
+                    <div class="flex space-x-2">
+                        <button onclick="removeFromPFGold('${service.id}')" class="px-3 py-1.5 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700 transition-colors">
+                            Remove from PFGold
+                        </button>
+                        <button onclick="addToDragon('${service.id}')" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors">
+                            Add to Dragon
+                        </button>
+                    </div>
+                `;
+            } else if (service.status === 'not-deployed') {
+                if (service.readyToDeploy) {
+                    return `
+                        <div class="flex space-x-2">
+                            <button onclick="cancelPrepareForDeployment('${service.id}')" class="px-3 py-1.5 bg-gray-600 text-white text-sm rounded-lg hover:bg-gray-700 transition-colors">
+                                <i data-feather="x" class="w-3 h-3 inline mr-1"></i>Cancel Preparation
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="flex space-x-2">
+                            <button onclick="prepareForDeployment('${service.id}')" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                                <i data-feather="check-circle" class="w-3 h-3 inline mr-1"></i>Prepare for Deployment
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+            return '';
+        }
+
+        // Search and filter functionality
+        function performSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!query) {
+                applyFilters();
+                return;
+            }
+
+            appState.filteredServices = appState.services.filter(service => 
+                service.name.toLowerCase().includes(query) ||
+                service.description.toLowerCase().includes(query) ||
+                (service.pipeline && service.pipeline.toLowerCase().includes(query))
+            );
+
+            renderServicesTable();
+            updateActiveFilters();
+        }
+
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const configFilter = document.getElementById('configFilter').value;
+
+            appState.filteredServices = appState.services.filter(service => {
+                let matchesStatus = true;
+                
+                if (statusFilter === 'ready') {
+                    matchesStatus = service.status === 'ready';
+                } else if (statusFilter === 'not-deployed') {
+                    matchesStatus = service.status === 'not-deployed' && !service.readyToDeploy;
+                } else if (statusFilter === 'prepared') {
+                    matchesStatus = service.status === 'not-deployed' && service.readyToDeploy;
+                } else if (statusFilter === 'missing-pfgold') {
+                    matchesStatus = service.status === 'missing-pfgold';
+                } else if (statusFilter === 'config-error') {
+                    matchesStatus = service.status === 'config-error';
+                }
+
+                let matchesConfig = true;
+                if (configFilter === 'both') {
+                    matchesConfig = service.inDragon && service.inPFGold;
+                } else if (configFilter === 'dragon-only') {
+                    matchesConfig = service.inDragon && !service.inPFGold;
+                } else if (configFilter === 'pfgold-only') {
+                    matchesConfig = !service.inDragon && service.inPFGold;
+                }
+
+                return matchesStatus && matchesConfig;
+            });
+
+            renderServicesTable();
+            updateActiveFilters();
+        }
+
+        function clearAllFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('configFilter').value = '';
+            appState.filteredServices = [...appState.services];
+            renderServicesTable();
+            updateActiveFilters();
+        }
+
+        function updateActiveFilters() {
+            const container = document.getElementById('activeFilters');
+            container.innerHTML = '';
+
+            const searchQuery = document.getElementById('searchInput').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const configFilter = document.getElementById('configFilter').value;
+
+            if (searchQuery) {
+                container.appendChild(createFilterTag('Search', searchQuery));
+            }
+            if (statusFilter) {
+                container.appendChild(createFilterTag('Status', statusFilter));
+            }
+            if (configFilter) {
+                container.appendChild(createFilterTag('Config', configFilter));
+            }
+        }
+
+        function createFilterTag(label, value) {
+            const tag = document.createElement('span');
+            tag.className = 'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800';
+            tag.innerHTML = `${label}: ${value} <button onclick="this.parentElement.remove()" class="ml-1 text-blue-600 hover:text-blue-800"><i data-feather="x" class="w-3 h-3"></i></button>`;
+            return tag;
+        }
+
+        // Selection management
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.service-checkbox:not(:disabled)');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+                const serviceId = checkbox.dataset.serviceId;
+                if (selectAll.checked) {
+                    appState.selectedServices.add(serviceId);
+                } else {
+                    appState.selectedServices.delete(serviceId);
+                }
+            });
+
+            updateSelectionUI();
+        }
+
+        function toggleServiceSelection(serviceId) {
+            if (appState.selectedServices.has(serviceId)) {
+                appState.selectedServices.delete(serviceId);
+            } else {
+                appState.selectedServices.add(serviceId);
+            }
+            updateSelectionUI();
+        }
+
+        function updateSelectionUI() {
+            const count = appState.selectedServices.size;
+            const selectedCount = document.getElementById('selectedCount');
+            const bulkDeployBtn = document.getElementById('bulkDeployBtn');
+
+            if (count > 0) {
+                selectedCount.classList.remove('hidden');
+                selectedCount.textContent = `${count} selected`;
+                bulkDeployBtn.disabled = false;
+            } else {
+                selectedCount.classList.add('hidden');
+                bulkDeployBtn.disabled = true;
+            }
+        }
+
+        // Modal management
+        function showBulkDeployModal() {
+            const selectedServices = Array.from(appState.selectedServices).map(id => 
+                appState.services.find(s => s.id === id)
+            );
+
+            document.getElementById('deployCount').textContent = selectedServices.length;
+            const servicesList = document.getElementById('deployServicesList');
+            servicesList.innerHTML = selectedServices.map(service => 
+                `<li class="flex items-center space-x-2">
+                    <i data-feather="${service.icon}" class="w-3 h-3"></i>
+                    <span>${service.name}</span>
+                </li>`
+            ).join('');
+
+            document.getElementById('bulkDeployModal').classList.remove('hidden');
+            feather.replace();
+        }
+
+        function hideBulkDeployModal() {
+            document.getElementById('bulkDeployModal').classList.add('hidden');
+        }
+
+        function confirmBulkDeploy() {
+            const selectedServiceNames = Array.from(appState.selectedServices).map(id => 
+                appState.services.find(s => s.id === id).name
+            );
+            
+            showNotification('Deployment Started', `Deploying ${selectedServiceNames.length} services...`);
+            hideBulkDeployModal();
+            
+            // Clear selections
+            appState.selectedServices.clear();
+            document.querySelectorAll('.service-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateSelectionUI();
+        }
+
+        // Action handlers
+        function addToPFGold(serviceId) {
+            const service = appState.services.find(s => s.id === serviceId);
+            showNotification('Configuration Update', `Adding ${service.name} to PFGold deployment.ini...`);
+        }
+
+        function removeFromDragon(serviceId) {
+            const service = appState.services.find(s => s.id === serviceId);
+            showNotification('Configuration Update', `Removing ${service.name} from Dragon GriffinServiceMap.ini...`);
+        }
+
+        function removeFromPFGold(serviceId) {
+            const service = appState.services.find(s => s.id === serviceId);
+            showNotification('Configuration Update', `Removing ${service.name} from PFGold deployment.ini...`);
+        }
+
+        function addToDragon(serviceId) {
+            const service = appState.services.find(s => s.id === serviceId);
+            showNotification('Configuration Update', `Adding ${service.name} to Dragon GriffinServiceMap.ini...`);
+        }
+
+        // 新增：准备部署功能
+        function prepareForDeployment(serviceId) {
+            const service = appState.services.find(s => s.id === serviceId);
+            if (service && service.status === 'not-deployed') {
+                service.readyToDeploy = true;
+                renderServicesTable();
+                showNotification('Deployment Preparation', `${service.name} is now prepared for deployment and can be selected`);
+            }
+        }
+
+        // 新增：取消准备部署功能
+        function cancelPrepareForDeployment(serviceId) {
+            const service = appState.services.find(s => s.id === serviceId);
+            if (service && service.status === 'not-deployed') {
+                service.readyToDeploy = false;
+                
+                // 如果服务已被选中，需要取消选中
+                if (appState.selectedServices.has(serviceId)) {
+                    appState.selectedServices.delete(serviceId);
+                    updateSelectionUI();
+                }
+                
+                renderServicesTable();
+                showNotification('Deployment Preparation', `${service.name} preparation cancelled and removed from selection`);
+            }
+        }
+
+        // Utility functions
+        function showNotification(title, message) {
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+            document.getElementById('notification').classList.add('show');
+            
+            setTimeout(() => {
+                hideNotification();
+            }, 5000);
+        }
+
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        function toggleFavorite() {
+            const btn = document.getElementById('favoriteBtn');
+            const icon = btn.querySelector('i');
+            
+            if (icon.classList.contains('fill-current')) {
+                icon.classList.remove('fill-current');
+                btn.title = 'Add to favorites';
+                showNotification('Favorites', 'Removed from favorites');
+            } else {
+                icon.classList.add('fill-current');
+                btn.title = 'Remove from favorites';
+                showNotification('Favorites', 'Added to favorites');
+            }
+        }
+
+        function refreshData() {
+            const btn = event.target.closest('button');
+            const icon = btn.querySelector('i');
+            
+            icon.style.transform = 'rotate(360deg)';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                icon.style.transform = '';
+                btn.disabled = false;
+                showNotification('Data Refreshed', 'Service data has been updated');
+            }, 1500);
+        }
+
+        function updateTableInfo() {
+            const total = appState.services.length;
+            const filtered = appState.filteredServices.length;
+            const info = document.getElementById('tableInfo');
+            
+            if (filtered === total) {
+                info.textContent = `Showing ${filtered} service${filtered !== 1 ? 's' : ''}`;
+            } else {
+                info.textContent = `Showing ${filtered} of ${total} services`;
+            }
+        }
+
+        function updateUI() {
+            updateTableInfo();
+            updateSelectionUI();
+            updateActiveFilters();
+        }
+
+        // Quick filter functions for stats cards
+        function filterByConfigSource(source) {
+            clearAllFilters();
+            if (source === 'dragon') {
+                appState.filteredServices = appState.services.filter(s => s.inDragon);
+            } else if (source === 'pfgold') {
+                appState.filteredServices = appState.services.filter(s => s.inPFGold);
+            }
+            renderServicesTable();
+        }
+
+        function filterByStatus(status) {
+            clearAllFilters();
+            if (status === 'deployed') {
+                appState.filteredServices = appState.services.filter(s => s.currentVersion);
+            }
+            renderServicesTable();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>VE Dashboard</title>
+  <link rel="stylesheet" href="../shared/styles/common.css">
+  <link rel="stylesheet" href="../shared/styles/layout.css">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+<div class="fluent-layout">
+  <div id="app-sidebar"></div>
+  <div class="fluent-content">
+    <div id="app-header"></div>
+    <div class="fluent-main">
+      <div class="fluent-sticky-actions">
+        <h1 class="fluent-section-title">Virtual Environments</h1>
+        <p class="fluent-meta">Overview of all VEs and onboarded services (Model B / B2)</p>
+      </div>
+      <div id="ve-grid" class="fluent-card-grid"></div>
+    </div>
+  </div>
+</div>
+<script src="../shared/js/mockData.js"></script>
+<script src="../shared/js/layout.js"></script>
+<script>
+injectSidebar("dashboard.html");
+injectHeader();
+
+function render(){
+  var grid = document.getElementById("ve-grid");
+  var html="";
+  for(var i=0;i<mockVEs.length;i++){
+    var ve = mockVEs[i];
+    var tagCls = ve.type==="B" ? "ve-b" : "ve-b2";
+    html += '<div class="fluent-card">' +
+      '<h3>'+ ve.name +'</h3>' +
+      '<div class="fluent-meta">Type: '+ renderTag(ve.type, "ve-"+ve.type.toLowerCase()) +' Env: '+ ve.environment +'</div>' +
+      '<div class="fluent-meta">'+ ve.services.length +' service(s)</div>' +
+      '<div class="fluent-inline">' +
+        '<a class="fluent-btn" href="ve-details.html?ve='+ encodeURIComponent(ve.name) +'">Open</a>' +
+        '<button class="fluent-btn secondary" onclick="deployVE(\''+ ve.name +'\')" '+ (canCurrentUserDeploy()?'':'disabled') +'>Deploy All</button>' +
+      '</div>' +
+    '</div>';
+  }
+  grid.innerHTML = html;
+}
+
+function deployVE(veName){
+  var ve = getVE(veName);
+  if(!canCurrentUserDeploy()){ alert("Not authorized."); return; }
+  simulateDeploy({ ve: veName, services: ve.services.slice() });
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

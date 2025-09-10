@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment History - Griffin SovOps Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        
+        /* Fluent UI v9 Design System */
+        :root {
+            --colorNeutralForeground1: #242424;
+            --colorNeutralForeground2: #424242;
+            --colorNeutralForeground3: #616161;
+            --colorNeutralBackground1: #ffffff;
+            --colorNeutralBackground2: #f5f5f5;
+            --colorNeutralBackground3: #f0f0f0;
+            --colorBrandBackground: #0f6cbd;
+            --colorBrandBackgroundHover: #115ea3;
+            --colorBrandForeground1: #0f6cbd;
+            --colorNeutralStroke1: #d1d1d1;
+            --colorNeutralStroke2: #e0e0e0;
+            --borderRadiusSmall: 4px;
+            --borderRadiusLarge: 8px;
+            --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+        }
+        
+        .fluent-card {
+            background: var(--colorNeutralBackground1);
+            border: 1px solid var(--colorNeutralStroke2);
+            border-radius: var(--borderRadiusLarge);
+            box-shadow: var(--shadow2);
+        }
+        
+        .fluent-nav-item {
+            padding: 6px 12px;
+            border-radius: var(--borderRadiusSmall);
+            color: var(--colorNeutralForeground2);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.1s cubic-bezier(0.33, 0, 0.67, 1);
+        }
+        
+        .fluent-nav-item:hover {
+            background: var(--colorNeutralBackground3);
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-nav-item.selected {
+            background: #e3f2fd;
+            color: var(--colorBrandForeground1);
+            font-weight: 600;
+        }
+        
+        .fluent-text-title1 {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 36px;
+            color: var(--colorNeutralForeground1);
+        }
+        
+        .fluent-text-body1 {
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 20px;
+            color: var(--colorNeutralForeground2);
+        }
+        
+        .fluent-icon {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+</head>
+<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
+    <!-- Fluent Navigation -->
+    <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
+                            <i data-feather="layers" class="fluent-icon text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Griffin SovOps Manager</h1>
+                            <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-1">
+                    <a href="dashboard.html" class="fluent-nav-item">
+                        <i data-feather="home" class="fluent-icon inline mr-2"></i>Dashboard
+                    </a>
+                    <a href="ve-management.html" class="fluent-nav-item">
+                        <i data-feather="server" class="fluent-icon inline mr-2"></i>VE Management
+                    </a>
+                    <a href="deployment-history.html" class="fluent-nav-item selected">
+                        <i data-feather="clock" class="fluent-icon inline mr-2"></i>History
+                    </a>
+                    <!-- ...existing code... -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <h2 class="fluent-text-title1 mb-3">Deployment History</h2>
+            <p class="fluent-text-body1">Track and review all deployment activities across virtual environments.</p>
+        </div>
+
+        <!-- Content placeholder -->
+        <div class="fluent-card p-8 text-center">
+            <i data-feather="clock" class="w-16 h-16 mx-auto mb-4" style="color: var(--colorNeutralForeground3);"></i>
+            <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">Deployment History</h3>
+            <p class="fluent-text-body1">This page will display deployment logs and history.</p>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>

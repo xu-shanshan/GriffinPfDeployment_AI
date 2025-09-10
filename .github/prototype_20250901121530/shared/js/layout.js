@@ -19,7 +19,7 @@
           </button>
           <div class="fluent-brand-icon">${icon('layers')}</div>
           <div>
-            <div style="font-weight:600;">Griffin PF AI</div>
+            <div style="font-weight:600;">Griffin SovOps Manager</div>
             <div class="fluent-text-caption1">Prototype</div>
           </div>
         </div>

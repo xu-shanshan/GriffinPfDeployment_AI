@@ -90,7 +90,7 @@
                         <i data-feather="layers" class="fluent-icon text-white" aria-hidden="true"></i>
                     </div>
                     <div class="brand-text">
-                        <h1 class="text-sm font-semibold brand-title">Griffin PF AI</h1>
+                        <h1 class="text-sm font-semibold brand-title">Griffin SovOps Manager</h1>
                         <p class="brand-subtitle">Deployment Platform</p>
                     </div>
                 </div>

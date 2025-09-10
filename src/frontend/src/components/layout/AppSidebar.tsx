@@ -101,7 +101,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ nav }) => {
         role="navigation"
         aria-label="Primary"
       >
-        <div className={styles.header}>Griffin PF AI</div>
+        <div className={styles.header}>Griffin SovOps Manager</div>
         <div className={styles.nav}>
           <div className={styles.sectionLabel}>Main</div>
           {nav.map(item => {

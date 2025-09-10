@@ -1,6 +1,0 @@
-.fluent-sticky-actions { position:sticky; top:0; background:#fff; padding:8px 0 14px 0; z-index:5; }
-.fluent-breadcrumb { font-size:12px; margin-bottom:10px; color:#5a6570; }
-.fluent-breadcrumb a { color:#0f57d9; }
-.fluent-status-succeeded { color:#0a6d2c; font-weight:600; }
-.fluent-status-inprogress { color:#965d00; font-weight:600; }
-.fluent-status-queued { color:#004c86; font-weight:600; }

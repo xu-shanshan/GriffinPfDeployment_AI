@@ -1,7 +1,7 @@
 # Griffin SovOps Manager System - Copilot Instructions
 
-**GriffinPfDeployment_AI** is a full-stack **Deployment Management System** with a **React frontend** and an **ASP.NET Core 8 backend**.  
-It delivers enterprise-grade deployment management with:
+**Griffin SovOps Manager** is a full-stack **SovCloud + Operations (Ops)** with a **React frontend** and an **ASP.NET Core 8 backend**.  
+It delivers enterprise-grade sovcloud management with:
 
 - **Role-based access control**  
 - **Virtual Environment (VE) and service management**  

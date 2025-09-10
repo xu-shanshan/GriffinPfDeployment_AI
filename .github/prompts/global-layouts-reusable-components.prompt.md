@@ -10,7 +10,7 @@ Project Context:
 - Components must follow .copilot.yml Instructions
 
 Task:
-- Generate reusable React layout components from HTML prototypes in: C:\src\gitXxtq\GriffinPfDeployment_AI\.github\prototypes
+- Generate reusable React layout components from HTML prototypes in: C:\src\gitXxtq\Griffin SovOps Manager\.github\prototypes
 
 Supported Component Types:
 - Sidebar (AppSidebar) : navigation + favorites

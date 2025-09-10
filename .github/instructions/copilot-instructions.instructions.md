@@ -2,9 +2,9 @@
 applyTo: '**'
 ---
 
-# GriffinPfDeployment_AI – Instruction Summary
+# Griffin SovOps Manager – Instruction Summary
 
-projectName: GriffinPfDeployment_AI  
+projectName: Griffin SovOps Manager  
 purpose: Deployment Management System for Virtual Environments (VEs) & Services with RBAC, CI/CD integration, traceability.
 
 ## Core Domain Concepts

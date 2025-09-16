@@ -6,6 +6,8 @@
     <title>SovBase - Virtual Environment Detail | Griffin SovOps Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="app-layout.css">
+    <script src="sidebar.js" defer data-active-nav="ve-management" data-auto="true"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
         body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
@@ -236,48 +238,7 @@
     </a>
   </div>
 </header>
-<div id="siderOverlay" class="sider-overlay" aria-hidden="true"></div>
 <div class="app-shell">
-  <aside class="fluent-sider" aria-label="Primary navigation">
-    <nav class="fluent-nav fluent-nav-vertical">
-      <div class="fluent-nav-section">
-        <div class="fluent-nav-section-title">Overview</div>
-        <a class="fluent-nav-item" href="dashboard_v2.html">
-          <i data-feather="home" class="fluent-icon"></i><span class="nav-label">Dashboard</span>
-        </a>
-        <a class="fluent-nav-item" href="deployment-history.html">
-          <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
-        </a>
-      </div>
-      <div class="fluent-nav-section">
-        <div class="fluent-nav-section-title">Management</div>
-        <a class="fluent-nav-item" href="ve-management.html" aria-current="page">
-          <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VE Management</span>
-        </a>
-        <a class="fluent-nav-item" href="services.html">
-          <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
-        </a>
-        <a class="fluent-nav-item" href="permissions.html">
-          <i data-feather="shield" class="fluent-icon"></i><span class="nav-label">Permissions</span>
-        </a>
-      </div>
-      <div class="fluent-nav-section">
-        <div class="fluent-nav-section-title">Operations</div>
-        <a class="fluent-nav-item" href="deploy.html">
-          <i data-feather="upload-cloud" class="fluent-icon"></i><span class="nav-label">Deploy</span>
-        </a>
-        <a class="fluent-nav-item" href="artifacts.html">
-          <i data-feather="package" class="fluent-icon"></i><span class="nav-label">Artifacts</span>
-        </a>
-      </div>
-      <div class="fluent-nav-section">
-        <div class="fluent-nav-section-title">System</div>
-        <a class="fluent-nav-item" href="settings.html">
-          <i data-feather="settings" class="fluent-icon"></i><span class="nav-label">Settings</span>
-        </a>
-      </div>
-    </nav>
-  </aside>
   <main>
     <!-- BEGIN main content -->
         <!-- Fluent Breadcrumb -->
@@ -543,88 +504,6 @@
             initializeServices();
             updateUI();
         });
-        
-        // Sider toggle (desktop + mobile) unified
-        document.addEventListener('DOMContentLoaded', () => {
-       const body = document.body;
-       const toggle = document.getElementById('siderToggle');
-       const overlay = document.getElementById('siderOverlay');
-       const aside = document.querySelector('aside.fluent-sider');
-       if (!toggle || !aside){
-         console.error('[ve-detail] Missing sider or toggle');
-         return;
-       }
-       function navItems(){ return Array.from(document.querySelectorAll('aside.fluent-sider a.fluent-nav-item')); }
-       function applyCollapsedAccessibility(collapsed){
-         toggle.setAttribute('aria-expanded', String(!collapsed));
-         toggle.setAttribute('data-state', collapsed ? 'collapsed' : 'expanded');
-         navItems().forEach(a=>{
-           const lbl=a.querySelector('.nav-label');
-           if(!lbl) return;
-           if(collapsed){
-             a.setAttribute('title', lbl.textContent.trim());
-             lbl.setAttribute('aria-hidden','true');
-           } else {
-             a.removeAttribute('title');
-             lbl.removeAttribute('aria-hidden');
-           }
-         });
-       }
-       function openMobile(){
-         body.classList.add('sider-open');
-         overlay?.setAttribute('aria-hidden','false');
-       }
-       function closeMobile(){
-         body.classList.remove('sider-open');
-         overlay?.setAttribute('aria-hidden','true');
-       }
-       function toggleSider(){
-         const mobile = window.matchMedia('(max-width:930px)').matches;
-         console.debug('[ve-detail] toggle click', { mobile, bodyClasses:[...body.classList] });
-         if(mobile){
-           body.classList.contains('sider-open') ? closeMobile() : openMobile();
-           return;
-         }
-         body.classList.toggle('sider-collapsed');
-         applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-       }
-       // Initial layout sanity
-       requestAnimationFrame(()=>{
-         const w = aside.getBoundingClientRect().width;
-         console.debug('[ve-detail] initial sider width', w);
-         if(w === 0){
-           aside.style.width='var(--siderWidth)';
-           console.warn('[ve-detail] Sider width 0 -> forced width var(--siderWidth)');
-         }
-         applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-       });
-       // Auto-open mobile first load
-       if(window.matchMedia('(max-width:930px)').matches){
-         openMobile();
-       }
-       // Events
-       toggle.addEventListener('click', toggleSider);
-       toggle.addEventListener('keydown', e=>{
-         if(e.key==='Enter' || e.key===' '){
-           e.preventDefault();
-           toggleSider();
-         }
-       });
-       overlay?.addEventListener('click', closeMobile);
-       navItems().forEach(a=> a.addEventListener('click', closeMobile));
-       // Handle breakpoint changes
-       let lastMobile = window.matchMedia('(max-width:930px)').matches;
-       window.addEventListener('resize', ()=>{
-         const nowMobile = window.matchMedia('(max-width:930px)').matches;
-         if(nowMobile !== lastMobile){
-           body.classList.remove('sider-open');
-           overlay?.setAttribute('aria-hidden','true');
-           applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-           lastMobile = nowMobile;
-         }
-       });
-       console.info('[ve-detail] Sider toggle initialized');
-     });
         
         // Service management functions
         function initializeServices() {

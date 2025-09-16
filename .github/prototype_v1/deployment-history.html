@@ -6,6 +6,8 @@
     <title>Deployment History - Griffin SovOps Manager</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="app-layout.css">
+    <script src="sidebar.js" defer data-active-nav="history" data-auto="true"></script>
     <style>
         /* Fluent UI v9 Design System */
         :root {
@@ -170,48 +172,7 @@
       </a>
     </div>
   </header>
-  <div id="siderOverlay" class="sider-overlay" aria-hidden="true"></div>
   <div class="app-shell">
-    <aside class="fluent-sider" aria-label="Primary navigation">
-      <nav class="fluent-nav fluent-nav-vertical">
-        <div class="fluent-nav-section">
-          <div class="fluent-nav-section-title">Overview</div>
-          <a class="fluent-nav-item" href="dashboard.html">
-            <i data-feather="home" class="fluent-icon"></i><span class="nav-label">Dashboard</span>
-          </a>
-          <a class="fluent-nav-item" href="deployment-history.html" aria-current="page">
-            <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
-          </a>
-        </div>
-        <div class="fluent-nav-section">
-          <div class="fluent-nav-section-title">Management</div>
-          <a class="fluent-nav-item" href="ve-management.html">
-            <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
-          </a>
-          <a class="fluent-nav-item" href="services.html">
-            <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
-          </a>
-          <a class="fluent-nav-item" href="permissions.html">
-            <i data-feather="shield" class="fluent-icon"></i><span class="nav-label">Permissions</span>
-          </a>
-        </div>
-        <div class="fluent-nav-section">
-          <div class="fluent-nav-section-title">Operations</div>
-          <a class="fluent-nav-item" href="deploy.html">
-            <i data-feather="upload-cloud" class="fluent-icon"></i><span class="nav-label">Deploy</span>
-          </a>
-          <a class="fluent-nav-item" href="artifacts.html">
-            <i data-feather="package" class="fluent-icon"></i><span class="nav-label">Artifacts</span>
-          </a>
-        </div>
-        <div class="fluent-nav-section">
-          <div class="fluent-nav-section-title">System</div>
-          <a class="fluent-nav-item" href="settings.html">
-            <i data-feather="settings" class="fluent-icon"></i><span class="nav-label">Settings</span>
-          </a>
-        </div>
-      </nav>
-    </aside>
     <main>
       <!-- BEGIN migrated original page content -->
       <div class="px-0">
@@ -232,48 +193,6 @@
   </div> <!-- end .app-shell -->
   <script>
     feather.replace();
-    // Sider toggle logic (mirrors dashboard)
-    (function(){
-      const body=document.body;
-      const toggle=document.getElementById('siderToggle');
-      const overlay=document.getElementById('siderOverlay');
-      if(!toggle) return;
-      const navItems=()=>Array.from(document.querySelectorAll('aside.fluent-sider a.fluent-nav-item'));
-      function applyCollapsedAccessibility(collapsed){
-        toggle.setAttribute('aria-expanded', String(!collapsed));
-        navItems().forEach(a=>{
-          const lbl=a.querySelector('.nav-label');
-            if(!lbl) return;
-            if(collapsed){
-              a.setAttribute('title', lbl.textContent.trim());
-              lbl.setAttribute('aria-hidden','true');
-            } else {
-              a.removeAttribute('title');
-              lbl.removeAttribute('aria-hidden');
-            }
-        });
-      }
-      function doToggle(){
-        const mobile=window.matchMedia('(max-width:930px)').matches;
-        if(mobile){
-          body.classList.toggle('sider-open');
-          overlay?.setAttribute('aria-hidden', body.classList.contains('sider-open') ? 'false':'true');
-          return;
-        }
-        body.classList.toggle('sider-collapsed');
-        applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-      }
-      toggle.addEventListener('click', doToggle);
-      toggle.addEventListener('keydown', e=>{
-        if(e.key==='Enter'||e.key===' '){ e.preventDefault(); doToggle(); }
-      });
-      overlay?.addEventListener('click', ()=>{
-        body.classList.remove('sider-open');
-        overlay.setAttribute('aria-hidden','true');
-      });
-      navItems().forEach(a=> a.addEventListener('click', ()=> body.classList.remove('sider-open')));
-      applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-    })();
   </script>
- </body>
+</body>
 </html>

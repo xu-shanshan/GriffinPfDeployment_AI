@@ -28,9 +28,9 @@
             --borderRadiusLarge: 8px;
             --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
             --shadow4: 0 2px 4px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
-            --topBarHeight:64px;
-            --siderWidth:240px;
-            --siderCollapsedWidth:56px;
+            --topBarHeight: 64px;
+            --siderWidth: 240px;
+            --siderCollapsedWidth: 56px;
         }
         
         .fluent-card {
@@ -181,7 +181,7 @@
         .sider-collapsed aside.fluent-sider .fluent-nav-section-title,
         .sider-collapsed aside.fluent-sider .nav-label { display:none !important; }
         .sider-collapsed aside.fluent-sider .fluent-nav-item { padding:10px 0; justify-content:center; }
-        main { flex:1; padding:2rem 2.25rem 3rem; background:var(--colorNeutralBackground2); }
+        main { flex:1; padding:2rem 2.25rem 3rem; background:var(--colorNeutralBackground2); overflow-x:hidden; }
         @media (max-width:930px){
           aside.fluent-sider {
              position:fixed; left:0; top:var(--topBarHeight);
@@ -194,9 +194,18 @@
         }
         .sider-overlay { position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:55; display:none; }
         .sider-open .sider-overlay { display:block; }
+
+        /* Optional: visual outline while debugging (disable later) */
+        body.debug aside.fluent-sider { outline:1px dashed #0f6cbd; }
+        /* Optional: add a subtle background when collapsed for debug */
+        body.debug.sider-collapsed aside.fluent-sider { background:linear-gradient(90deg,#fff 0,#fafafa 100%); }
+
+        /* Prevent table wrapper from pushing layout wider than viewport */
+        .table-responsive-wrapper { max-width:100%; overflow-x:auto; }
+        html, body { overflow-x:hidden; }
     </style>
 </head>
-<body style="background: var(--colorNeutralBackground2); min-h: 100vh;">
+<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
 <header class="top-bar">
   <div class="brand-block">
     <div class="brand-left">
@@ -270,7 +279,7 @@
     </nav>
   </aside>
   <main>
-    <!-- BEGIN main content (wrapper removed to match dashboard structure) -->
+    <!-- BEGIN main content -->
         <!-- Fluent Breadcrumb -->
         <nav class="flex items-center space-x-2 text-sm mb-6" style="color: var(--colorNeutralForeground3);">
             <a href="ve-management.html" class="hover:text-blue-600 transition-colors" style="color: var(--colorBrandForeground1);">VE Management</a>
@@ -433,7 +442,7 @@
         </div>
     </div>
   </main>
-</div>
+</div> <!-- end .app-shell -->
 
 <!-- Bulk Deploy Modal -->
 <div id="bulkDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
@@ -535,33 +544,87 @@
             updateUI();
         });
         
-        /* Sider toggle logic (added) */
-        (function(){
-          const body=document.body;
-          const toggle=document.getElementById('siderToggle');
-          const overlay=document.getElementById('siderOverlay');
-          const navItems=()=>Array.from(document.querySelectorAll('aside.fluent-sider a.fluent-nav-item'));
-          function applyCollapsedAccessibility(c){
-            toggle.setAttribute('aria-expanded', String(!c));
-            navItems().forEach(a=>{
-              const lbl=a.querySelector('.nav-label');
-              if(!lbl)return;
-              if(c){ a.setAttribute('title', lbl.textContent.trim()); lbl.setAttribute('aria-hidden','true'); }
-              else { a.removeAttribute('title'); lbl.removeAttribute('aria-hidden'); }
-            });
-          }
-          function doToggle(){
-            const mobile=window.matchMedia('(max-width:930px)').matches;
-            if(mobile){ body.classList.toggle('sider-open'); overlay.setAttribute('aria-hidden', body.classList.contains('sider-open')?'false':'true'); return; }
-            body.classList.toggle('sider-collapsed');
-            applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-          }
-          toggle.addEventListener('click', doToggle);
-          toggle.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); doToggle(); }});
-          overlay.addEventListener('click', ()=>{ body.classList.remove('sider-open'); overlay.setAttribute('aria-hidden','true'); });
-          navItems().forEach(a=> a.addEventListener('click', ()=> body.classList.remove('sider-open')));
-          applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
-        })();
+        // Sider toggle (desktop + mobile) unified
+        document.addEventListener('DOMContentLoaded', () => {
+       const body = document.body;
+       const toggle = document.getElementById('siderToggle');
+       const overlay = document.getElementById('siderOverlay');
+       const aside = document.querySelector('aside.fluent-sider');
+       if (!toggle || !aside){
+         console.error('[ve-detail] Missing sider or toggle');
+         return;
+       }
+       function navItems(){ return Array.from(document.querySelectorAll('aside.fluent-sider a.fluent-nav-item')); }
+       function applyCollapsedAccessibility(collapsed){
+         toggle.setAttribute('aria-expanded', String(!collapsed));
+         toggle.setAttribute('data-state', collapsed ? 'collapsed' : 'expanded');
+         navItems().forEach(a=>{
+           const lbl=a.querySelector('.nav-label');
+           if(!lbl) return;
+           if(collapsed){
+             a.setAttribute('title', lbl.textContent.trim());
+             lbl.setAttribute('aria-hidden','true');
+           } else {
+             a.removeAttribute('title');
+             lbl.removeAttribute('aria-hidden');
+           }
+         });
+       }
+       function openMobile(){
+         body.classList.add('sider-open');
+         overlay?.setAttribute('aria-hidden','false');
+       }
+       function closeMobile(){
+         body.classList.remove('sider-open');
+         overlay?.setAttribute('aria-hidden','true');
+       }
+       function toggleSider(){
+         const mobile = window.matchMedia('(max-width:930px)').matches;
+         console.debug('[ve-detail] toggle click', { mobile, bodyClasses:[...body.classList] });
+         if(mobile){
+           body.classList.contains('sider-open') ? closeMobile() : openMobile();
+           return;
+         }
+         body.classList.toggle('sider-collapsed');
+         applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
+       }
+       // Initial layout sanity
+       requestAnimationFrame(()=>{
+         const w = aside.getBoundingClientRect().width;
+         console.debug('[ve-detail] initial sider width', w);
+         if(w === 0){
+           aside.style.width='var(--siderWidth)';
+           console.warn('[ve-detail] Sider width 0 -> forced width var(--siderWidth)');
+         }
+         applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
+       });
+       // Auto-open mobile first load
+       if(window.matchMedia('(max-width:930px)').matches){
+         openMobile();
+       }
+       // Events
+       toggle.addEventListener('click', toggleSider);
+       toggle.addEventListener('keydown', e=>{
+         if(e.key==='Enter' || e.key===' '){
+           e.preventDefault();
+           toggleSider();
+         }
+       });
+       overlay?.addEventListener('click', closeMobile);
+       navItems().forEach(a=> a.addEventListener('click', closeMobile));
+       // Handle breakpoint changes
+       let lastMobile = window.matchMedia('(max-width:930px)').matches;
+       window.addEventListener('resize', ()=>{
+         const nowMobile = window.matchMedia('(max-width:930px)').matches;
+         if(nowMobile !== lastMobile){
+           body.classList.remove('sider-open');
+           overlay?.setAttribute('aria-hidden','true');
+           applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
+           lastMobile = nowMobile;
+         }
+       });
+       console.info('[ve-detail] Sider toggle initialized');
+     });
         
         // Service management functions
         function initializeServices() {

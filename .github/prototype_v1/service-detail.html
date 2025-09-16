@@ -188,7 +188,8 @@
         #siderToggle{cursor:pointer;outline:none;width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:var(--colorBrandBackground);transition:background .18s,transform .25s;}
         #siderToggle:hover{filter:brightness(1.05);}
         #siderToggle:focus-visible{box-shadow:0 0 0 2px var(--colorBrandForeground1);}
-        #siderToggle svg{width:14px;height:14px;transition:transform .35s cubic-bezier(.33,0,.67,1);}
+        /* Match dashboard / ve-detail toggle icon size */
+        #siderToggle svg{width:20px;height:20px;transition:transform .35s cubic-bezier(.33,0,.67,1);}
         .sider-collapsed #siderToggle svg{transform:rotate(180deg) scale(.9);}
         .app-shell{display:flex;align-items:stretch;min-height:calc(100vh - var(--topBarHeight));width:100%;}
         aside.fluent-sider{

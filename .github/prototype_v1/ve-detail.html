@@ -160,7 +160,8 @@
         }
         #siderToggle:hover { filter:brightness(1.05); }
         #siderToggle:focus-visible { box-shadow:0 0 0 2px var(--colorBrandForeground1); }
-        #siderToggle svg { width:14px; height:14px; transition:transform .35s cubic-bezier(.33,0,.67,1); }
+        /* Smaller SVG inside fixed 56px brand-left zone (match dashboard) */
+        #siderToggle svg { width:20px; height:20px; transition:transform .35s cubic-bezier(.33,0,.67,1); }
         .sider-collapsed #siderToggle svg { transform:rotate(180deg) scale(.9); }
         .app-shell { display:flex; align-items:stretch; min-height:calc(100vh - var(--topBarHeight)); width:100%; }
         aside.fluent-sider {
@@ -269,8 +270,7 @@
     </nav>
   </aside>
   <main>
-    <!-- BEGIN migrated main content -->
-    <div class="px-0 py-0">
+    <!-- BEGIN main content (wrapper removed to match dashboard structure) -->
         <!-- Fluent Breadcrumb -->
         <nav class="flex items-center space-x-2 text-sm mb-6" style="color: var(--colorNeutralForeground3);">
             <a href="ve-management.html" class="hover:text-blue-600 transition-colors" style="color: var(--colorBrandForeground1);">VE Management</a>

@@ -56,8 +56,6 @@ Mock data simulates actual application data and lives in:
 - `Utilities/`: Common helpers, logging, HTTP clients for API calls
 - `Migrations/`: EF Core migrations
 
-## Key Features
-
 ### Permission Management
 - **User Groups**: Organize users into teams for easier management
 - **User Roles**:
@@ -80,25 +78,5 @@ Mock data simulates actual application data and lives in:
     - Users in this list or group have **“sign/deploy” permission** for the specified VE/services
   - **Admin**: Modify VE/service configurations, assign users, manage Environment-Level (APE/CPE/VE) settings, Service-Level settings, and user roles
 
-### Core Functionality
-1. **Visibility**
-   - View all VEs and their associated services
-   - Check **Build information** and **Drop URLs** for each service
-   - Monitor deployment status and history per VE/service
-2. **Control**
-   - Trigger deployments at **VE level** or **Service level**
-   - Only authorized users defined in `AllowedToSignClaims` can perform deployments
-   - Support both **single deployment** and **batch deployment** scenarios
-3. **Traceability**
-   - Track deployment actions with user identity, timestamp, and affected VE/services
-   - Maintain **audit logs** of all deployment events and Drop URL access
-   - Ensure compliance and visibility for operational audits
-4. **Configuration Management**
-   - Read configuration files (INI) from Azure DevOps repositories
-   - Cache frequently accessed configurations in **Redis**
-   - Support **Environment-Level (VE)** and **Service-Level** settings
-5. **Integration & Automation**
-   - Integrate with **Azure DevOps REST API / SDK** for Pipeline artifacts and build metadata
-   - Automate deployment workflows and validate user permissions before triggering tasks
-   - Support **asynchronous task execution** via Hangfire / BackgroundService
+
 

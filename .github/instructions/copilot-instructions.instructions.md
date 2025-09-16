@@ -1,8 +1,3 @@
----
-applyTo: '**'
----
-
-# Griffin SovOps Manager – Instruction Summary
 
 projectName: Griffin SovOps Manager  
 purpose: Deployment Management System for Virtual Environments (VEs) & Services with RBAC, CI/CD integration, traceability.

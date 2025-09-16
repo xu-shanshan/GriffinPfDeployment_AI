@@ -7,9 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
-        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
-        
         /* Fluent UI v9 Design System */
         :root {
             --colorNeutralForeground1: #242424;
@@ -26,6 +23,9 @@
             --borderRadiusSmall: 4px;
             --borderRadiusLarge: 8px;
             --shadow2: 0 1px 2px rgba(0,0,0,0.14), 0 0px 2px rgba(0,0,0,0.12);
+            --topBarHeight:64px;
+            --siderWidth:240px;
+            --siderCollapsedWidth:56px;
         }
         
         .fluent-card {
@@ -73,41 +73,148 @@
             width: 16px;
             height: 16px;
         }
+        
+        /* Top + Sider layout (aligned with dashboard.html) */
+        header.top-bar{
+          height:var(--topBarHeight);
+          display:flex;
+          align-items:center;
+          background:var(--colorNeutralBackground1);
+          border-bottom:1px solid var(--colorNeutralStroke2);
+          padding:0;
+          position:sticky;top:0;z-index:40;
+        }
+        .brand-block{display:flex;align-items:center;gap:0;}
+        .brand-left{width:var(--siderCollapsedWidth);display:flex;align-items:center;justify-content:center;}
+        .topbar-divider{width:1px;height:var(--topBarHeight);background:var(--colorNeutralStroke2);}
+        #siderToggle{
+          cursor:pointer;outline:none;width:38px;height:38px;border-radius:10px;
+          display:flex;align-items:center;justify-content:center;
+          background:var(--colorBrandBackground);
+          transition:background .18s,transform .25s;
+        }
+        #siderToggle:hover{filter:brightness(1.05);}
+        #siderToggle:focus-visible{box-shadow:0 0 0 2px var(--colorBrandForeground1);}
+        #siderToggle svg{width:20px;height:20px;transition:transform .35s cubic-bezier(.33,0,.67,1);}
+        .sider-collapsed #siderToggle svg{transform:rotate(180deg) scale(.9);}
+        .app-shell{display:flex;align-items:stretch;min-height:calc(100vh - var(--topBarHeight));width:100%;}
+        aside.fluent-sider{
+          width:var(--siderWidth);background:var(--colorNeutralBackground1);
+          border-right:1px solid var(--colorNeutralStroke2);
+          padding:.75rem 0 1.25rem;
+          position:sticky;top:var(--topBarHeight);
+          height:calc(100vh - var(--topBarHeight));
+          overflow-y:auto;
+          transition:width .18s cubic-bezier(.33,0,.67,1);
+        }
+        .sider-collapsed aside.fluent-sider{width:var(--siderCollapsedWidth);}
+        .fluent-nav-vertical{display:flex;flex-direction:column;gap:2px;}
+        .fluent-nav-section-title{
+          font-size:11px;font-weight:600;letter-spacing:.5px;
+          text-transform:uppercase;padding:8px 20px 4px;
+          color:var(--colorNeutralForeground3);
+        }
+        .fluent-nav-vertical .fluent-nav-item{
+          width:100%;border-radius:0;padding:8px 20px;
+          display:inline-flex;gap:8px;justify-content:flex-start;
+          font-weight:500;
+        }
+        .sider-collapsed aside.fluent-sider .fluent-nav-section-title,
+        .sider-collapsed aside.fluent-sider .nav-label{display:none!important;}
+        .sider-collapsed aside.fluent-sider .fluent-nav-item{padding:10px 0;justify-content:center;}
+        main{flex:1;padding:2rem 2.25rem 3rem;background:var(--colorNeutralBackground2);}
+        @media (max-width:930px){
+          aside.fluent-sider{
+             position:fixed;left:0;top:var(--topBarHeight);
+             height:calc(100vh - var(--topBarHeight));
+             transform:translateX(-100%);
+             box-shadow:var(--shadow2);
+             transition:transform .22s cubic-bezier(.33,0,.67,1);
+             width:var(--siderWidth);z-index:60;
+          }
+          .sider-open aside.fluent-sider{transform:translateX(0);}
+          main{padding:1.75rem 1.25rem 3rem;}
+        }
+        .sider-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:55;display:none;}
+        .sider-open .sider-overlay{display:block;}
     </style>
 </head>
-<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
-    <!-- Fluent Navigation -->
-    <nav class="fluent-card" style="margin: 0; border-radius: 0; border-left: none; border-right: none; border-top: none;">
-        <div class="container mx-auto px-6">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center space-x-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded flex items-center justify-center" style="background: var(--colorBrandBackground);">
-                            <i data-feather="layers" class="fluent-icon text-white"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-lg font-semibold" style="color: var(--colorNeutralForeground1);">Griffin SovOps Manager</h1>
-                            <p style="font-size: 12px; color: var(--colorNeutralForeground3);">Virtual Environment Management</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center space-x-1">
-                    <a href="dashboard.html" class="fluent-nav-item">
-                        <i data-feather="home" class="fluent-icon inline mr-2"></i>Dashboard
-                    </a>
-                    <a href="ve-management.html" class="fluent-nav-item">
-                        <i data-feather="server" class="fluent-icon inline mr-2"></i>VE Management
-                    </a>
-                    <a href="deployment-history.html" class="fluent-nav-item selected">
-                        <i data-feather="clock" class="fluent-icon inline mr-2"></i>History
-                    </a>
-                    <!-- ...existing code... -->
-                </div>
-            </div>
+<body style="background: var(--colorNeutralBackground2); min-height:100vh;">
+  <header class="top-bar">
+    <div class="brand-block">
+      <div class="brand-left">
+        <div id="siderToggle" role="button" tabindex="0" aria-label="Toggle navigation" aria-expanded="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
         </div>
-    </nav>
-
-    <div class="container mx-auto px-6 py-8">
+      </div>
+      <div class="topbar-divider"></div>
+      <div style="padding-left:1rem;">
+        <h1 class="text-base font-semibold" style="color:var(--colorNeutralForeground1);">Griffin SovOps Manager</h1>
+        <p style="font-size:12px;color:var(--colorNeutralForeground3);">Virtual Environment Management</p>
+      </div>
+    </div>
+    <div class="ml-auto flex items-center gap-4" style="padding:0 1.25rem;">
+      <div class="hidden md:flex flex-col items-end">
+        <span class="text-sm font-medium" style="color:var(--colorNeutralForeground1);">John Operator</span>
+        <span style="font-size:12px;color:var(--colorNeutralForeground3);">Operator</span>
+      </div>
+      <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--colorNeutralBackground3);">
+        <i data-feather="user" class="fluent-icon" style="color:var(--colorNeutralForeground3);"></i>
+      </div>
+      <a href="login.html" class="fluent-button fluent-button-subtle">
+        <i data-feather="log-out" class="fluent-icon"></i>
+      </a>
+    </div>
+  </header>
+  <div id="siderOverlay" class="sider-overlay" aria-hidden="true"></div>
+  <div class="app-shell">
+    <aside class="fluent-sider" aria-label="Primary navigation">
+      <nav class="fluent-nav fluent-nav-vertical">
+        <div class="fluent-nav-section">
+          <div class="fluent-nav-section-title">Overview</div>
+          <a class="fluent-nav-item" href="dashboard.html">
+            <i data-feather="home" class="fluent-icon"></i><span class="nav-label">Dashboard</span>
+          </a>
+          <a class="fluent-nav-item" href="deployment-history.html" aria-current="page">
+            <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
+          </a>
+        </div>
+        <div class="fluent-nav-section">
+          <div class="fluent-nav-section-title">Management</div>
+          <a class="fluent-nav-item" href="ve-management.html">
+            <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
+          </a>
+          <a class="fluent-nav-item" href="services.html">
+            <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
+          </a>
+          <a class="fluent-nav-item" href="permissions.html">
+            <i data-feather="shield" class="fluent-icon"></i><span class="nav-label">Permissions</span>
+          </a>
+        </div>
+        <div class="fluent-nav-section">
+          <div class="fluent-nav-section-title">Operations</div>
+          <a class="fluent-nav-item" href="deploy.html">
+            <i data-feather="upload-cloud" class="fluent-icon"></i><span class="nav-label">Deploy</span>
+          </a>
+          <a class="fluent-nav-item" href="artifacts.html">
+            <i data-feather="package" class="fluent-icon"></i><span class="nav-label">Artifacts</span>
+          </a>
+        </div>
+        <div class="fluent-nav-section">
+          <div class="fluent-nav-section-title">System</div>
+          <a class="fluent-nav-item" href="settings.html">
+            <i data-feather="settings" class="fluent-icon"></i><span class="nav-label">Settings</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+    <main>
+      <!-- BEGIN migrated original page content -->
+      <div class="px-0">
         <!-- Header -->
         <div class="mb-8">
             <h2 class="fluent-text-title1 mb-3">Deployment History</h2>
@@ -120,10 +227,53 @@
             <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">Deployment History</h3>
             <p class="fluent-text-body1">This page will display deployment logs and history.</p>
         </div>
-    </div>
-
-    <script>
-        feather.replace();
-    </script>
-</body>
+      </div>
+    </main>
+  </div> <!-- end .app-shell -->
+  <script>
+    feather.replace();
+    // Sider toggle logic (mirrors dashboard)
+    (function(){
+      const body=document.body;
+      const toggle=document.getElementById('siderToggle');
+      const overlay=document.getElementById('siderOverlay');
+      if(!toggle) return;
+      const navItems=()=>Array.from(document.querySelectorAll('aside.fluent-sider a.fluent-nav-item'));
+      function applyCollapsedAccessibility(collapsed){
+        toggle.setAttribute('aria-expanded', String(!collapsed));
+        navItems().forEach(a=>{
+          const lbl=a.querySelector('.nav-label');
+            if(!lbl) return;
+            if(collapsed){
+              a.setAttribute('title', lbl.textContent.trim());
+              lbl.setAttribute('aria-hidden','true');
+            } else {
+              a.removeAttribute('title');
+              lbl.removeAttribute('aria-hidden');
+            }
+        });
+      }
+      function doToggle(){
+        const mobile=window.matchMedia('(max-width:930px)').matches;
+        if(mobile){
+          body.classList.toggle('sider-open');
+          overlay?.setAttribute('aria-hidden', body.classList.contains('sider-open') ? 'false':'true');
+          return;
+        }
+        body.classList.toggle('sider-collapsed');
+        applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
+      }
+      toggle.addEventListener('click', doToggle);
+      toggle.addEventListener('keydown', e=>{
+        if(e.key==='Enter'||e.key===' '){ e.preventDefault(); doToggle(); }
+      });
+      overlay?.addEventListener('click', ()=>{
+        body.classList.remove('sider-open');
+        overlay.setAttribute('aria-hidden','true');
+      });
+      navItems().forEach(a=> a.addEventListener('click', ()=> body.classList.remove('sider-open')));
+      applyCollapsedAccessibility(body.classList.contains('sider-collapsed'));
+    })();
+  </script>
+ </body>
 </html>

@@ -18,6 +18,11 @@
   --topBarHeight:64px;
   --siderWidth:240px;
   --siderCollapsedWidth:56px;
+  /* Aliases for legacy per-page variables */
+  --borderRadiusSmall: var(--radiusS);
+  --borderRadiusMedium: var(--radiusM);
+  --borderRadiusLarge: var(--radiusL);
+  --borderRadiusXLarge:12px;
 }
 body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:var(--colorNeutralBackground2); min-height:100vh; }
 header.top-bar {

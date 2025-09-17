@@ -17,7 +17,7 @@
        <a class="fluent-nav-item" data-key="ve-management" href="ve-management.html">
          <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
        </a>
-       <a class="fluent-nav-item" data-key="services" href="services.html">
+       <a class="fluent-nav-item" data-key="services" href="service-management.html">
          <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
        </a>
      </div>

@@ -84,8 +84,10 @@ main.app-main{flex:1;padding:2rem 2.25rem 3rem;background:var(--colorNeutralBack
 
 /* Reusable components */
 .fluent-card{
-  background:var(--colorNeutralBackground1);border:1px solid var(--colorNeutralStroke2);
-  border-radius:var(--radiusL);box-shadow:var(--shadow2);
+  background:var(--colorNeutralBackground1);
+  border:1px solid var(--colorNeutralStroke2);
+  border-radius:var(--radiusL);
+  box-shadow:var(--shadow2);
   transition:.12s cubic-bezier(.33,0,.67,1);
 }
 .fluent-card:hover{box-shadow:var(--shadow4);border-color:var(--colorNeutralStroke1);}

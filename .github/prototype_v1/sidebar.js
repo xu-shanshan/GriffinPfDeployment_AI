@@ -1,48 +1,78 @@
 (function(global){
   function buildSidebar(){
     return `
-<aside class="fluent-sider" aria-label="Primary navigation">
-  <nav class="fluent-nav fluent-nav-vertical">
-    <div class="fluent-nav-section">
-      <div class="fluent-nav-section-title">Overview</div>
-      <a class="fluent-nav-item" data-key="dashboard" href="dashboard.html">
-        <i data-feather="home" class="fluent-icon"></i><span class="nav-label">Dashboard</span>
-      </a>
-      <a class="fluent-nav-item" data-key="history" href="deployment-history.html">
-        <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
-      </a>
-    </div>
-    <div class="fluent-nav-section">
-      <div class="fluent-nav-section-title">Management</div>
-      <a class="fluent-nav-item" data-key="ve-management" href="ve-management.html">
-        <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
-      </a>
-      <a class="fluent-nav-item" data-key="services" href="services.html">
-        <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
-      </a>
-    </div>
-    <div class="fluent-nav-section">
-      <div class="fluent-nav-section-title">Operations</div>
-      <a class="fluent-nav-item" data-key="deploy" href="deploy.html">
-        <i data-feather="upload-cloud" class="fluent-icon"></i><span class="nav-label">Deploy</span>
-      </a>
-      <a class="fluent-nav-item" data-key="artifacts" href="artifacts.html">
-        <i data-feather="package" class="fluent-icon"></i><span class="nav-label">Artifacts</span>
-      </a>
-    </div>
-    <div class="fluent-nav-section">
-      <div class="fluent-nav-section-title">System</div>
-      <a class="fluent-nav-item" data-key="settings" href="settings.html">
-        <i data-feather="settings" class="fluent-icon"></i><span class="nav-label">Settings</span>
-      </a>
-    </div>
-  </nav>
-</aside>`;
+ <aside class="fluent-sider" aria-label="Primary navigation">
+   <nav class="fluent-nav fluent-nav-vertical">
+     <div class="fluent-nav-section">
+       <div class="fluent-nav-section-title">Overview</div>
+       <a class="fluent-nav-item" data-key="dashboard" href="dashboard.html">
+         <i data-feather="home" class="fluent-icon"></i><span class="nav-label">Dashboard</span>
+       </a>
+       <a class="fluent-nav-item" data-key="history" href="deployment-history.html">
+         <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
+       </a>
+     </div>
+     <div class="fluent-nav-section">
+       <div class="fluent-nav-section-title">Management</div>
+       <a class="fluent-nav-item" data-key="ve-management" href="ve-management.html">
+         <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
+       </a>
+       <a class="fluent-nav-item" data-key="services" href="services.html">
+         <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
+       </a>
+     </div>
+     <div class="fluent-nav-section" id="quickAccessSection">
+      <div class="fluent-nav-section-title">Quick Access</div>
+      <div class="px-6 py-2 text-xs fg-3">No favorites yet</div>
+     </div>
+   </nav>
+ </aside>`;
+  }
+  
+  function getFavorites(){
+    let ves=[], services=[];
+    try {
+      const vRaw = localStorage.getItem('favoritesVEs');
+      const sRaw = localStorage.getItem('favoritesServices');
+      if(vRaw) ves = JSON.parse(vRaw);
+      if(sRaw) services = JSON.parse(sRaw);
+    } catch(e){ /* ignore parse errors */ }
+    return { ves, services };
+  }
+
+  function buildQuickAccessHTML(){
+    const { ves, services } = getFavorites();
+    const links = [];
+    ves.slice(0,5).forEach(name=>{
+      const safe = encodeURIComponent(name);
+      links.push(`<a class="fluent-nav-item" data-key="qa-ve-${safe}" href="ve-detail.html?ve=${safe}">
+        <i data-feather="server" class="fluent-icon"></i><span class="nav-label">${name}</span>
+      </a>`);
+    });
+    services.slice(0,5).forEach(name=>{
+      const safe = encodeURIComponent(name);
+      links.push(`<a class="fluent-nav-item" data-key="qa-svc-${safe}" href="service-detail.html?service=${safe}">
+        <i data-feather="package" class="fluent-icon"></i><span class="nav-label">${name}</span>
+      </a>`);
+    });
+    if(!links.length){
+      return `<div class="px-6 py-2 text-xs fg-3">No favorites yet</div>`;
+    }
+    return links.join('');
+  }
+
+  function refreshQuickAccess(){
+    const container = document.getElementById('quickAccessSection');
+    if(!container) return;
+    const title = container.querySelector('.fluent-nav-section-title');
+    container.innerHTML = title ? title.outerHTML + buildQuickAccessHTML() : buildQuickAccessHTML();
+    if(global.feather) global.feather.replace();
   }
 
   function renderSidebar(containerEl, activeKey){
     if(!containerEl) return;
     containerEl.insertAdjacentHTML('afterbegin', buildSidebar());
+    refreshQuickAccess();
     if(activeKey){
       const active = containerEl.querySelector(`.fluent-nav-item[data-key="${activeKey}"]`);
       if(active) active.setAttribute('aria-current','page');
@@ -147,10 +177,11 @@
 
   global.renderSidebar = renderSidebar;
   global.renderLayout = renderLayout;
+  global.refreshQuickAccess = refreshQuickAccess;
 
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded', autoInit);
   } else {
     autoInit();
   }
-})(window);
+ })(window);

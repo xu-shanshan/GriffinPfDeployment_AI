@@ -4,21 +4,18 @@
  <aside class="fluent-sider" aria-label="Primary navigation">
    <nav class="fluent-nav fluent-nav-vertical">
      <div class="fluent-nav-section">
-       <div class="fluent-nav-section-title">Overview</div>
+       <div class="fluent-nav-section-title">MAIN NAVIGATION</div>
        <a class="fluent-nav-item" data-key="dashboard" href="dashboard.html">
          <i data-feather="home" class="fluent-icon"></i><span class="nav-label">Dashboard</span>
        </a>
-       <a class="fluent-nav-item" data-key="history" href="deployment-history.html">
-         <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
-       </a>
-     </div>
-     <div class="fluent-nav-section">
-       <div class="fluent-nav-section-title">Management</div>
        <a class="fluent-nav-item" data-key="ve-management" href="ve-management.html">
          <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
        </a>
        <a class="fluent-nav-item" data-key="services" href="service-management.html">
          <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
+       </a>
+        <a class="fluent-nav-item" data-key="history" href="deployment-history.html">
+         <i data-feather="clock" class="fluent-icon"></i><span class="nav-label">History</span>
        </a>
      </div>
      <div class="fluent-nav-section" id="quickAccessSection">

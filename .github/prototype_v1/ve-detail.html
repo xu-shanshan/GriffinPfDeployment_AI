@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <link rel="stylesheet" href="app-layout.css">
+    <script src="topbar.js" defer data-brand="Griffin SovOps Manager" data-subtitle="Virtual Environment Management" data-user="John Operator" data-role="Operator"></script>
     <script src="sidebar.js" defer data-active-nav="ve-management" data-auto="true"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
@@ -183,39 +184,9 @@
     </style>
 </head>
 <body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
-<header class="top-bar">
-  <div class="brand-block">
-    <div class="brand-left">
-      <div id="siderToggle" role="button" tabindex="0" aria-label="Toggle navigation" aria-expanded="true">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white">
-          <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-          <polyline points="2 17 12 22 22 17"></polyline>
-          <polyline points="2 12 12 17 22 12"></polyline>
-        </svg>
-      </div>
-    </div>
-    <div class="topbar-divider"></div>
-    <div style="padding-left:1rem;">
-      <h1 class="text-base font-semibold" style="color:var(--colorNeutralForeground1);">Griffin SovOps Manager</h1>
-      <p style="font-size:12px;color:var(--colorNeutralForeground3);">Virtual Environment Management</p>
-    </div>
-  </div>
-  <div class="ml-auto flex items-center gap-4" style="padding:0 1.25rem;">
-    <div class="hidden md:flex flex-col items-end">
-      <span class="text-sm font-medium" style="color:var(--colorNeutralForeground1);">John Operator</span>
-      <span style="font-size:12px;color:var(--colorNeutralForeground3);">Operator</span>
-    </div>
-    <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--colorNeutralBackground3);">
-      <i data-feather="user" class="fluent-icon" style="color:var(--colorNeutralForeground3);"></i>
-    </div>
-    <a href="login.html" class="fluent-button fluent-button-subtle">
-      <i data-feather="log-out" class="fluent-icon"></i>
-    </a>
-  </div>
-</header>
-<div class="app-shell">
-  <main>
-    <!-- BEGIN main content -->
+  <div class="app-shell">
+    <main>
+      <!-- BEGIN main content -->
         <!-- Fluent Breadcrumb -->
         <nav class="flex items-center space-x-2 text-sm mb-6" style="color: var(--colorNeutralForeground3);">
             <a href="ve-management.html" class="hover:text-blue-600 transition-colors" style="color: var(--colorBrandForeground1);">VE Management</a>
@@ -378,7 +349,7 @@
         </div>
     </div>
   </main>
-</div> <!-- end .app-shell -->
+</div> 
 
 <!-- Bulk Deploy Modal -->
 <div id="bulkDeployModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">

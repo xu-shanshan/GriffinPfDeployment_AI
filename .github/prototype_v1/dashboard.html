@@ -13,47 +13,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
 <link rel="stylesheet" href="app-layout.css">
+<script src="topbar.js" defer data-brand="Griffin SovOps Manager" data-subtitle="VE Deployment Control" data-user="John Operator" data-role="Operator"></script>
 <script src="sidebar.js" defer data-active-nav="dashboard" data-auto="true"></script>
 </head>
-<body>
-<header class="top-bar">
-    <div class="brand-block">
-        <div class="brand-left">
-            <div id="siderToggle" class="rounded flex items-center justify-center"
-                 role="button" tabindex="0" aria-label="Toggle navigation" aria-expanded="true"
-                 style="background:var(--colorBrandBackground);">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                     stroke-linejoin="round" class="text-white">
-                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                    <polyline points="2 17 12 22 22 17"></polyline>
-                    <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
-            </div>
-        </div>
-        <div class="topbar-divider"></div>
-        <div style="padding-left:1rem;">
-            <!-- slight horizontal padding after divider to restore breathing room -->
-            <h1 class="text-base font-semibold" style="color:var(--colorNeutralForeground1);">Griffin SovOps Manager</h1>
-            <p class="fluent-caption1">VE Deployment Control</p>
-        </div>
-    </div>
-    <div class="ml-auto flex items-center gap-4">
-        <div class="hidden md:flex flex-col items-end">
-            <span class="fluent-body1 font-medium" style="color:var(--colorNeutralForeground1);">John Operator</span>
-            <span class="fluent-caption1">Operator</span>
-        </div>
-        <div class="w-8 h-8 rounded-full flex items-center justify-center" style="background:var(--colorNeutralBackground3);">
-            <i data-feather="user" class="icon-16" style="color:var(--colorNeutralForeground3);"></i>
-        </div>
-        <a class="fluent-button fluent-button-subtle" href="login.html">
-            <i data-feather="log-out" class="icon-16"></i>
-        </a>
-    </div>
-</header>
-
-<div class="app-shell">
-  <main>
+<body style="background: var(--colorNeutralBackground2); min-height: 100vh;">
+  <div class="app-shell">
+    <main>
         <!-- Stats (each fluent-card -> future <Card>) -->
         <section class="grid gap-6 md:grid-cols-3 mb-10" aria-label="Environment statistics">
             <!-- Card: Total VEs -->

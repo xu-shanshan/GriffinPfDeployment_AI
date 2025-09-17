@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Service Management - Griffin SovOps Manager</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <link rel="stylesheet" href="app-layout.css">
+  <script src="topbar.js" defer data-brand="Griffin SovOps Manager" data-subtitle="Service Management" data-user="John Operator" data-role="Operator"></script>
+  <script src="sidebar.js" defer data-active-nav="services" data-auto="true"></script>
+  <style>
+    /* Page‑specific minor helpers */
+    .svc-card:hover{box-shadow:var(--shadow4);border-color:var(--colorNeutralStroke1);}
+    .svc-card{transition:.12s cubic-bezier(.33,0,.67,1);}
+    .kbd-focus:focus-visible{outline:2px solid var(--colorBrandForeground1);outline-offset:2px;border-radius:6px;}
+  </style>
+</head>
+<body class="app-surface">
+  <div class="app-shell">
+    <main>
+      <!-- Header -->
+      <div class="mb-8">
+        <h2 class="fluent-title1 mb-3">Service Management</h2>
+        <p class="fluent-body1">Browse and manage deployed services across virtual environments.</p>
+      </div>
+
+      <!-- Search / Filters -->
+      <div class="fluent-card mb-8">
+        <div class="p-6">
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-col md:flex-row md:items-center gap-4">
+              <div class="relative">
+                <i data-feather="search" class="fluent-icon absolute left-2 top-1/2 -translate-y-1/2 fg-3"></i>
+                <input id="searchInput" class="fluent-input w-80" placeholder="Search service or VE..." oninput="applyFilters()">
+              </div>
+              <select id="typeFilter" class="fluent-select" onchange="applyFilters()">
+                <option value="">All Types</option>
+                <option value="B Type">B Type</option>
+                <option value="B2 Type">B2 Type</option>
+              </select>
+              <select id="veFilter" class="fluent-select" onchange="applyFilters()">
+                <option value="">All VEs</option>
+                <option value="SovBase">SovBase</option>
+                <option value="ModelBSov">ModelBSov</option>
+                <option value="OwaMailB2-SOV">OwaMailB2-SOV</option>
+                <option value="GraphConnectorsB2-SOV">GraphConnectorsB2-SOV</option>
+                <option value="FlowControlB2-SOV">FlowControlB2-SOV</option>
+                <option value="TodoB2-SOV">TodoB2-SOV</option>
+              </select>
+              <button class="fluent-button fluent-button-subtle" onclick="clearFilters()">Clear All</button>
+            </div>
+          </div>
+        </div>
+        <div id="searchSummary" class="px-6 pb-4 hidden">
+          <div class="bg-brand-accent border-bottom-stroke border border-bottom-stroke rounded-md p-3">
+            <p id="summaryText" class="text-sm fg-brand"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Service Cards -->
+      <div id="servicesGrid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-10"></div>
+
+      <!-- Pagination placeholder (static demo) -->
+      <div class="flex items-center justify-between">
+        <div class="fluent-body1">Showing <span id="countDisplay">0</span> services</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    feather.replace();
+
+    // Data model
+    const services = [
+      { name:'MailboxIndexer',  ve:'SovBase',             type:'B Type',  deployments:67, instances:12, status:'Healthy',    updated:'1h ago' },
+      { name:'NotificationHub', ve:'ModelBSov',           type:'B Type',  deployments:32, instances:10, status:'Healthy',    updated:'3h ago' },
+      { name:'OwaMailCore',     ve:'OwaMailB2-SOV',       type:'B2 Type', deployments:12, instances:4,  status:'Healthy',    updated:'12m ago' },
+      { name:'FlowControl',     ve:'FlowControlB2-SOV',   type:'B2 Type', deployments:0,  instances:3,  status:'Attention',  updated:'5m ago' },
+      { name:'GraphConnector',  ve:'GraphConnectorsB2-SOV',type:'B2 Type',deployments:0,  instances:2,  status:'Deploying', updated:'2m ago' },
+      { name:'TodoTasks',       ve:'TodoB2-SOV',          type:'B2 Type', deployments:1,  instances:1,  status:'Healthy',    updated:'30m ago' },
+    ];
+
+    // Favorites (localStorage) ----------------
+    function loadFavorites(){
+      try { return JSON.parse(localStorage.getItem('favoritesServices'))||[]; } catch { return []; }
+    }
+    function saveFavorites(list){
+      localStorage.setItem('favoritesServices', JSON.stringify(list));
+      if(window.refreshQuickAccess) refreshQuickAccess();
+    }
+
+    function isFav(name){ return loadFavorites().includes(name); }
+
+    function toggleFavoriteService(evt, name){
+      evt.stopPropagation();
+      const favs = loadFavorites();
+      const idx = favs.indexOf(name);
+      if(idx>-1) favs.splice(idx,1); else favs.push(name);
+      saveFavorites(favs);
+      renderServices(); // re-render to update star
+    }
+
+    // Rendering --------------------------------
+    function statusBadge(s){
+      if(s==='Healthy') return '<span class="fluent-badge fluent-badge-success">Healthy</span>';
+      if(s==='Deploying') return '<span class="fluent-badge fluent-badge-info">Deploying</span>';
+      return '<span class="fluent-badge" style="background:#fff4ce;color:#8a6100;">Needs Attention</span>';
+    }
+
+    function serviceCard(svc){
+      const fav = isFav(svc.name);
+      return `
+      <div class="fluent-card svc-card p-5 cursor-pointer kbd-focus" tabindex="0"
+           onclick="openService('${svc.name}','${svc.ve}')"
+           onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openService('${svc.name}','${svc.ve}');}">
+        <div class="flex items-start justify-between mb-3">
+          <div>
+            <h3 class="fluent-text-title2 mb-1">${svc.name}</h3>
+            <div class="flex items-center gap-2 fluent-caption1 fg-3">
+              <span>${svc.ve}</span><span>•</span><span>${svc.type}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="fluent-badge ${svc.type==='B2 Type'?'fluent-badge-success':'fluent-badge-neutral'}">${svc.type}</span>
+            <button class="text-favorite hover:opacity-80" aria-label="Toggle favorite"
+                onclick="toggleFavoriteService(event,'${svc.name}')">
+              <i data-feather="star" class="w-4 h-4 ${fav?'fill-current':''}"></i>
+            </button>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-4 mb-3">
+          <div class="text-center">
+            <div class="text-xl font-semibold fg-1">${svc.deployments}</div>
+            <div class="fluent-caption1">Deployments</div>
+          </div>
+         <div class="text-center">
+           <div class="text-xl font-semibold fg-brand">${svc.instances}</div>
+           <div class="fluent-caption1">VE Instances</div>
+         </div>
+          <div class="text-center">
+            <div class="text-xl font-semibold ${svc.status==='Attention'?'text-warn':svc.status==='Deploying'?'fg-brand':'text-success'}">${svc.status==='Attention'?'!':svc.status==='Deploying'?'…':'OK'}</div>
+            <div class="fluent-caption1">Status</div>
+          </div>
+        </div>
+        <hr class="fluent-divider mb-3">
+        <div class="flex items-center justify-between fluent-body1">
+          <div class="flex items-center gap-2">
+            ${statusBadge(svc.status)}
+            <span class="fluent-caption1 fg-3">${svc.updated}</span>
+          </div>
+          <i data-feather="chevron-right" class="fluent-icon fg-3"></i>
+        </div>
+      </div>`;
+    }
+
+    function renderServices(){
+      const grid = document.getElementById('servicesGrid');
+      const { filtered, summary } = filterData();
+      grid.innerHTML = filtered.map(serviceCard).join('');
+      document.getElementById('countDisplay').textContent = filtered.length;
+      const summaryBox = document.getElementById('searchSummary');
+      const textEl = document.getElementById('summaryText');
+      if(summary){
+        textEl.textContent = summary;
+        summaryBox.classList.remove('hidden');
+      } else {
+        summaryBox.classList.add('hidden');
+      }
+      feather.replace();
+    }
+
+    // Filtering --------------------------------
+    function filterData(){
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const type = document.getElementById('typeFilter').value;
+      const ve = document.getElementById('veFilter').value;
+      let filtered = services.filter(s=>{
+        if(type && s.type!==type) return false;
+        if(ve && s.ve!==ve) return false;
+        if(q && !(`${s.name}`.toLowerCase().includes(q) || s.ve.toLowerCase().includes(q))) return false;
+        return true;
+      });
+      let summary='';
+      if(q || type || ve){
+        summary = `Showing ${filtered.length} service(s)` +
+          (q?` matching "${q}"`:'') +
+          (type?` • Type: ${type}`:'') +
+          (ve?` • VE: ${ve}`:'');
+      }
+      return { filtered, summary };
+    }
+
+    function applyFilters(){ renderServices(); }
+
+    function clearFilters(){
+      document.getElementById('searchInput').value='';
+      document.getElementById('typeFilter').value='';
+      document.getElementById('veFilter').value='';
+      applyFilters();
+    }
+
+    // Navigation --------------------------------
+    function openService(name, ve){
+      location.href = `service-detail.html?service=${encodeURIComponent(name)}&ve=${encodeURIComponent(ve)}`;
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', ()=> {
+      renderServices();
+    });
+  </script>
+</body>
+</html>

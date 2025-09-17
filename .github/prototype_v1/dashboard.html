@@ -72,74 +72,151 @@
       </section>
 
       <!-- Favorites -->
-      <section class="fluent-card" aria-labelledby="favVEHeader">
-        <header class="px-6 py-4 border-b border-bottom-stroke">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <i data-feather="star" class="w-5 h-5 text-favorite"></i>
-              <h3 id="favVEHeader" class="fluent-title2">Favorite Virtual Environments</h3>
+      <div class="grid gap-8 md:grid-cols-2 mb-10" aria-label="Favorites">
+        <section class="fluent-card h-full" aria-labelledby="favVEHeader">
+          <header class="px-6 py-4 border-b border-bottom-stroke">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <i data-feather="star" class="w-5 h-5 text-favorite"></i>
+                <h3 id="favVEHeader" class="fluent-title2">Favorite Virtual Environments</h3>
+              </div>
+              <button class="fluent-button fluent-button-subtle" type="button">View All</button>
             </div>
-            <button class="fluent-button fluent-button-subtle" type="button">View All</button>
+          </header>
+          <div class="p-6 space-y-1">
+            <article class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-accent">
+                  <i data-feather="server" class="w-5 h-5 fg-brand"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium fg-1">SovBase</h4>
+                  <div class="flex items-center gap-4 mt-1">
+                    <span class="fluent-body1">67 services</span>
+                    <span class="fluent-badge fluent-badge-neutral">B Type</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 fluent-body1">
+                <span>2 hours ago</span>
+                <i data-feather="chevron-right" class="icon-16"></i>
+              </div>
+            </article>
+            <article class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-fuchsia-100">
+                  <i data-feather="layers" class="w-5 h-5 text-fuchsia-800"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium fg-1">ModelBSov</h4>
+                  <div class="flex items-center gap-4 mt-1">
+                    <span class="fluent-body1">65 services</span>
+                    <span class="fluent-badge fluent-badge-neutral">B Type</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 fluent-body1">
+                <span>4 hours ago</span>
+                <i data-feather="chevron-right" class="icon-16"></i>
+              </div>
+            </article>
+            <article class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100">
+                  <i data-feather="mail" class="w-5 h-5 text-green-800"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium fg-1">OwaMailB2-SOV</h4>
+                  <div class="flex items-center gap-4 mt-1">
+                    <span class="fluent-body1">1 service</span>
+                    <span class="fluent-badge fluent-badge-success">B2 Type</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 fluent-body1">
+                <span>2 minutes ago</span>
+                <i data-feather="chevron-right" class="icon-16"></i>
+              </div>
+            </article>
           </div>
-        </header>
-        <div class="p-6 space-y-1">
-          <article class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-accent">
-                <i data-feather="server" class="w-5 h-5 fg-brand"></i>
+        </section>
+        <section class="fluent-card h-full" aria-labelledby="favServicesHeader">
+          <header class="px-6 py-4 border-b border-bottom-stroke">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <i data-feather="package" class="w-5 h-5 fg-brand"></i>
+                <h3 id="favServicesHeader" class="fluent-title2">Favorite Services</h3>
               </div>
-              <div>
-                <h4 class="font-medium fg-1">SovBase</h4>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="fluent-body1">67 services</span>
-                  <span class="fluent-badge fluent-badge-neutral">B Type</span>
+              <button class="fluent-button fluent-button-subtle" type="button">Manage</button>
+            </div>
+          </header>
+          <div class="p-6 space-y-1" role="list">
+            <article role="listitem" tabindex="0"
+                     onclick="location.href='service-detail.html?service=MailboxIndexer&ve=SovBase'"
+                     class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable"
+                     aria-label="MailboxIndexer Service">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-brand-accent">
+                  <i data-feather="layers" class="w-5 h-5 fg-brand"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium fg-1">MailboxIndexer</h4>
+                  <div class="flex flex-wrap items-center gap-4 mt-1">
+                    <span class="fluent-body1">VE: SovBase</span>
+                    <span class="fluent-badge fluent-badge-neutral">Model B</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="flex items-center gap-3 fluent-body1">
-              <span>2 hours ago</span>
-              <i data-feather="chevron-right" class="icon-16"></i>
-            </div>
-          </article>
-          <article class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-fuchsia-100">
-                <i data-feather="layers" class="w-5 h-5 text-fuchsia-800"></i>
+              <div class="flex items-center gap-3 fluent-body1">
+                <span>Deployed 1h ago</span>
+                <i data-feather="chevron-right" class="icon-16"></i>
               </div>
-              <div>
-                <h4 class="font-medium fg-1">ModelBSov</h4>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="fluent-body1">65 services</span>
-                  <span class="fluent-badge fluent-badge-neutral">B Type</span>
+            </article>
+            <article role="listitem" tabindex="0"
+                     onclick="location.href='service-detail.html?service=NotificationHub&ve=ModelBSov'"
+                     class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable"
+                     aria-label="NotificationHub Service">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-yellow-accent">
+                  <i data-feather="bell" class="w-5 h-5 text-warn"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium fg-1">NotificationHub</h4>
+                  <div class="flex flex-wrap items-center gap-4 mt-1">
+                    <span class="fluent-body1">VE: ModelBSov</span>
+                    <span class="fluent-badge fluent-badge-neutral">Model B</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="flex items-center gap-3 fluent-body1">
-              <span>4 hours ago</span>
-              <i data-feather="chevron-right" class="icon-16"></i>
-            </div>
-          </article>
-          <article class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable">
-            <div class="flex items-center gap-4">
-              <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-green-100">
-                <i data-feather="mail" class="w-5 h-5 text-green-800"></i>
+              <div class="flex items-center gap-3 fluent-body1">
+                <span>Deployed 3h ago</span>
+                <i data-feather="chevron-right" class="icon-16"></i>
               </div>
-              <div>
-                <h4 class="font-medium fg-1">OwaMailB2-SOV</h4>
-                <div class="flex items-center gap-4 mt-1">
-                  <span class="fluent-body1">1 service</span>
-                  <span class="fluent-badge fluent-badge-success">B2 Type</span>
+            </article>
+            <article role="listitem" tabindex="0"
+                     onclick="location.href='service-detail.html?service=OwaMailCore&ve=OwaMailB2-SOV'"
+                     class="group flex items-center justify-between p-4 rounded cursor-pointer hover:bg-gray-50 transition pressable"
+                     aria-label="OwaMailCore Service">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-green-accent">
+                  <i data-feather="mail" class="w-5 h-5 text-success"></i>
+                </div>
+                <div>
+                  <h4 class="font-medium fg-1">OwaMailCore</h4>
+                  <div class="flex flex-wrap items-center gap-4 mt-1">
+                    <span class="fluent-body1">VE: OwaMailB2-SOV</span>
+                    <span class="fluent-badge fluent-badge-success">Model B2</span>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="flex items-center gap-3 fluent-body1">
-              <span>2 minutes ago</span>
-              <i data-feather="chevron-right" class="icon-16"></i>
-            </div>
-          </article>
-        </div>
-      </section>
-      <!-- ...Favorite Services section updated analogously (replace style attrs with classes)... -->
+              <div class="flex items-center gap-3 fluent-body1">
+                <span>Deployed 12m ago</span>
+                <i data-feather="chevron-right" class="icon-16"></i>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
     </main>
   </div>
   <script>

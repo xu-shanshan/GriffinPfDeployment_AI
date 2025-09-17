@@ -149,7 +149,9 @@ main.app-main{flex:1;padding:2rem 2.25rem 3rem;background:var(--colorNeutralBack
 
 /* Star / favorite color */
 .text-favorite { color:#faa06b!important; }
-
+.text-success { color:#107c10!important; }
+.text-warn { color:#ca5010!important; }
+.text-purple { color:#5c2d91!important; }
 /* Utility spacing (only ones needed by removed inline) */
 .pl-1rem { padding-left:1rem!important; }
 

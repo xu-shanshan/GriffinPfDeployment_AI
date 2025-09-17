@@ -140,7 +140,6 @@ main.app-main{flex:1;padding:2rem 2.25rem 3rem;background:var(--colorNeutralBack
 .btn-green { background:#107c10; color:#fff; }
 .btn-green:hover { filter:brightness(1.05); }
 .gradient-brand-icon { background:linear-gradient(135deg,#0f6cbd 0%,#115ea3 100%); }
-.no-inline { /* marker class (no styles) */ }
 
 /* Status / metric tiles */
 .metric-tile { background:var(--colorNeutralBackground2); border-radius:8px; padding:1rem; text-align:center; }

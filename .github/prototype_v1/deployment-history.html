@@ -121,28 +121,20 @@
         .sider-open .sider-overlay{display:block;}
     </style>
 </head>
-<body style="background: var(--colorNeutralBackground2); min-height:100vh;">
+<body class="app-surface">
   <div class="app-shell">
     <main>
-      <!-- BEGIN migrated original page content -->
-      <div class="px-0">
-        <!-- Header -->
-        <div class="mb-8">
-            <h2 class="fluent-text-title1 mb-3">Deployment History</h2>
-            <p class="fluent-text-body1">Track and review all deployment activities across virtual environments.</p>
-        </div>
-
-        <!-- Content placeholder -->
-        <div class="fluent-card p-8 text-center">
-            <i data-feather="clock" class="w-16 h-16 mx-auto mb-4" style="color: var(--colorNeutralForeground3);"></i>
-            <h3 class="text-xl font-semibold mb-2" style="color: var(--colorNeutralForeground1);">Deployment History</h3>
-            <p class="fluent-text-body1">This page will display deployment logs and history.</p>
-        </div>
+      <div class="mb-8">
+        <h2 class="fluent-text-title1 mb-3 fg-1">Deployment History</h2>
+        <p class="fluent-text-body1 fg-2">Track and review all deployment activities across virtual environments.</p>
+      </div>
+      <div class="fluent-card p-8 text-center">
+        <i data-feather="clock" class="w-16 h-16 mx-auto mb-4 fg-3"></i>
+        <h3 class="text-xl font-semibold mb-2 fg-1">Deployment History</h3>
+        <p class="fluent-text-body1 fg-2">This page will display deployment logs and history.</p>
       </div>
     </main>
-  </div> <!-- end .app-shell -->
-  <script>
-    feather.replace();
-  </script>
+  </div>
+  <script>feather.replace();</script>
 </body>
 </html>

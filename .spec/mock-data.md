@@ -20,3 +20,8 @@ Mock data simulates actual application data and lives in:
   Contains detailed information for each Service (Build info, Pipeline, Drop URL, etc.).
   The frontend needs to display and operate on this information (e.g., trigger deployments, select builds, etc.).
 
+
+Frontend consumption:
+1. List VEs (flatten groups)
+2. For selected VE, list services
+3. For a service, show build info, Drop URL pattern, pipelines

@@ -13,6 +13,7 @@ All pages must be **standalone** (openable directly in a browser without build t
 ## Root Folder
 - [ ] Name root folder `.github/prototype_YYYYMMDDHHMMSS/`.  
   _Ensures each prototype build is timestamped and easily identifiable._
+- [ ] Added a progress tracking file check.md inside the timestamped prototype root folder.
 
 ---
 

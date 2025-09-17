@@ -1,8 +1,6 @@
 create a new prototype following the established instructions and keeping the existing UI/UX design patterns. 
 
 The new prototype will include:
-1. Updated folder structure with timestamp
-2. Consolidated shared assets (layout.js, improved mockData.js)
 3. Enhanced pages with consistent UI/UX patterns
 4. Better accessibility and responsive design
 5. Improved navigation and state management
@@ -47,15 +45,6 @@ Implemented dashboard content (prototype_20250901121530):
 - Added sidebar favorites sync (visible subset) via layout.js syncSidebarFavorites()
 - Extended common.css (badges + grids)
 - Added page-specific dashboard.css styling
-
-
-Let's implement the ve-detail.html and modify sidebar with content area for new prototype .github/prototype_20250901121530.
-
-<!-- Let's create a empty dashboard page first.only contains sidebar and header -->
-
-<!-- Let's implement the dashboard page with content area for new prototype .github/prototype_20250901121530. -->
-
-
 
 
 

@@ -36,9 +36,10 @@ All pages must be **standalone** (openable directly in a browser without build t
   ```html
   <div id="app-header"></div>
   <div id="app-sidebar"></div>
-````
+  <div id="app-content"></div>
+  ```
 
-* [ ] After loading `layout.js`, call:
+- [ ] After loading `layout.js`, call:
 
   ```js
   injectHeader();

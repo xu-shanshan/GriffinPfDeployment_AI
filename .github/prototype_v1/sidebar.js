@@ -15,13 +15,10 @@
     <div class="fluent-nav-section">
       <div class="fluent-nav-section-title">Management</div>
       <a class="fluent-nav-item" data-key="ve-management" href="ve-management.html">
-        <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VE Management</span>
+        <i data-feather="server" class="fluent-icon"></i><span class="nav-label">VEs</span>
       </a>
       <a class="fluent-nav-item" data-key="services" href="services.html">
         <i data-feather="layers" class="fluent-icon"></i><span class="nav-label">Services</span>
-      </a>
-      <a class="fluent-nav-item" data-key="permissions" href="permissions.html">
-        <i data-feather="shield" class="fluent-icon"></i><span class="nav-label">Permissions</span>
       </a>
     </div>
     <div class="fluent-nav-section">

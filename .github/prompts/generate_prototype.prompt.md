@@ -8,15 +8,6 @@ This document outlines the tasks and structure for building **pure HTML prototyp
 The goal is to quickly validate requirements and interaction design before implementing a full framework (React, Vue, Angular).  
 All pages must be **standalone** (openable directly in a browser without build tools) and share a consistent look, feel, and interaction logic.
 
----
-
-## Root Folder
-- [ ] Name root folder `.github/prototype_YYYYMMDDHHMMSS/`.  
-  _Ensures each prototype build is timestamped and easily identifiable._
-- [ ] Added a progress tracking file check.md inside the timestamped prototype root folder.
-
----
-
 ## Shared Assets (Iterative Lifecycle)
 > This checklist is re-evaluated every time a new page or feature is added; it is an ongoing loop until the prototype phase ends.  
 - [ ] Revisit on each new page/feature: run Reuse Gate search, update candidate list, evaluate promotions.
@@ -156,7 +147,6 @@ Goal: Avoid premature abstraction; minimize churn while still converging on a co
 * [ ] Apply **visual hierarchy** and **accessible design principles**.
 * [ ] Design must be **user-friendly**, clear, and lightweight.
 
----
 
 ✅ With this setup, stakeholders can validate requirements, test user flows, and review visual design **before framework development begins**.
 

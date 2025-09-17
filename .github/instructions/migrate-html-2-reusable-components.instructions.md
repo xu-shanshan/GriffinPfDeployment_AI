@@ -1,5 +1,5 @@
 ---
-mode: edit
+applyTo: '**'
 ---
 
 Project Context:

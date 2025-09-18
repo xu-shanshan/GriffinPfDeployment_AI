@@ -1,0 +1,6 @@
+.fluent-ve-card { gap:10px; min-height:150px; }
+.fluent-ve-card-top { display:flex; align-items:center; gap:8px; }
+.fluent-ve-card-title { font-weight:600; font-size:16px; color:var(--color-text); }
+.fluent-ve-card-title:hover { text-decoration:underline; }
+.fluent-ve-card-stats { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+.fluent-ve-card-footer { margin-top:auto; font-size:12px; color:var(--color-text-dim); }

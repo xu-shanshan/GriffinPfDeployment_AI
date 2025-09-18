@@ -1,0 +1,120 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><title>VE Management</title>
+<link rel="stylesheet" href="../shared/styles/common.css">
+<link rel="stylesheet" href="../shared/styles/layout.css">
+<link rel="stylesheet" href="ve-management.css">
+</head><body>
+<div id="app-header"></div><div id="app-sidebar"></div>
+<div class="fluent-main-shell">
+  <header class="fluent-content-header">
+    <div class="fluent-breadcrumb"><a href="dashboard.html">Home</a><span>VEs</span></div>
+    <h1>VEs</h1>
+    <div class="fluent-inline-search">
+      <input id="veSearch" placeholder="Search VE..." aria-label="Search Virtual Environments">
+      <select id="veScope">
+        <option value="">Scope (All)</option>
+        <option value="Prod">Contains Prod</option>
+        <option value="PPE">Contains PPE</option>
+      </select>
+      <button id="clearFilters">Clear</button>
+    </div>
+    <div class="fluent-inline-help">Search filters name substring; scope filter checks mapping membership.</div>
+  </header>
+  <main class="fluent-content">
+    <div id="veGrid" class="fluent-grid-auto"></div>
+    <div class="fluent-pagination" id="vePager"></div>
+    <div class="fluent-live-region" aria-live="polite" id="veLive"></div>
+  </main>
+</div>
+<script src="../shared/js/layout.js"></script>
+<script src="../shared/js/mockData.js"></script>
+<script src="../shared/js/pageInit.js"></script>
+<script>
+var page=1, perPage=12, currentList=[];
+initPageWithMockData("ve", function(){
+  document.getElementById("veSearch").addEventListener("input", applyFilters);
+  document.getElementById("veScope").addEventListener("change", applyFilters);
+  document.getElementById("clearFilters").addEventListener("click", function(){
+    veSearch.value=""; veScope.value=""; applyFilters();
+  });
+  applyFilters();
+});
+function applyFilters(){
+  var q=veSearch.value.trim().toLowerCase();
+  var scope=veScope.value;
+  currentList = MockData.allVEs.filter(function(v){
+    if(q && v.toLowerCase().indexOf(q)===-1) return false;
+    if(scope){
+      if(scope==="Prod" && !(v.indexOf("Prod")>=0 || v==="Prod")) return false;
+      if(scope==="PPE" && !(v.toUpperCase().includes("PPE"))) return false;
+    }
+    return true;
+  });
+  page=1;
+  renderPage();
+  announce(currentList.length+" VEs match");
+}
+function renderPage(){
+  var grid=document.getElementById("veGrid");
+  grid.innerHTML="";
+  if(currentList.length===0){
+    grid.innerHTML='<div class="fluent-empty" style="grid-column:1 / -1;">No matches</div>';
+    document.getElementById("vePager").innerHTML="";
+    return;
+  }
+  var start=(page-1)*perPage, end=start+perPage;
+  currentList.slice(start,end).forEach(function(v){
+    grid.appendChild(makeCard(v));
+  });
+  renderPager();
+}
+function makeCard(v){
+  var ds=MockData.veDetails[v];
+  var c=document.createElement("div");
+  c.className="fluent-card fluent-ve-card";
+  c.innerHTML='<div class="fluent-ve-card-top">'+
+     '<button class="fluent-favorite-toggle" aria-pressed="'+MockData.isFavoriteVE(v)+'" aria-label="Toggle favorite '+v+'" data-ve="'+v+'">★</button>'+
+     '<a class="fluent-ve-card-title" href="ve-detail.html?ve='+encodeURIComponent(v)+'">'+v+'</a></div>'+
+     '<div class="fluent-ve-card-stats">'+
+       badge("Svc", ds?ds.total:0)+
+       badge("Healthy", ds?ds.healthy:0, "ok")+
+       badge("Attn", ds?ds.attention:0, "warn")+
+       badge("Deploy", ds?ds.deploying:0, ds.deploying>0?"accent":"")+
+     '</div>'+
+     '<div class="fluent-ve-card-footer">Updated '+timeAgo(ds.updated)+'</div>';
+  c.querySelector(".fluent-favorite-toggle").onclick=function(){
+    toggleFavoriteVE(v);
+    this.setAttribute("aria-pressed", ""+MockData.isFavoriteVE(v));
+  };
+  return c;
+}
+function badge(label,val,cls){
+  return '<span class="fluent-badge '+(cls||'')+'"><strong>'+val+'</strong>&nbsp;'+label+'</span>';
+}
+function renderPager(){
+  var total=Math.ceil(currentList.length/perPage);
+  var holder=document.getElementById("vePager");
+  holder.innerHTML="";
+  if(total<=1) return;
+  var mkBtn=function(p,lbl,dis){
+    var b=document.createElement("button");
+    b.textContent=lbl;
+    if(dis) b.disabled=true;
+    b.onclick=function(){ page=p; renderPage(); window.scrollTo(0,0); };
+    holder.appendChild(b);
+  };
+  mkBtn(page-1,"Prev",page===1);
+  holder.appendChild(document.createTextNode(" Page "+page+" / "+total+" "));
+  mkBtn(page+1,"Next",page===total);
+}
+function timeAgo(ts){
+  var d=Date.now()-ts;
+  var m=Math.round(d/60000);
+  if(m<1) return "now";
+  if(m<60) return m+"m ago";
+  var h=Math.round(m/60);
+  return h+"h ago";
+}
+function announce(msg){ var r=document.getElementById("veLive"); r.textContent=msg; }
+</script>
+</body></html>

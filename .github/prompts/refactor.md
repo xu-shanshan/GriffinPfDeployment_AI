@@ -1,5 +1,13 @@
 create a new prototype following the established instructions and keeping the existing UI/UX design patterns. 
 
+<!-- Added: prototype_20250901121530 implementation summary -->
+## prototype_20250901121530 Summary
+- Scaffold: shared/styles (common.css, layout.css), shared/js (layout.js, mockData.js, pageInit.js, auth-mock.js)
+- Pages implemented: dashboard, ve-management, services-management, ve-detail, service-detail, service-in-ve, deployment-history, login
+- Features: responsive collapsible sidebar (CSS var --sidebar-width), favorites (VEs & Services) with overflow handling, deterministic mock status generation, accessible live regions, keyboard & aria-current nav, accent stat cards, adaptive grids, selection table in ve-detail, deployment history generator, auth mock.
+- Class normalization: all new UI uses fluent-* prefix; legacy non‑fluent removed in new pages.
+- Visual enhancements: accent gradients, animated (reduced-motion safe) shine, multi-column featured stat, micro trend chips, unified focus ring, grid gaps via --gap-sm/md/lg tokens.
+
 The new prototype will include:
 3. Enhanced pages with consistent UI/UX patterns
 4. Better accessibility and responsive design
@@ -46,8 +54,6 @@ Implemented dashboard content (prototype_20250901121530):
 - Extended common.css (badges + grids)
 - Added page-specific dashboard.css styling
 
-
-
 you are a Interaction Designer/Visual Designer/UI/UX Designer，
 
 Make the dashboard cards look more engaging and visually dynamic.
@@ -64,7 +70,6 @@ Continuation (prototype_20250901121530):
 - Added .fluent-sidebar-toggle + collapsed width behavior
 - Added unified focus ring & helper utilities
 - Enhanced layout.js (toggle, active nav setter, safe re-sync of favorites)
-
 
 The sidebar can collapse and expand, but the right content area keeps the same width. It does not resize when the sidebar changes.
 

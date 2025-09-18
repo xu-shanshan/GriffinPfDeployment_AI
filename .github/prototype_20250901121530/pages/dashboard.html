@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><title>Dashboard</title>
+<link rel="stylesheet" href="../shared/styles/common.css">
+<link rel="stylesheet" href="../shared/styles/layout.css">
+<link rel="stylesheet" href="dashboard.css">
+</head><body>
+<div id="app-header"></div><div id="app-sidebar"></div>
+<div class="fluent-main-shell">
+  <main class="fluent-content-header">
+    <div class="fluent-breadcrumb"><a href="dashboard.html">Home</a><span>Dashboard</span></div>
+    <h1>Deployment Dashboard</h1>
+    <p class="fluent-text-dim">Environment and services overview with favorites & quick indicators.</p>
+  </main>
+  <section class="fluent-content" id="dashContent">
+    <section>
+      <h2 class="visually-hidden">Key Statistics</h2>
+      <div class="fluent-grid-stats" id="statGrid"></div>
+    </section>
+    <section class="fluent-dashboard-favorites" aria-label="Favorites Overview">
+      <div class="fluent-dashboard-favorite-card" id="favVEsCard">
+        <div class="fluent-dashboard-favorite-card-header">
+          <h3>Favorite VEs</h3><span class="fluent-tag-muted" id="favVeCount"></span>
+        </div>
+        <div class="fluent-dashboard-favorite-card-content" id="favVeChips"></div>
+        <div class="fluent-dashboard-favorite-card-footer">
+          <span id="favVeFooter"></span><a href="ve-management.html">Manage VEs →</a>
+        </div>
+      </div>
+      <div class="fluent-dashboard-favorite-card" id="favSvcCard">
+        <div class="fluent-dashboard-favorite-card-header">
+          <h3>Favorite Services</h3><span class="fluent-tag-muted" id="favSvcCount"></span>
+        </div>
+        <div class="fluent-dashboard-favorite-card-content" id="favSvcChips"></div>
+        <div class="fluent-dashboard-favorite-card-footer">
+          <span id="favSvcFooter"></span><a href="services-management.html">Manage Services →</a>
+        </div>
+      </div>
+    </section>
+  </section>
+</div>
+<script src="../shared/js/layout.js"></script>
+<script src="../shared/js/mockData.js"></script>
+<script src="../shared/js/pageInit.js"></script>
+<script>
+initPageWithMockData("dashboard", function(){
+  buildStats();
+  buildFavorites();
+});
+function buildStats(){
+  var g=document.getElementById("statGrid");
+  var md=MockData;
+  var totalServices=Object.keys(md.servicesDetails).length;
+  var totalVEs=md.allVEs.length;
+  var deployments=md.regenDeploymentHistory(25);
+  var success=deployments.filter(d=>d.status==="Succeeded").length;
+  var active=deployments.filter(d=>d.status==="InProgress").length;
+  var stats=[
+    {label:"Total Services", value:totalServices, accent:"a", sub:"Registered"},
+    {label:"Total VEs", value:totalVEs, accent:"b", sub:"Active scope"},
+    {label:"Deploy Succeeded", value:success, accent:"d", sub:"Last 25"},
+    {label:"Deploy In-Progress", value:active, accent:"e", sub:"Currently running"},
+    {label:"Favorites (All)", value: md.favorites.ves.length+md.favorites.services.length, accent:"f", sub:"VE+Svc"},
+  ];
+  g.innerHTML="";
+  stats.forEach(function(s,i){
+    var card=document.createElement("div");
+    card.className="fluent-dashboard-stat fluent-shine";
+    card.dataset.accent=s.accent;
+    card.innerHTML='<div class="fluent-dashboard-stat-label">'+s.label+'</div>'+
+      '<div class="fluent-dashboard-stat-value"><span class="fluent-animated-number" data-val="'+s.value+'">'+s.value+'</span>'+
+      '<span class="fluent-chip">'+(i===0?"+ "+Math.round(s.value*0.02)+" new":"•")+'</span></div>'+
+      '<div class="fluent-dashboard-stat-sub">'+s.sub+'</div>';
+    g.appendChild(card);
+  });
+}
+function buildFavorites(){
+  renderFavSet("ves", MockData.favorites.ves, "favVeChips","favVeCount","favVeFooter","ve-detail.html?ve=");
+  renderFavSet("services", MockData.favorites.services, "favSvcChips","favSvcCount","favSvcFooter","service-detail.html?service=");
+}
+function renderFavSet(kind, arr, chipsId,countId,footId, hrefBase){
+  var chips=document.getElementById(chipsId);
+  var cnt=document.getElementById(countId);
+  var foot=document.getElementById(footId);
+  var MAX=10;
+  cnt.textContent=arr.length+" items";
+  chips.innerHTML="";
+  if(arr.length===0){
+    chips.innerHTML='<div class="fluent-text-dim" style="grid-column:1 / -1;">No favorites yet</div>';
+    foot.textContent="Add favorites via management pages.";
+    return;
+  }
+  var visible=arr.slice(0,MAX);
+  visible.forEach(function(n){
+    var a=document.createElement("a");
+    a.href=hrefBase+encodeURIComponent(n);
+    a.className="fluent-dashboard-favorite-chip";
+    a.innerHTML='<span>'+n+'</span><span style="opacity:.55;">›</span>';
+    chips.appendChild(a);
+  });
+  if(arr.length>MAX){
+    var more=document.createElement("div");
+    more.className="fluent-overflow-card";
+    more.textContent="… +"+(arr.length-MAX)+" more";
+    chips.appendChild(more);
+  }
+  foot.textContent="Showing "+visible.length+(arr.length>MAX?(" of "+arr.length):"");
+}
+</script>
+</body></html>

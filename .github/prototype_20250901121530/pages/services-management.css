@@ -1,7 +1,0 @@
-.fluent-svc-card { gap:8px; }
-.fluent-svc-head { display:flex; align-items:center; gap:6px; }
-.fluent-svc-name { font-weight:600; font-size:15px; color:var(--color-text); }
-.fluent-svc-name:hover { text-decoration:underline; }
-.fluent-svc-meta { font-size:12px; color:var(--color-text-dim); }
-.fluent-svc-pipelines { display:flex; gap:6px; flex-wrap:wrap; }
-.fluent-svc-footer { font-size:12px; color:var(--color-text-dim); margin-top:auto; display:flex; gap:8px; align-items:center; }
